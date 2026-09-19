@@ -1,0 +1,552 @@
+{
+  "events": [
+    {
+      "id": "EVT_1789853528596_q2nt5",
+      "timestamp": "2026-09-19T21:32:08.596Z",
+      "eventType": "WEBHOOK_INVALID_SIGNATURE",
+      "severity": "MEDIUM",
+      "ip": "::1",
+      "endpoint": "/api/v1/billing/webhooks/paystack",
+      "method": "POST",
+      "detectionRule": "RULE_WEBHOOK_SIGNATURE",
+      "actionTaken": "LOGGED",
+      "metadata": {
+        "provider": "PAYSTACK",
+        "counterCount": 1,
+        "threshold": 3,
+        "windowSeconds": 300
+      }
+    },
+    {
+      "id": "EVT_1789853528405_8kils",
+      "timestamp": "2026-09-19T21:32:08.405Z",
+      "eventType": "MALWARE_DETECTED",
+      "severity": "CRITICAL",
+      "ip": "0.0.0.0",
+      "actorId": "cmu2o3i2l00028cq4m8gk96zf",
+      "detectionRule": "RULE_MALWARE_ZERO_TOLERANCE",
+      "actionTaken": "FILE_QUARANTINED_PROCESSING_ABORTED",
+      "metadata": {
+        "fileId": "FILE_1789853528398_04dee135",
+        "threatSignature": "EICAR.StandardAntivirusTestString",
+        "result": "THREAT_DETECTED"
+      }
+    },
+    {
+      "id": "EVT_1789853528312_a4xkb",
+      "timestamp": "2026-09-19T21:32:08.312Z",
+      "eventType": "MALICIOUS_UPLOAD",
+      "severity": "HIGH",
+      "ip": "0.0.0.0",
+      "actorId": "cmu2o3i2l00028cq4m8gk96zf",
+      "detectionRule": "MIME_SIGNATURE_VERIFICATION",
+      "actionTaken": "FILE_QUARANTINED",
+      "metadata": {
+        "fileId": "FILE_1789853528305_9e833855",
+        "originalName": "malicious_spoofed.pdf",
+        "error": "Content signature mismatch: file claims to be PDF but lacks '%PDF' magic header."
+      }
+    },
+    {
+      "id": "EVT_1789853528184_qijiq",
+      "timestamp": "2026-09-19T21:32:08.185Z",
+      "eventType": "SUSPICIOUS_ADMIN_ACTIVITY",
+      "severity": "INFO",
+      "ip": "192.0.2.77",
+      "detectionRule": "MANUAL_IP_ENFORCEMENT",
+      "actionTaken": "MANUAL_STATE_MONITOR",
+      "actorEmail": "admin@diasporaland.ai",
+      "metadata": {
+        "reason": "Admin verified legitimate developer testing; lifting restriction."
+      }
+    },
+    {
+      "id": "EVT_1789853421101_35c0s",
+      "timestamp": "2026-09-19T21:30:21.101Z",
+      "eventType": "WEBHOOK_INVALID_SIGNATURE",
+      "severity": "MEDIUM",
+      "ip": "::1",
+      "endpoint": "/api/v1/billing/webhooks/paystack",
+      "method": "POST",
+      "detectionRule": "RULE_WEBHOOK_SIGNATURE",
+      "actionTaken": "LOGGED",
+      "metadata": {
+        "provider": "PAYSTACK",
+        "counterCount": 1,
+        "threshold": 3,
+        "windowSeconds": 300
+      }
+    },
+    {
+      "id": "EVT_1789853417145_dvgd6",
+      "timestamp": "2026-09-19T21:30:17.145Z",
+      "eventType": "BRUTE_FORCE",
+      "severity": "HIGH",
+      "ip": "192.0.2.77",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "actorEmail": "victim_1789853416953@example.com",
+      "detectionRule": "RULE_BRUTE_FORCE_LOGIN",
+      "actionTaken": "TEMPORARY_BLOCK_30M",
+      "metadata": {
+        "reason": "Non-existent account login attempt",
+        "counterCount": 5,
+        "threshold": 5,
+        "windowSeconds": 300
+      }
+    },
+    {
+      "id": "EVT_1789853416941_jhlvl",
+      "timestamp": "2026-09-19T21:30:16.941Z",
+      "eventType": "BRUTE_FORCE",
+      "severity": "HIGH",
+      "ip": "192.0.2.77",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "actorEmail": "victim_1789853416753@example.com",
+      "detectionRule": "RULE_BRUTE_FORCE_LOGIN",
+      "actionTaken": "LOGGED",
+      "metadata": {
+        "reason": "Non-existent account login attempt",
+        "counterCount": 4,
+        "threshold": 5,
+        "windowSeconds": 300
+      }
+    },
+    {
+      "id": "EVT_1789853416749_h126y",
+      "timestamp": "2026-09-19T21:30:16.749Z",
+      "eventType": "BRUTE_FORCE",
+      "severity": "HIGH",
+      "ip": "192.0.2.77",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "actorEmail": "victim_1789853416658@example.com",
+      "detectionRule": "RULE_BRUTE_FORCE_LOGIN",
+      "actionTaken": "LOGGED",
+      "metadata": {
+        "reason": "Non-existent account login attempt",
+        "counterCount": 3,
+        "threshold": 5,
+        "windowSeconds": 300
+      }
+    },
+    {
+      "id": "EVT_1789853416652_shny9",
+      "timestamp": "2026-09-19T21:30:16.652Z",
+      "eventType": "BRUTE_FORCE",
+      "severity": "HIGH",
+      "ip": "192.0.2.77",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "actorEmail": "victim_1789853416147@example.com",
+      "detectionRule": "RULE_BRUTE_FORCE_LOGIN",
+      "actionTaken": "LOGGED",
+      "metadata": {
+        "reason": "Non-existent account login attempt",
+        "counterCount": 2,
+        "threshold": 5,
+        "windowSeconds": 300
+      }
+    },
+    {
+      "id": "EVT_1789853416143_lo2dw",
+      "timestamp": "2026-09-19T21:30:16.143Z",
+      "eventType": "BRUTE_FORCE",
+      "severity": "HIGH",
+      "ip": "192.0.2.77",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "actorEmail": "victim_1789853415776@example.com",
+      "detectionRule": "RULE_BRUTE_FORCE_LOGIN",
+      "actionTaken": "LOGGED",
+      "metadata": {
+        "reason": "Non-existent account login attempt",
+        "counterCount": 1,
+        "threshold": 5,
+        "windowSeconds": 300
+      }
+    },
+    {
+      "id": "EVT_INIT_101",
+      "eventType": "RATE_LIMIT_EXCEEDED",
+      "severity": "LOW",
+      "timestamp": "2026-09-19T19:30:15.110Z",
+      "ip": "197.210.64.12",
+      "endpoint": "/api/properties",
+      "method": "GET",
+      "detectionRule": "GLOBAL_API_RATE_LIMIT",
+      "actionTaken": "HTTP_429_THROTTLED",
+      "metadata": {
+        "requestCount": 45,
+        "windowSec": 60
+      }
+    },
+    {
+      "id": "EVT_INIT_102",
+      "eventType": "PROBING_ATTACK",
+      "severity": "MEDIUM",
+      "timestamp": "2026-09-19T20:55:15.110Z",
+      "ip": "185.220.101.5",
+      "endpoint": "/.env",
+      "method": "GET",
+      "userAgent": "curl/7.68.0 scanner",
+      "detectionRule": "RULE_API_PROBING",
+      "actionTaken": "RATE_LIMIT_APPLIED",
+      "metadata": {
+        "probeTarget": "/.env",
+        "userAgent": "scanner"
+      }
+    },
+    {
+      "id": "EVT_INIT_103",
+      "eventType": "BRUTE_FORCE",
+      "severity": "HIGH",
+      "timestamp": "2026-09-19T21:20:15.110Z",
+      "ip": "102.89.23.44",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "actorEmail": "targeted_victim@gmail.com",
+      "detectionRule": "RULE_BRUTE_FORCE_LOGIN",
+      "actionTaken": "TEMPORARY_IP_BLOCK_30M",
+      "metadata": {
+        "consecutiveFailures": 5,
+        "timeWindowSeconds": 300
+      }
+    }
+  ],
+  "ipRecords": {
+    "102.89.23.44": {
+      "ip": "102.89.23.44",
+      "status": "TEMPORARILY_BLOCKED",
+      "firstSeen": "2026-09-19T19:30:15.110Z",
+      "lastSeen": "2026-09-19T21:20:15.110Z",
+      "requestCount": 42,
+      "failedRequestCount": 14,
+      "failedAuthCount": 5,
+      "successfulAuthCount": 0,
+      "affectedAccounts": [
+        "targeted_victim@gmail.com"
+      ],
+      "affectedOrganizations": [],
+      "threatScore": 78,
+      "blockReason": "Repeated failed authentication attempts exceeding threshold (5/300s)",
+      "detectionRule": "RULE_BRUTE_FORCE_LOGIN",
+      "expiresAt": "2026-09-19T21:50:15.110Z",
+      "updatedAt": "2026-09-19T21:30:15.110Z"
+    },
+    "185.220.101.5": {
+      "ip": "185.220.101.5",
+      "status": "MONITOR",
+      "firstSeen": "2026-09-19T19:30:15.110Z",
+      "lastSeen": "2026-09-19T20:55:15.110Z",
+      "requestCount": 18,
+      "failedRequestCount": 11,
+      "failedAuthCount": 0,
+      "successfulAuthCount": 0,
+      "affectedAccounts": [],
+      "affectedOrganizations": [],
+      "threatScore": 45,
+      "blockReason": "Automated sensitive path enumeration (.env probe)",
+      "detectionRule": "RULE_API_PROBING",
+      "updatedAt": "2026-09-19T21:30:15.110Z"
+    },
+    "::1": {
+      "ip": "::1",
+      "status": "MONITOR",
+      "firstSeen": "2026-09-19T21:30:15.177Z",
+      "lastSeen": "2026-09-19T21:32:08.596Z",
+      "requestCount": 5,
+      "failedRequestCount": 2,
+      "failedAuthCount": 0,
+      "successfulAuthCount": 3,
+      "affectedAccounts": [
+        "admin@diasporaland.ai"
+      ],
+      "affectedOrganizations": [],
+      "threatScore": 10,
+      "updatedAt": "2026-09-19T21:32:08.596Z"
+    },
+    "192.0.2.77": {
+      "ip": "192.0.2.77",
+      "status": "MONITOR",
+      "firstSeen": "2026-09-19T21:30:16.142Z",
+      "lastSeen": "2026-09-19T21:30:17.144Z",
+      "requestCount": 5,
+      "failedRequestCount": 5,
+      "failedAuthCount": 5,
+      "successfulAuthCount": 0,
+      "affectedAccounts": [
+        "victim_1789853415776@example.com",
+        "victim_1789853416147@example.com",
+        "victim_1789853416658@example.com",
+        "victim_1789853416753@example.com",
+        "victim_1789853416953@example.com"
+      ],
+      "affectedOrganizations": [],
+      "threatScore": 75,
+      "updatedAt": "2026-09-19T21:32:08.184Z",
+      "blockReason": "Admin verified legitimate developer testing; lifting restriction.",
+      "createdBy": "admin@diasporaland.ai"
+    }
+  },
+  "incidents": [
+    {
+      "id": "INC-2026-328",
+      "createdAt": "2026-09-19T21:32:08.406Z",
+      "updatedAt": "2026-09-19T21:32:08.406Z",
+      "title": "Malware detected in upload: trojan_document.pdf",
+      "description": "Threat signature 'EICAR.StandardAntivirusTestString' detected by DiasporaLand Heuristic Engine v2.4. File quarantined immediately. Downstream AI/OCR execution aborted.",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "affectedUsers": [
+        "cmu2o3i2l00028cq4m8gk96zf"
+      ],
+      "affectedOrganizations": [],
+      "affectedIps": [],
+      "affectedResources": [
+        "trojan_document.pdf"
+      ],
+      "detectionSource": "RULE_MALWARE_ZERO_TOLERANCE",
+      "timeline": [
+        {
+          "timestamp": "2026-09-19T21:32:08.406Z",
+          "description": "Upload rejected. Quarantined as quarantine_FILE_1789853528398_04dee135_trojan_document.pdf",
+          "actor": "FILE_SECURITY_SERVICE"
+        }
+      ],
+      "actionsTaken": [
+        "QUARANTINED",
+        "DOWNSTREAM_ABORTED",
+        "ALERT_FIRED"
+      ]
+    },
+    {
+      "id": "INC-2026-532",
+      "createdAt": "2026-09-19T21:30:17.145Z",
+      "updatedAt": "2026-09-19T21:30:17.145Z",
+      "title": "BRUTE FORCE detected from 192.0.2.77",
+      "description": "Automated detection triggered by Brute Force Authentication Protection. Affected accounts: victim_1789853415776@example.com, victim_1789853416147@example.com, victim_1789853416658@example.com, victim_1789853416753@example.com, victim_1789853416953@example.com.",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "affectedUsers": [
+        "victim_1789853415776@example.com",
+        "victim_1789853416147@example.com",
+        "victim_1789853416658@example.com",
+        "victim_1789853416753@example.com",
+        "victim_1789853416953@example.com"
+      ],
+      "affectedOrganizations": [],
+      "affectedIps": [
+        "192.0.2.77"
+      ],
+      "affectedResources": [
+        "/api/auth/login"
+      ],
+      "detectionSource": "RULE_BRUTE_FORCE_LOGIN",
+      "timeline": [
+        {
+          "timestamp": "2026-09-19T21:30:17.145Z",
+          "description": "Threshold exceeded: 5/5 events. Applied temporary block for 30m.",
+          "actor": "SECURITY_ENGINE"
+        }
+      ],
+      "actionsTaken": [
+        "TEMPORARY_BLOCK_30M"
+      ]
+    },
+    {
+      "id": "INC-2026-001",
+      "title": "Distributed Authentication Probing against DiasporaLand Gateway",
+      "description": "Multiple login credential attempts originating from suspicious residential IP range.",
+      "severity": "HIGH",
+      "status": "CONTAINED",
+      "affectedUsers": [
+        "targeted_victim@gmail.com"
+      ],
+      "affectedOrganizations": [],
+      "affectedIps": [
+        "102.89.23.44"
+      ],
+      "affectedResources": [
+        "/api/auth/login"
+      ],
+      "detectionSource": "RULE_BRUTE_FORCE_LOGIN",
+      "assignedAdmin": "admin@diasporaland.ai",
+      "timeline": [
+        {
+          "timestamp": "2026-09-19T20:55:15.110Z",
+          "description": "Initial authentication failures logged",
+          "actor": "SYSTEM"
+        },
+        {
+          "timestamp": "2026-09-19T21:20:15.110Z",
+          "description": "Threshold exceeded (5/5). Temporary block applied for 30 minutes.",
+          "actor": "SECURITY_ENGINE"
+        },
+        {
+          "timestamp": "2026-09-19T21:20:15.110Z",
+          "description": "Incident INC-2026-001 automatically opened",
+          "actor": "SYSTEM"
+        }
+      ],
+      "actionsTaken": [
+        "TEMPORARY_BLOCK_30M",
+        "ADMIN_ALERT_DISPATCHED"
+      ],
+      "createdAt": "2026-09-19T21:20:15.110Z",
+      "updatedAt": "2026-09-19T21:30:15.110Z"
+    }
+  ],
+  "rules": [
+    {
+      "id": "RULE_BRUTE_FORCE_LOGIN",
+      "name": "Brute Force Authentication Protection",
+      "description": "Detects repeated failed authentication attempts from a single IP address",
+      "eventType": "BRUTE_FORCE",
+      "threshold": 5,
+      "timeWindowSeconds": 300,
+      "severity": "HIGH",
+      "action": "TEMP_BLOCK",
+      "enabled": true,
+      "environment": "ALL",
+      "version": 1,
+      "updatedAt": "2026-09-19T21:30:14.238Z",
+      "updatedBy": "SYSTEM"
+    },
+    {
+      "id": "RULE_CREDENTIAL_STUFFING",
+      "name": "Distributed Credential Stuffing Detector",
+      "description": "Flags multi-account login failures originating from the same network client",
+      "eventType": "CREDENTIAL_STUFFING",
+      "threshold": 3,
+      "timeWindowSeconds": 180,
+      "severity": "CRITICAL",
+      "action": "TEMP_BLOCK",
+      "enabled": true,
+      "environment": "ALL",
+      "version": 1,
+      "updatedAt": "2026-09-19T21:30:14.238Z",
+      "updatedBy": "SYSTEM"
+    },
+    {
+      "id": "RULE_IDOR_PREVENTION",
+      "name": "Tenant Isolation & IDOR Shield",
+      "description": "Detects attempts to access property dossiers or documents across organization boundaries",
+      "eventType": "IDOR_ATTEMPT",
+      "threshold": 2,
+      "timeWindowSeconds": 600,
+      "severity": "HIGH",
+      "action": "TEMP_BLOCK",
+      "enabled": true,
+      "environment": "ALL",
+      "version": 1,
+      "updatedAt": "2026-09-19T21:30:14.238Z",
+      "updatedBy": "SYSTEM"
+    },
+    {
+      "id": "RULE_MALWARE_ZERO_TOLERANCE",
+      "name": "Malware & Polyglot Upload Containment",
+      "description": "Immediately isolates and quarantines files exhibiting malicious signatures or deceptive MIME types",
+      "eventType": "MALWARE_DETECTED",
+      "threshold": 1,
+      "timeWindowSeconds": 60,
+      "severity": "CRITICAL",
+      "action": "QUARANTINE_FILE",
+      "enabled": true,
+      "environment": "ALL",
+      "version": 1,
+      "updatedAt": "2026-09-19T21:30:14.238Z",
+      "updatedBy": "SYSTEM"
+    },
+    {
+      "id": "RULE_WEBHOOK_SIGNATURE",
+      "name": "Webhook Cryptographic Tampering Guard",
+      "description": "Detects replayed or untrusted signatures on financial webhook endpoints",
+      "eventType": "WEBHOOK_INVALID_SIGNATURE",
+      "threshold": 3,
+      "timeWindowSeconds": 300,
+      "severity": "MEDIUM",
+      "action": "MONITOR",
+      "enabled": true,
+      "environment": "ALL",
+      "version": 1,
+      "updatedAt": "2026-09-19T21:30:14.238Z",
+      "updatedBy": "SYSTEM"
+    },
+    {
+      "id": "RULE_API_PROBING",
+      "name": "Sensitive Endpoint Probing Guard",
+      "description": "Blocks automated vulnerability scanners probing for 404/403 administrative paths",
+      "eventType": "PROBING_ATTACK",
+      "threshold": 10,
+      "timeWindowSeconds": 60,
+      "severity": "MEDIUM",
+      "action": "RATE_LIMIT",
+      "enabled": true,
+      "environment": "ALL",
+      "version": 1,
+      "updatedAt": "2026-09-19T21:30:14.238Z",
+      "updatedBy": "SYSTEM"
+    }
+  ],
+  "malwareScans": [
+    {
+      "id": "SCAN_1789853528480_leqs",
+      "scannedAt": "2026-09-19T21:32:08.480Z",
+      "fileId": "FILE_1789853528478_fcf1e986",
+      "originalName": "clean_survey_plan.pdf",
+      "mimeType": "application/pdf",
+      "sizeBytes": 66,
+      "status": "CLEAN",
+      "scanner": "DiasporaLand Heuristic Engine v2.4",
+      "scannerResult": "SCAN_PASSED_NO_THREATS",
+      "userId": "cmu2o3i2l00028cq4m8gk96zf",
+      "uploadTime": "2026-09-19T21:32:08.480Z"
+    },
+    {
+      "id": "SCAN_1789853528405_f761",
+      "scannedAt": "2026-09-19T21:32:08.405Z",
+      "fileId": "FILE_1789853528398_04dee135",
+      "originalName": "trojan_document.pdf",
+      "mimeType": "application/pdf",
+      "sizeBytes": 111,
+      "status": "INFECTED",
+      "scanner": "DiasporaLand Heuristic Engine v2.4",
+      "scannerResult": "THREAT_DETECTED",
+      "threatSignature": "EICAR.StandardAntivirusTestString",
+      "quarantineStorageKey": "quarantine_FILE_1789853528398_04dee135_trojan_document.pdf",
+      "userId": "cmu2o3i2l00028cq4m8gk96zf",
+      "uploadTime": "2026-09-19T21:32:08.405Z",
+      "notes": "Threat detected: EICAR.StandardAntivirusTestString"
+    },
+    {
+      "id": "SCAN_1789853528312_i4jz",
+      "scannedAt": "2026-09-19T21:32:08.312Z",
+      "fileId": "FILE_1789853528305_9e833855",
+      "originalName": "malicious_spoofed.pdf",
+      "mimeType": "application/pdf",
+      "sizeBytes": 33,
+      "status": "QUARANTINED",
+      "scanner": "DiasporaLand Heuristic Engine v2.4",
+      "scannerResult": "Content signature mismatch: file claims to be PDF but lacks '%PDF' magic header.",
+      "quarantineStorageKey": "quarantine_FILE_1789853528305_9e833855_malicious_spoofed.pdf",
+      "userId": "cmu2o3i2l00028cq4m8gk96zf",
+      "uploadTime": "2026-09-19T21:32:08.312Z",
+      "notes": "Automatic quarantine due to header signature spoofing"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "ALT-101",
+      "title": "High-Frequency Login Failures Detected",
+      "message": "IP 102.89.23.44 temporarily restricted after 5 consecutive password mismatches.",
+      "severity": "HIGH",
+      "eventType": "BRUTE_FORCE",
+      "status": "UNREAD",
+      "ruleId": "RULE_BRUTE_FORCE_LOGIN",
+      "createdAt": "2026-09-19T21:20:15.110Z"
+    }
+  ],
+  "reports": []
+}

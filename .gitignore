@@ -38,6 +38,8 @@ prisma/*.db
 prisma/*.db-journal
 storage/uploads/*
 !storage/uploads/.gitkeep
+storage/quarantine/*
+!storage/quarantine/.gitkeep
 
 # Executables & local tunnel tools
 cloudflared.exe

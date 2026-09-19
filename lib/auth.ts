@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { db } from "@/lib/db";
 
 const JWT_SECRET = new TextEncoder().encode(
@@ -40,12 +40,8 @@ export function validatePasswordStrength(password: string): PasswordStrengthResu
   if (!/[0-9]/.test(password)) missing.push("a number (0-9)");
   if (!/[^A-Za-z0-9]/.test(password)) missing.push("a special character (!@#$%^&*...)");
 
-  // Calculate score out of 5: length (1) + 4 character categories
   const score = 1 + (4 - missing.length);
 
-  // Require length >= 8 and at least 3 character types (or all 4)
-  // To strictly prevent weak passwords, missing at most 1 type or 0:
-  // Requiring all 4 character types ensures strong password
   if (missing.length > 0) {
     return {
       isValid: false,
@@ -98,6 +94,17 @@ export async function getCurrentUser(request?: Request) {
     }
   }
 
+  // 1b. Check next/headers for Authorization header
+  if (!token) {
+    try {
+      const reqHeaders = headers();
+      const authHeader = reqHeaders.get("authorization") || reqHeaders.get("Authorization");
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        token = authHeader.substring(7).trim();
+      }
+    } catch {}
+  }
+
   // 2. If no header token, check cookie store
   if (!token) {
     try {
@@ -138,16 +145,16 @@ export async function getCurrentUser(request?: Request) {
   return user;
 }
 
-export async function requireAuth() {
-  const user = await getCurrentUser();
+export async function requireAuth(request?: Request) {
+  const user = await getCurrentUser(request);
   if (!user) {
     throw new Error("Unauthorized");
   }
   return user;
 }
 
-export async function requireAdmin() {
-  const user = await requireAuth();
+export async function requireAdmin(request?: Request) {
+  const user = await requireAuth(request);
   if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
     throw new Error("Forbidden: Admin privileges required");
   }

@@ -91,9 +91,31 @@ export async function POST(
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
+
+    // Security Pipeline: Magic byte signature check, archive bomb check, antivirus scan & quarantine
+    const { fileSecurityService } = await import("@/lib/security/malware");
+    const securityCheck = await fileSecurityService.processUpload({
+      buffer,
+      originalName: file.name,
+      mimeType: file.type || "application/pdf",
+      userId: user.id,
+      caseId,
+    });
+
+    if (!securityCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: securityCheck.errorMessage || "Security scan failed. File has been quarantined for administrator review.",
+          status: securityCheck.status,
+          scanId: securityCheck.record.id,
+        },
+        { status: 400 }
+      );
+    }
+
     const storageKey = `${caseId}_${Date.now()}_${crypto.randomBytes(6).toString("hex")}_${file.name.replace(/[^a-zA-Z0-9._-]/g, "")}`;
 
-    // Save to private storage
+    // Save to private clean storage
     await savePrivateFile(storageKey, buffer);
 
     // Save to DB

@@ -19,6 +19,14 @@ export async function POST(
       if (process.env.PAYSTACK_WEBHOOK_SECRET && !process.env.PAYSTACK_WEBHOOK_SECRET.includes("placeholder")) {
         const hash = crypto.createHmac("sha512", secret).update(rawBody).digest("hex");
         if (hash !== signature) {
+          try {
+            const { threatEngine } = await import("@/lib/security/engine");
+            await threatEngine.reportThreat("WEBHOOK_INVALID_SIGNATURE", {
+              ip: request.headers.get("x-forwarded-for")?.split(",")[0] || "0.0.0.0",
+              endpoint: `/api/v1/billing/webhooks/${params.provider}`,
+              method: "POST",
+            }, { provider: providerParam });
+          } catch {}
           return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
         }
       }

@@ -199,6 +199,35 @@ export async function assertCaseOwnership(userId: string, caseId: string, userRo
   });
 
   if (!propertyCase) {
+    // Check if the case exists at all (indicating a targeted cross-tenant IDOR probing attempt)
+    const existsElsewhere = await db.propertyCase.findUnique({
+      where: { id: caseId },
+      select: { id: true, userId: true, organizationId: true },
+    });
+
+    if (existsElsewhere) {
+      // Targeted IDOR breach attempt detected
+      try {
+        const { threatEngine } = await import("@/lib/security/engine");
+        await threatEngine.reportThreat(
+          "IDOR_ATTEMPT",
+          {
+            ip: "0.0.0.0",
+            actorId: userId,
+            endpoint: `/api/properties/${caseId}`,
+            method: "GET/POST",
+          },
+          {
+            targetCaseId: caseId,
+            victimUserId: existsElsewhere.userId,
+            victimOrgId: existsElsewhere.organizationId,
+          }
+        );
+      } catch {
+        // Non-blocking security logging
+      }
+    }
+
     throw new Error("Access denied: You do not have permission to access this property case");
   }
 
