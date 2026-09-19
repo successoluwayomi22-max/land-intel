@@ -859,6 +859,10 @@ export default function BillingPage() {
         <>
           <style jsx global>{`
             @media print {
+              @page {
+                size: A4 portrait;
+                margin: 10mm 12mm;
+              }
               body {
                 background: #ffffff !important;
                 color: #0f172a !important;
@@ -873,18 +877,19 @@ export default function BillingPage() {
                 visibility: visible !important;
               }
               #printable-vat-receipt {
-                position: fixed !important;
+                position: absolute !important;
                 left: 0 !important;
                 top: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
-                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
                 margin: 0 !important;
-                padding: 32px !important;
+                padding: 24px !important;
                 background: #ffffff !important;
                 color: #0f172a !important;
-                border: 2px solid #0f172a !important;
-                border-radius: 12px !important;
+                border: 1.5px solid #0f172a !important;
+                border-radius: 8px !important;
                 box-shadow: none !important;
                 z-index: 999999 !important;
                 -webkit-print-color-adjust: exact !important;
@@ -895,56 +900,94 @@ export default function BillingPage() {
               }
             }
           `}</style>
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-            <div id="printable-vat-receipt" className="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-              <div className="bg-slate-900 text-white p-5 flex items-center justify-between no-print">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-sm overflow-y-auto animate-in fade-in">
+            <div
+              id="printable-vat-receipt"
+              className="bg-white w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto"
+            >
+              {/* Modal Top Bar (Hidden in Print) */}
+              <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between no-print shrink-0">
                 <div className="flex items-center gap-2.5">
                   <Receipt className="w-5 h-5 text-emerald-400" />
                   <div>
-                    <h3 className="font-heading font-extrabold text-base">Official VAT Tax Receipt</h3>
+                    <h3 className="font-heading font-extrabold text-base">Official Statutory VAT Invoice</h3>
                     <p className="text-[11px] text-slate-400 font-mono">{selectedReceipt.reference}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedReceipt(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  aria-label="Close Receipt"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="p-6 md:p-8 space-y-5">
+              {/* Scrollable Receipt Body */}
+              <div className="p-5 sm:p-8 space-y-5 overflow-y-auto flex-1">
                 {/* Corporate Header */}
-                <div className="flex justify-between items-start border-b border-slate-200 pb-5">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-slate-200 pb-5">
                   <div>
                     <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-emerald-400 font-black text-sm">
+                      <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-emerald-400 font-black text-sm shrink-0">
                         LI
                       </div>
                       <div>
-                        <h4 className="font-extrabold text-slate-900 text-base font-heading leading-tight">
+                        <h4 className="font-extrabold text-slate-900 text-base sm:text-lg font-heading leading-tight">
                           LandIntel Cadastral Intelligence Ltd.
                         </h4>
                         <p className="text-xs text-slate-500">Statutory Land Due-Diligence & Boundary Verification</p>
                       </div>
                     </div>
                     <div className="text-[11px] text-slate-500 mt-2.5 space-y-0.5 font-sans">
-                      <p><span className="font-semibold text-slate-700">TIN / VAT Reg:</span> 24198273-0001 (FIRS Registered)</p>
-                      <p><span className="font-semibold text-slate-700">RC No:</span> 1984291 • Statutory Tax Compliant</p>
-                      <p className="text-slate-400">Victoria Island, Lagos, Nigeria • Diaspora Desk: London / New York</p>
+                      <p><span className="font-semibold text-slate-700">TIN / FIRS VAT Reg:</span> 24198273-0001 (FIRS Tax Compliant)</p>
+                      <p><span className="font-semibold text-slate-700">RC Number:</span> RC 1984291 • Corporate Affairs Commission</p>
+                      <p className="text-slate-400">Head Office: 14B Karimu Kotun St, Victoria Island, Lagos • Diaspora Desk: London / NYC</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-300">
+                  <div className="text-left sm:text-right shrink-0">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-extrabold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-300 shadow-xs">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                       PAID IN FULL
                     </span>
-                    <p className="text-[10px] text-slate-400 mt-1 font-mono">ELECTRONIC RECEIPT</p>
+                    <p className="text-[10px] text-slate-400 mt-1 font-mono uppercase">STATUTORY TAX INVOICE</p>
+                    <p className="text-[10px] text-slate-400 font-mono">
+                      Ref: {selectedReceipt.reference?.slice(0, 16)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Billed To & Property Assignment Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                    <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">
+                      Billed To (Investor / Client)
+                    </span>
+                    <p className="font-bold text-slate-900 text-sm">{selectedReceipt.customerName || "Valued Diaspora Investor"}</p>
+                    <p className="text-slate-600 font-mono text-[11px] mt-0.5">{selectedReceipt.customerEmail || "N/A"}</p>
+                    <p className="text-slate-400 text-[10px] mt-1">
+                      Tax Jurisdiction: {selectedReceipt.resolvedCurrency === "USD" ? "International Investor (Cross-Border)" : "Federal Republic of Nigeria"}
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                    <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">
+                      Property Subject Matter
+                    </span>
+                    <p className="font-bold text-slate-900 text-sm truncate" title={selectedReceipt.caseTitle}>
+                      {selectedReceipt.caseTitle || "LandIntel Cadastral Due-Diligence Case"}
+                    </p>
+                    <p className="text-slate-600 text-[11px] mt-0.5 truncate" title={selectedReceipt.caseLocation || selectedReceipt.caseAddress}>
+                      {selectedReceipt.caseLocation || selectedReceipt.caseAddress || "Official Cadastral Survey Zone"}
+                    </p>
+                    <p className="text-slate-400 text-[10px] mt-1 font-mono">
+                      Case Identifier: {selectedReceipt.caseId ? `CASE-${selectedReceipt.caseId.slice(-8).toUpperCase()}` : "N/A"}
+                    </p>
                   </div>
                 </div>
 
                 {/* Metadata Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs bg-slate-50 p-3 rounded-xl border border-slate-200">
                   <div>
                     <span className="text-slate-400 text-[10px] uppercase font-bold block">Issue Date</span>
                     <span className="font-bold text-slate-800">
@@ -966,8 +1009,8 @@ export default function BillingPage() {
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-400 text-[10px] uppercase font-bold block">Tax Category</span>
-                    <span className="font-semibold text-emerald-800">Standard 7.5% VAT</span>
+                    <span className="text-slate-400 text-[10px] uppercase font-bold block">Statutory VAT</span>
+                    <span className="font-semibold text-emerald-800">Standard 7.5%</span>
                   </div>
                 </div>
 
@@ -976,8 +1019,8 @@ export default function BillingPage() {
                   <table className="w-full text-left">
                     <thead className="bg-slate-100 text-slate-600 text-[10px] uppercase font-mono border-b border-slate-200">
                       <tr>
-                        <th className="p-3">Item Description</th>
-                        <th className="p-3 text-right">Tax Rate</th>
+                        <th className="p-3">Service Deliverable &amp; Cadastral Investigation</th>
+                        <th className="p-3 text-right">VAT Rate</th>
                         <th className="p-3 text-right">Amount</th>
                       </tr>
                     </thead>
@@ -985,16 +1028,19 @@ export default function BillingPage() {
                       <tr>
                         <td className="p-3 text-slate-800">
                           <span className="font-bold block text-xs">
-                            {selectedReceipt.caseTitle || selectedReceipt.metadata?.description || selectedReceipt.metadata?.packageName || "LandIntel Cadastral Due-Diligence Report"}
+                            {selectedReceipt.caseTitle || selectedReceipt.metadata?.description || selectedReceipt.metadata?.packageName || "Instant Cadastral Audit Report"}
                           </span>
-                          <span className="text-[11px] text-slate-500 block mt-0.5">
-                            Institutional land search, boundary verification & cadastral risk audit
+                          <span className="text-[11px] text-slate-500 block mt-0.5 leading-relaxed">
+                            &bull; 15-Section Cadastral &amp; Title Verification Deep-Scan<br />
+                            &bull; Boundary Coordinates &amp; Beacon Overlap Analysis Matrix<br />
+                            &bull; Cross-Document Contradiction Check (Deed, Survey Plan &amp; Gazette)<br />
+                            &bull; Surveyor &amp; Lawyer Inquiry Checklists with Certified PDF
                           </span>
                         </td>
-                        <td className="p-3 text-right font-mono text-slate-500">
+                        <td className="p-3 text-right font-mono text-slate-500 align-top">
                           Excl. VAT
                         </td>
-                        <td className="p-3 text-right font-mono font-bold text-slate-900">
+                        <td className="p-3 text-right font-mono font-bold text-slate-900 align-top">
                           {selectedReceipt.currencySymbol || "₦"}{selectedReceipt.subtotal?.toLocaleString()}
                         </td>
                       </tr>
@@ -1002,7 +1048,7 @@ export default function BillingPage() {
                         <td className="p-3 text-emerald-900 font-medium">
                           Statutory Value Added Tax (VAT 7.5%)
                           <span className="text-[10px] text-emerald-700 block font-normal">
-                            FIRS Value Added Tax Act Section 34
+                            Federal Inland Revenue Service (FIRS) Value Added Tax Act Section 34
                           </span>
                         </td>
                         <td className="p-3 text-right font-mono font-semibold text-emerald-800">
@@ -1016,7 +1062,7 @@ export default function BillingPage() {
                     <tfoot className="bg-slate-900 text-white font-bold">
                       <tr>
                         <td className="p-3 text-xs" colSpan={2}>
-                          Total Amount Paid ({selectedReceipt.resolvedCurrency || "NGN"})
+                          Total Amount Paid In Full ({selectedReceipt.resolvedCurrency || "NGN"})
                         </td>
                         <td className="p-3 text-right font-mono text-base text-emerald-400">
                           {selectedReceipt.currencySymbol || "₦"}{selectedReceipt.total?.toLocaleString()}
@@ -1026,25 +1072,29 @@ export default function BillingPage() {
                   </table>
                 </div>
 
-                {/* Statutory Compliance Footer */}
+                {/* Statutory Compliance Footer & Tax Clearance Stamp */}
                 <div className="pt-2 border-t border-slate-100 space-y-3">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[11px] text-slate-500">
                     <span className="flex items-center gap-1.5">
                       <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span>Authenticated Statutory Electronic VAT Invoice & Tax Clearance Record</span>
+                      <span>Authenticated Statutory Electronic VAT Invoice &amp; Tax Clearance Record</span>
                     </span>
-                    <span className="font-mono text-[10px] text-slate-400">
-                      Auth: {selectedReceipt.reference?.slice(-10)}
+                    <span className="font-mono text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                      Auth Code: LDI-SEC-{selectedReceipt.reference?.slice(-8).toUpperCase()}
                     </span>
                   </div>
 
+                  <p className="text-[10px] text-slate-400 leading-normal">
+                    This electronic VAT receipt is legally binding under the Nigerian Tax Administration Act and Section 34 of the FIRS Value Added Tax Act. Retain this invoice as proof of statutory payment for due-diligence expenditure.
+                  </p>
+
                   {/* Action Buttons (Hidden during print) */}
-                  <div className="flex justify-end items-center gap-2 pt-2 no-print">
+                  <div className="flex justify-end items-center gap-2 pt-3 no-print border-t border-slate-100">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setSelectedReceipt(null)}
-                      className="font-medium text-xs"
+                      className="font-medium text-xs px-4"
                     >
                       Close
                     </Button>
@@ -1052,7 +1102,7 @@ export default function BillingPage() {
                       variant="primary"
                       size="sm"
                       onClick={() => window.print()}
-                      className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm"
+                      className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm px-4"
                     >
                       <Printer className="w-3.5 h-3.5" />
                       <span>Print Official Receipt</span>
