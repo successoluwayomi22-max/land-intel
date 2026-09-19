@@ -330,11 +330,11 @@ export default function BillingPage() {
             </p>
           </div>
 
-          {subscription?.cancelAtPeriodEnd ? (
+          {subscription?.id && subscription?.provider && subscription.provider !== "NONE" && subscription.provider !== "MANUAL" && subscription?.cancelAtPeriodEnd ? (
             <div className="space-y-2 pt-2 border-t border-slate-100">
               <p className="text-xs text-amber-600 flex items-center gap-1.5 font-medium">
                 <Clock className="w-3.5 h-3.5" />
-                <span>Cancels at period end</span>
+                <span>Recurring billing paused</span>
               </p>
               <Button
                 variant="outline"
@@ -346,7 +346,7 @@ export default function BillingPage() {
                 Reactivate Subscription
               </Button>
             </div>
-          ) : currentPlanKey !== "FREE" ? (
+          ) : subscription?.id && subscription?.provider && subscription.provider !== "NONE" && subscription.provider !== "MANUAL" && currentPlanKey !== "FREE" ? (
             <div className="pt-2 border-t border-slate-100">
               <Button
                 variant="ghost"
@@ -355,14 +355,14 @@ export default function BillingPage() {
                 onClick={handleCancelSubscription}
                 disabled={actionLoading === "cancel"}
               >
-                Cancel Subscription
+                Cancel Recurring Billing
               </Button>
             </div>
           ) : (
             <div className="pt-2 border-t border-slate-100">
               <Link href="#plans" className="block w-full">
-                <Button variant="primary" size="sm" className="w-full text-xs font-bold bg-brand-blue">
-                  Upgrade Plan
+                <Button variant="primary" size="sm" className="w-full text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white">
+                  Unlock New Property Audit
                 </Button>
               </Link>
             </div>
