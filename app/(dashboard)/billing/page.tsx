@@ -324,8 +324,8 @@ export default function BillingPage() {
               {subscription?.plan?.name || "Free Preview"}
             </h2>
             <p className="text-xs text-slate-500 mt-1">
-              {subscription?.currentPeriodEnd
-                ? `Renews on ${new Date(subscription.currentPeriodEnd).toLocaleDateString()}`
+              {currentPlanKey !== "FREE" || subscription?.status === "ACTIVE"
+                ? "Full access to verified audits, boundary checks & PDF downloads."
                 : "Free tier with preliminary risk analysis."}
             </p>
           </div>
