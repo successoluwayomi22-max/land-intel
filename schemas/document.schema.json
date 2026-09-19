@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/document.schema.json",
+  "title": "PropertyDocument",
+  "type": "object",
+  "required": ["id", "caseId", "fileName", "mimeType", "status", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "caseId": { "type": "string", "format": "uuid" },
+    "fileName": { "type": "string" },
+    "mimeType": { "type": "string" },
+    "fileSize": { "type": "integer" },
+    "documentType": { "type": "string" },
+    "language": { "type": "string" },
+    "countryCode": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["PENDING", "PROCESSING", "PROCESSED", "COMPLETED", "FAILED"]
+    },
+    "pageCount": { "type": "integer", "minimum": 1 },
+    "checksum": { "type": "string" },
+    "processing": {
+      "type": "object",
+      "properties": {
+        "ocrStatus": { "type": "string" },
+        "extractionStatus": { "type": "string" },
+        "classificationStatus": { "type": "string" }
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

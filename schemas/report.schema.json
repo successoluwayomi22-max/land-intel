@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/report.schema.json",
+  "title": "Report",
+  "type": "object",
+  "required": ["id", "caseId", "analysisId", "version", "language", "displayCurrency", "status", "format"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "caseId": { "type": "string", "format": "uuid" },
+    "analysisId": { "type": "string", "format": "uuid" },
+    "version": { "type": "integer", "minimum": 1 },
+    "language": { "type": "string" },
+    "displayCurrency": { "type": "string" },
+    "originalCurrencies": { "type": "array", "items": { "type": "string" } },
+    "status": { "type": "string", "enum": ["PENDING", "PROCESSING", "READY", "FAILED"] },
+    "format": { "type": "string", "enum": ["PDF", "JSON", "HTML"] },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "downloadUrl": { "type": ["string", "null"] },
+    "sections": { "type": "array", "items": { "type": "string" } }
+  }
+}

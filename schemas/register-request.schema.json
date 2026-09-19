@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/register-request.schema.json",
+  "title": "RegisterRequest",
+  "type": "object",
+  "required": ["email", "password", "firstName", "lastName", "acceptTerms", "acceptPrivacyPolicy"],
+  "properties": {
+    "email": { "type": "string", "format": "email" },
+    "password": { "type": "string", "minLength": 12, "maxLength": 128 },
+    "firstName": { "type": "string", "minLength": 1 },
+    "lastName": { "type": "string", "minLength": 1 },
+    "language": { "type": "string" },
+    "currency": { "type": "string" },
+    "timezone": { "type": "string" },
+    "acceptTerms": { "type": "boolean", "const": true },
+    "acceptPrivacyPolicy": { "type": "boolean", "const": true }
+  }
+}

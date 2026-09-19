@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/ai-task.schema.json",
+  "title": "AiTask",
+  "type": "object",
+  "required": ["taskId", "type", "caseId", "status", "createdAt"],
+  "properties": {
+    "taskId": { "type": "string", "format": "uuid" },
+    "type": {
+      "type": "string",
+      "enum": [
+        "DOCUMENT_CLASSIFICATION",
+        "OCR_POST_PROCESSING",
+        "FIELD_EXTRACTION",
+        "ENTITY_RESOLUTION",
+        "CROSS_DOCUMENT_COMPARISON",
+        "RISK_ANALYSIS",
+        "GEOSPATIAL_EXPLANATION",
+        "TRANSLATION",
+        "REPORT_GENERATION",
+        "AI_ASSISTANT"
+      ]
+    },
+    "caseId": { "type": "string", "format": "uuid" },
+    "analysisId": { "type": ["string", "null"], "format": "uuid" },
+    "input": { "type": "object" },
+    "modelPolicy": {
+      "type": "object",
+      "properties": {
+        "provider": { "type": "string" },
+        "maxCost": { "type": "string" },
+        "temperature": { "type": "number" }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["QUEUED", "PROCESSING", "COMPLETED", "FAILED", "CANCELLED"]
+    },
+    "createdAt": { "type": "string", "format": "date-time" }
+  }
+}

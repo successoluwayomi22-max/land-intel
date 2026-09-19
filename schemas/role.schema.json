@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/role.schema.json",
+  "title": "Role",
+  "type": "object",
+  "required": ["id", "name", "description", "permissions"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "permissions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

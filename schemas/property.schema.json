@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/property.schema.json",
+  "title": "Property",
+  "type": "object",
+  "required": ["id", "propertyType", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "address": {
+      "type": "object",
+      "properties": {
+        "line1": { "type": "string" },
+        "line2": { "type": ["string", "null"] },
+        "city": { "type": "string" },
+        "region": { "type": "string" },
+        "postalCode": { "type": ["string", "null"] },
+        "countryCode": { "type": "string" }
+      }
+    },
+    "identifiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "value", "confidence"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "TITLE_NUMBER",
+              "PARCEL_NUMBER",
+              "PLOT_NUMBER",
+              "LOT_NUMBER",
+              "BLOCK_NUMBER",
+              "DEED_NUMBER",
+              "REGISTRATION_NUMBER",
+              "CADASTRAL_REFERENCE",
+              "SURVEY_REFERENCE",
+              "PROPERTY_ID",
+              "LOCAL_AUTHORITY_REFERENCE",
+              "OTHER"
+            ]
+          },
+          "value": { "type": "string" },
+          "sourceDocumentId": { "type": "string", "format": "uuid" },
+          "confidence": { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW"] }
+        }
+      }
+    },
+    "area": {
+      "type": "object",
+      "properties": {
+        "value": { "type": "number" },
+        "unit": { "type": "string" },
+        "originalValue": { "type": "number" },
+        "originalUnit": { "type": "string" },
+        "normalizedValue": { "type": "number" },
+        "normalizedUnit": { "type": "string" }
+      }
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "latitude": { "type": ["number", "null"] },
+        "longitude": { "type": ["number", "null"] },
+        "accuracyMeters": { "type": "number" },
+        "source": { "type": "string" }
+      }
+    },
+    "propertyType": { "type": "string" },
+    "tenure": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

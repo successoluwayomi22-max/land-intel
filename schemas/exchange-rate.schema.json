@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/exchange-rate.schema.json",
+  "title": "ExchangeRate",
+  "type": "object",
+  "required": ["baseCurrency", "quoteCurrency", "rate", "source", "retrievedAt"],
+  "properties": {
+    "baseCurrency": { "type": "string", "minLength": 3, "maxLength": 3 },
+    "quoteCurrency": { "type": "string", "minLength": 3, "maxLength": 3 },
+    "rate": { "type": "string" },
+    "source": { "type": "string" },
+    "retrievedAt": { "type": "string", "format": "date-time" },
+    "effectiveAt": { "type": ["string", "null"], "format": "date-time" },
+    "expiresAt": { "type": ["string", "null"], "format": "date-time" }
+  }
+}

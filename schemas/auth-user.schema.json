@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/auth-user.schema.json",
+  "title": "AuthUser",
+  "type": "object",
+  "required": ["id", "email", "firstName", "lastName", "role", "emailVerified", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "email": { "type": "string", "format": "email" },
+    "firstName": { "type": "string" },
+    "lastName": { "type": "string" },
+    "role": {
+      "type": "string",
+      "enum": [
+        "USER",
+        "OWNER",
+        "ADMIN",
+        "REVIEWER",
+        "ANALYST",
+        "MEMBER",
+        "VIEWER",
+        "PLATFORM_ADMIN",
+        "SUPER_ADMIN"
+      ]
+    },
+    "organizationId": { "type": ["string", "null"], "format": "uuid" },
+    "emailVerified": { "type": "boolean" },
+    "twoFactorEnabled": { "type": "boolean" },
+    "language": { "type": "string" },
+    "currency": { "type": "string" },
+    "timezone": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

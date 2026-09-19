@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/security-event.schema.json",
+  "title": "SecurityEvent",
+  "type": "object",
+  "required": ["id", "userId", "type", "success", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "userId": { "type": "string", "format": "uuid" },
+    "organizationId": { "type": ["string", "null"], "format": "uuid" },
+    "type": {
+      "type": "string",
+      "enum": [
+        "REGISTRATION",
+        "LOGIN_SUCCESS",
+        "LOGIN_FAILED",
+        "LOGOUT",
+        "LOGOUT_ALL",
+        "SESSION_CREATED",
+        "SESSION_REVOKED",
+        "SESSION_EXPIRED",
+        "PASSWORD_CHANGED",
+        "PASSWORD_RESET_REQUESTED",
+        "PASSWORD_RESET_COMPLETED",
+        "EMAIL_VERIFIED",
+        "EMAIL_CHANGED",
+        "OAUTH_LOGIN",
+        "OAUTH_LINKED",
+        "OAUTH_UNLINKED",
+        "MAGIC_LINK_REQUESTED",
+        "MAGIC_LINK_USED",
+        "TWO_FACTOR_ENABLED",
+        "TWO_FACTOR_DISABLED",
+        "TWO_FACTOR_FAILED",
+        "RECOVERY_STARTED",
+        "RECOVERY_COMPLETED",
+        "REAUTHENTICATION_SUCCESS",
+        "ACCOUNT_LOCKED",
+        "ACCOUNT_SUSPENDED",
+        "ACCOUNT_DISABLED",
+        "SUSPICIOUS_LOGIN",
+        "REFRESH_TOKEN_REPLAY"
+      ]
+    },
+    "ipAddress": { "type": "string" },
+    "userAgent": { "type": "string" },
+    "authMethod": { "type": "string" },
+    "success": { "type": "boolean" },
+    "metadata": { "type": "object" },
+    "createdAt": { "type": "string", "format": "date-time" }
+  }
+}

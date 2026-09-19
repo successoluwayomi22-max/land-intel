@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/support-request.schema.json",
+  "title": "SupportRequest",
+  "type": "object",
+  "required": ["id", "reference", "userId", "category", "subject", "message", "priority", "status", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "reference": { "type": "string", "pattern": "^DL-SUP-[0-9]{4}-[0-9]{6}$" },
+    "userId": { "type": "string", "format": "uuid" },
+    "organizationId": { "type": ["string", "null"], "format": "uuid" },
+    "caseId": { "type": ["string", "null"], "format": "uuid" },
+    "category": {
+      "type": "string",
+      "enum": [
+        "GENERAL_SUPPORT",
+        "ACCOUNT",
+        "LOGIN",
+        "PASSWORD",
+        "SECURITY",
+        "PROPERTY_ANALYSIS",
+        "DOCUMENT",
+        "REPORT",
+        "PAYMENT",
+        "BILLING",
+        "REFUND",
+        "VERIFICATION",
+        "TECHNICAL",
+        "BUG_REPORT",
+        "FEATURE_REQUEST",
+        "DATA_REQUEST",
+        "PRIVACY",
+        "PROFESSIONAL_REVIEW",
+        "OTHER"
+      ]
+    },
+    "subject": { "type": "string", "minLength": 1 },
+    "message": { "type": "string", "minLength": 1 },
+    "priority": { "type": "string", "enum": ["LOW", "NORMAL", "HIGH", "CRITICAL"] },
+    "status": {
+      "type": "string",
+      "enum": [
+        "OPEN",
+        "ACKNOWLEDGED",
+        "IN_PROGRESS",
+        "WAITING_FOR_CUSTOMER",
+        "ESCALATED",
+        "RESOLVED",
+        "CLOSED"
+      ]
+    },
+    "assignedAdminId": { "type": ["string", "null"], "format": "uuid" },
+    "contactPreference": { "type": "string", "enum": ["EMAIL", "WHATSAPP", "IN_APP"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "resolvedAt": { "type": ["string", "null"], "format": "date-time" }
+  }
+}

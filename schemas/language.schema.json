@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/language.schema.json",
+  "title": "Language",
+  "type": "object",
+  "required": ["code", "name", "nativeName", "direction", "active"],
+  "properties": {
+    "code": { "type": "string" },
+    "name": { "type": "string" },
+    "nativeName": { "type": "string" },
+    "direction": { "type": "string", "enum": ["LTR", "RTL"] },
+    "active": { "type": "boolean" }
+  }
+}

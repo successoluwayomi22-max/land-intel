@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/api-key.schema.json",
+  "title": "ApiKey",
+  "type": "object",
+  "required": ["id", "name", "organizationId", "scopes", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "name": { "type": "string" },
+    "organizationId": { "type": "string", "format": "uuid" },
+    "scopes": { "type": "array", "items": { "type": "string" } },
+    "lastUsedAt": { "type": ["string", "null"], "format": "date-time" },
+    "expiresAt": { "type": ["string", "null"], "format": "date-time" },
+    "revokedAt": { "type": ["string", "null"], "format": "date-time" },
+    "createdAt": { "type": "string", "format": "date-time" }
+  }
+}

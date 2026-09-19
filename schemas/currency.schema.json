@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/currency.schema.json",
+  "title": "Currency",
+  "type": "object",
+  "required": ["code", "name", "symbol", "minorUnit", "active"],
+  "properties": {
+    "code": { "type": "string", "minLength": 3, "maxLength": 3 },
+    "name": { "type": "string" },
+    "symbol": { "type": "string" },
+    "minorUnit": { "type": "integer", "minimum": 0 },
+    "numericCode": { "type": "string" },
+    "active": { "type": "boolean" }
+  }
+}

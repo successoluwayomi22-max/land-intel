@@ -1,0 +1,951 @@
+openapi: 3.1.0
+info:
+  title: Landintel Property Intelligence API
+  version: 1.0.0
+  description: |
+    Official canonical REST API for Landintel / DiasporaLand:
+    Global Property Due-Diligence, Document Intelligence, Currency & Localization Engine.
+servers:
+  - url: https://temperature-feels-republic-symphony.trycloudflare.com/api/v1
+    description: Live Development & Staging Server
+  - url: https://landintel.ng/api/v1
+    description: Production Edge Server
+
+paths:
+  # Authentication & Identity Endpoints
+  /auth/register:
+    post:
+      summary: Register New User Account
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUserResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+
+  /auth/login:
+    post:
+      summary: User Authentication
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/logout:
+    post:
+      summary: Invalidate Current Session
+      operationId: logoutUser
+      responses:
+        '200':
+          description: Session invalidated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      loggedOut:
+                        type: boolean
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+
+  /auth/me:
+    get:
+      summary: Get Current Authenticated User Context
+      operationId: getCurrentUser
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUserResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /sessions:
+    get:
+      summary: List Active User Sessions
+      operationId: listSessions
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Session'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+
+  /sessions/{sessionId}:
+    delete:
+      summary: Revoke Specific User Session
+      operationId: revokeSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      revoked:
+                        type: boolean
+
+  # Case Management
+  /cases:
+    post:
+      summary: Create Property Case
+      operationId: createCase
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCaseRequest'
+      responses:
+        '201':
+          description: Property case created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    get:
+      summary: List Property Cases
+      operationId: listCases
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 25
+      responses:
+        '200':
+          description: Paginated collection of property cases
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseCollectionResponse'
+
+  /cases/{caseId}:
+    get:
+      summary: Retrieve Property Case Details
+      operationId: getCase
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /cases/{caseId}/documents:
+    post:
+      summary: Upload Document to Property Case
+      operationId: uploadCaseDocument
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Document uploaded and processing queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentResponse'
+
+    get:
+      summary: List Documents for Property Case
+      operationId: listCaseDocuments
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Document'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+
+  /cases/{caseId}/analysis:
+    post:
+      summary: Trigger or Rerun Case Due-Diligence Analysis
+      operationId: triggerAnalysis
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '202':
+          description: Analysis task dispatched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResponse'
+
+    get:
+      summary: Get Latest Case Due-Diligence Analysis
+      operationId: getLatestAnalysis
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResponse'
+
+  /cases/{caseId}/reports:
+    post:
+      summary: Generate Professional Due-Diligence Report
+      operationId: generateReport
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResponse'
+
+  /cases/{caseId}/assistant/messages:
+    post:
+      summary: Send Inquiry to AI Property Due-Diligence Assistant
+      operationId: askAssistant
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      messageId:
+                        type: string
+                        format: uuid
+                      answer:
+                        type: string
+                      citations:
+                        type: array
+                        items:
+                          type: object
+
+  # Global Currencies & Exchange Rates
+  /currencies:
+    get:
+      summary: List Supported Global Currencies
+      operationId: listCurrencies
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Currency'
+
+  /exchange-rates:
+    get:
+      summary: Get Live Exchange Rates
+      operationId: getExchangeRates
+      parameters:
+        - name: base
+          in: query
+          schema:
+            type: string
+            default: USD
+        - name: quote
+          in: query
+          schema:
+            type: string
+            default: NGN
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExchangeRateResponse'
+
+  # Languages & Localizations
+  /languages:
+    get:
+      summary: List Active Global Platform Languages
+      operationId: listLanguages
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Language'
+
+  # Jurisdictions
+  /jurisdictions:
+    get:
+      summary: List Supported Country Jurisdictions & Support Levels
+      operationId: listJurisdictions
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Jurisdiction'
+
+  # Contact & Support Desk
+  /contact:
+    get:
+      summary: Retrieve Centralized Contact Channels
+      operationId: getContactChannels
+      responses:
+        '200':
+          description: Official active platform contact methods
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactResponse'
+
+  /support/requests:
+    post:
+      summary: Submit Support Inquiry or Report Issue
+      operationId: createSupportRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSupportRequest'
+      responses:
+        '201':
+          description: Ticket registered and admin notified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportRequestResponse'
+
+    get:
+      summary: List Support Requests
+      operationId: listSupportRequests
+      responses:
+        '200':
+          description: List of support requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SupportRequest'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+
+  # Customer Notifications
+  /notifications:
+    get:
+      summary: List User Notifications
+      operationId: listNotifications
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+
+  /notifications/unread-count:
+    get:
+      summary: Get Unread Notification Count
+      operationId: getUnreadNotificationCount
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      unreadCount:
+                        type: integer
+
+components:
+  schemas:
+    Meta:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        total:
+          type: integer
+      required:
+        - requestId
+
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+        - acceptTerms
+        - acceptPrivacyPolicy
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 12
+        firstName:
+          type: string
+        lastName:
+          type: string
+        acceptTerms:
+          type: boolean
+        acceptPrivacyPolicy:
+          type: boolean
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        rememberMe:
+          type: boolean
+
+    LoginResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/AuthUser'
+            session:
+              $ref: '#/components/schemas/Session'
+            requiresTwoFactor:
+              type: boolean
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    AuthUserResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/AuthUser'
+            verificationRequired:
+              type: boolean
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    CurrentUserResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/AuthUser'
+            session:
+              $ref: '#/components/schemas/Session'
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+        emailVerified:
+          type: boolean
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        expiresAt:
+          type: string
+          format: date-time
+
+    CreateCaseRequest:
+      type: object
+      required:
+        - name
+        - countryCode
+        - propertyType
+      properties:
+        name:
+          type: string
+          example: Lekki Phase 1 Residential Parcel
+        countryCode:
+          type: string
+          example: NG
+        jurisdiction:
+          type: object
+          properties:
+            regionCode:
+              type: string
+              example: LA
+            districtCode:
+              type: string
+              example: ETI-OSA
+            city:
+              type: string
+              example: Lekki
+        propertyType:
+          type: string
+          enum: [LAND, RESIDENTIAL, COMMERCIAL, AGRICULTURAL, MIXED_USE, OTHER]
+          example: LAND
+
+    CaseResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Case'
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    CaseCollectionResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Case'
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    Case:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        reference:
+          type: string
+          example: DL-2026-000123
+        name:
+          type: string
+        status:
+          type: string
+          enum: [DRAFT, UPLOADING, PROCESSING, ANALYZING, PARTIALLY_ANALYZED, ANALYZED, REQUIRES_REVIEW, REPORT_READY, ARCHIVED, FAILED]
+        countryCode:
+          type: string
+        propertyType:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        mimeType:
+          type: string
+        documentType:
+          type: string
+        status:
+          type: string
+
+    DocumentResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Document'
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    Analysis:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        caseId:
+          type: string
+          format: uuid
+        version:
+          type: integer
+        status:
+          type: string
+        summary:
+          type: object
+
+    AnalysisResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Analysis'
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    ReportResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            status:
+              type: string
+            downloadUrl:
+              type: string
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+        minorUnit:
+          type: integer
+
+    ExchangeRateResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            baseCurrency:
+              type: string
+            quoteCurrency:
+              type: string
+            rate:
+              type: string
+            source:
+              type: string
+
+    Language:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        nativeName:
+          type: string
+        direction:
+          type: string
+
+    Jurisdiction:
+      type: object
+      properties:
+        countryCode:
+          type: string
+        name:
+          type: string
+        supportLevel:
+          type: string
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        title:
+          type: string
+        message:
+          type: string
+        severity:
+          type: string
+        read:
+          type: boolean
+
+    ContactResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            email:
+              type: string
+              example: successoluwayomi22@gmail.com
+            whatsappNumbers:
+              type: array
+              items:
+                type: string
+              example: ["+2349033084408", "+2348077426824"]
+            primaryWhatsapp:
+              type: string
+              example: "+2349033084408"
+            secondaryWhatsapp:
+              type: string
+              example: "+2348077426824"
+            facebook:
+              type: string
+              example: Oluwayomi Succe
+            instagram:
+              type: string
+              example: oluwayomi_success
+            supportAvailability:
+              type: string
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    CreateSupportRequest:
+      type: object
+      required:
+        - email
+        - subject
+        - message
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        category:
+          type: string
+          enum: [GENERAL_SUPPORT, PROPERTY_ANALYSIS, VERIFICATION, DOCUMENT, REPORT, PAYMENT, BILLING, OTHER]
+        subject:
+          type: string
+        message:
+          type: string
+        caseId:
+          type: string
+          format: uuid
+          nullable: true
+
+    SupportRequestResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/SupportRequest'
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    SupportRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        ticketNumber:
+          type: string
+          example: DL-SUP-2026-000184
+        name:
+          type: string
+        email:
+          type: string
+        category:
+          type: string
+        subject:
+          type: string
+        status:
+          type: string
+          enum: [OPEN, IN_PROGRESS, RESOLVED, CLOSED]
+        createdAt:
+          type: string
+          format: date-time
+
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              example: Invalid input parameters provided.
+            details:
+              type: object
+            requestId:
+              type: string
+              format: uuid
+          required:
+            - code
+            - message
+            - requestId
+
+  responses:
+    ValidationError:
+      description: Bad request validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+
+    UnauthorizedError:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'

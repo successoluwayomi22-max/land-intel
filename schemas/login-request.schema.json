@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/login-request.schema.json",
+  "title": "LoginRequest",
+  "type": "object",
+  "required": ["email", "password"],
+  "properties": {
+    "email": { "type": "string", "format": "email" },
+    "password": { "type": "string" },
+    "rememberMe": { "type": "boolean", "default": false }
+  }
+}

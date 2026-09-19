@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/analysis.schema.json",
+  "title": "Analysis",
+  "type": "object",
+  "required": ["id", "caseId", "version", "status", "startedAt"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "caseId": { "type": "string", "format": "uuid" },
+    "version": { "type": "integer", "minimum": 1 },
+    "status": {
+      "type": "string",
+      "enum": ["QUEUED", "PROCESSING", "COMPLETED", "FAILED", "REQUIRES_REVIEW"]
+    },
+    "jurisdiction": {
+      "type": "object",
+      "properties": {
+        "countryCode": { "type": "string" },
+        "regionCode": { "type": "string" }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "documents": { "type": "integer" },
+        "fieldsExtracted": { "type": "integer" },
+        "externalChecks": { "type": "integer" },
+        "availableChecks": { "type": "integer" },
+        "unavailableChecks": { "type": "integer" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "findingCount": { "type": "integer" },
+        "highSeverityCount": { "type": "integer" },
+        "mediumSeverityCount": { "type": "integer" },
+        "lowSeverityCount": { "type": "integer" }
+      }
+    },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": ["string", "null"], "format": "date-time" }
+  }
+}

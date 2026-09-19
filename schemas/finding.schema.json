@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/finding.schema.json",
+  "title": "AnalysisFinding",
+  "type": "object",
+  "required": ["id", "category", "title", "severity", "confidence", "status", "description"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "analysisId": { "type": "string", "format": "uuid" },
+    "category": {
+      "type": "string",
+      "enum": [
+        "DOCUMENT_INTEGRITY",
+        "OWNERSHIP_CONSISTENCY",
+        "PROPERTY_IDENTITY",
+        "AREA_CONSISTENCY",
+        "BOUNDARY_CONSISTENCY",
+        "REGISTRATION",
+        "ENCUMBRANCE",
+        "LIEN",
+        "MORTGAGE",
+        "LEASE",
+        "PLANNING",
+        "ZONING",
+        "TAX",
+        "ENVIRONMENTAL",
+        "LOCATION",
+        "IDENTITY",
+        "TRANSACTION",
+        "SOURCE_AVAILABILITY",
+        "JURISDICTION",
+        "DATA_COMPLETENESS",
+        "OTHER"
+      ]
+    },
+    "title": { "type": "string" },
+    "severity": {
+      "type": "string",
+      "enum": ["INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["HIGH", "MEDIUM", "LOW"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["OPEN", "ACKNOWLEDGED", "DISMISSED", "VERIFIED"]
+    },
+    "description": { "type": "string" },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "documentId": { "type": "string", "format": "uuid" },
+          "page": { "type": "integer" },
+          "value": { "type": "string" }
+        }
+      }
+    },
+    "difference": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "valueA": { "type": "string" },
+        "valueB": { "type": "string" },
+        "unit": { "type": "string" }
+      }
+    },
+    "recommendedAction": { "type": "string" },
+    "requiresProfessionalReview": { "type": "boolean" }
+  }
+}

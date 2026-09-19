@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/auth-error.schema.json",
+  "title": "AuthError",
+  "type": "object",
+  "required": ["error"],
+  "properties": {
+    "error": {
+      "type": "object",
+      "required": ["code", "message", "requestId"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "AUTH_REQUIRED",
+            "AUTH_INVALID",
+            "AUTH_EXPIRED",
+            "AUTH_FORBIDDEN",
+            "AUTH_SESSION_REVOKED",
+            "AUTH_SESSION_EXPIRED",
+            "AUTH_TOKEN_INVALID",
+            "AUTH_TOKEN_EXPIRED",
+            "AUTH_TOKEN_REPLAYED",
+            "INVALID_CREDENTIALS",
+            "ACCOUNT_NOT_FOUND",
+            "ACCOUNT_DISABLED",
+            "ACCOUNT_SUSPENDED",
+            "ACCOUNT_LOCKED",
+            "EMAIL_NOT_VERIFIED",
+            "EMAIL_VERIFICATION_INVALID",
+            "EMAIL_VERIFICATION_EXPIRED",
+            "PASSWORD_INVALID",
+            "PASSWORD_TOO_WEAK",
+            "PASSWORD_COMPROMISED",
+            "PASSWORD_RESET_INVALID",
+            "PASSWORD_RESET_EXPIRED",
+            "TWO_FACTOR_REQUIRED",
+            "TWO_FACTOR_INVALID",
+            "TWO_FACTOR_EXPIRED",
+            "TWO_FACTOR_REAUTH_REQUIRED",
+            "SESSION_NOT_FOUND",
+            "SESSION_ACCESS_DENIED",
+            "OAUTH_INVALID_STATE",
+            "OAUTH_CODE_INVALID",
+            "OAUTH_PROVIDER_ERROR",
+            "MAGIC_LINK_INVALID",
+            "MAGIC_LINK_EXPIRED",
+            "INVITATION_INVALID",
+            "INVITATION_EXPIRED",
+            "INVITATION_ALREADY_USED",
+            "ORGANIZATION_NOT_FOUND",
+            "ORGANIZATION_ACCESS_DENIED",
+            "MEMBERSHIP_NOT_FOUND",
+            "PERMISSION_DENIED",
+            "ROLE_REQUIRED",
+            "API_KEY_INVALID",
+            "API_KEY_REVOKED",
+            "API_KEY_EXPIRED",
+            "RATE_LIMITED",
+            "TOO_MANY_AUTH_ATTEMPTS"
+          ]
+        },
+        "message": { "type": "string" },
+        "details": { "type": "object" },
+        "requestId": { "type": "string", "format": "uuid" }
+      }
+    }
+  }
+}

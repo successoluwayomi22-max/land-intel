@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/membership.schema.json",
+  "title": "OrganizationMembership",
+  "type": "object",
+  "required": ["id", "organizationId", "userId", "role", "status", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "organizationId": { "type": "string", "format": "uuid" },
+    "userId": { "type": "string", "format": "uuid" },
+    "role": {
+      "type": "string",
+      "enum": ["OWNER", "ADMIN", "MEMBER", "REVIEWER", "ANALYST", "VIEWER"]
+    },
+    "status": { "type": "string", "enum": ["INVITED", "ACTIVE", "SUSPENDED", "REMOVED"] },
+    "joinedAt": { "type": ["string", "null"], "format": "date-time" },
+    "invitedBy": { "type": ["string", "null"], "format": "uuid" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

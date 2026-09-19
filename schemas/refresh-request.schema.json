@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/refresh-request.schema.json",
+  "title": "RefreshRequest",
+  "type": "object",
+  "required": ["refreshToken"],
+  "properties": {
+    "refreshToken": { "type": "string" }
+  }
+}

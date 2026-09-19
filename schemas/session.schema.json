@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/session.schema.json",
+  "title": "Session",
+  "type": "object",
+  "required": ["id", "userId", "createdAt", "expiresAt", "status"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "userId": { "type": "string", "format": "uuid" },
+    "device": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "browser": { "type": "string" },
+        "os": { "type": "string" }
+      }
+    },
+    "ipAddress": { "type": "string" },
+    "countryCode": { "type": "string" },
+    "authMethod": { "type": "string", "enum": ["PASSWORD", "GOOGLE", "MAGIC_LINK", "TWO_FACTOR"] },
+    "assuranceLevel": { "type": "string", "enum": ["PASSWORD", "EMAIL_VERIFIED", "TWO_FACTOR", "REAUTHENTICATED"] },
+    "status": { "type": "string", "enum": ["ACTIVE", "EXPIRED", "REVOKED", "SUSPENDED"] },
+    "current": { "type": "boolean" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "lastActiveAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" }
+  }
+}

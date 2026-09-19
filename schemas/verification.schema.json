@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/verification.schema.json",
+  "title": "VerificationCheck",
+  "type": "object",
+  "required": ["id", "caseId", "category", "title", "status"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "caseId": { "type": "string", "format": "uuid" },
+    "sourceId": { "type": ["string", "null"], "format": "uuid" },
+    "category": { "type": "string" },
+    "title": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": [
+        "VERIFIED",
+        "PARTIALLY_VERIFIED",
+        "CONSISTENT",
+        "INCONSISTENT",
+        "NOT_FOUND",
+        "NOT_AVAILABLE",
+        "NOT_SUPPORTED",
+        "USER_PROVIDED_ONLY",
+        "REQUIRES_HUMAN_VERIFICATION",
+        "PROVIDER_ERROR"
+      ]
+    },
+    "priority": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+    "reason": { "type": "string" },
+    "query": { "type": "object" },
+    "result": { "type": "object" },
+    "retrievedAt": { "type": ["string", "null"], "format": "date-time" },
+    "evidenceIds": { "type": "array", "items": { "type": "string", "format": "uuid" } }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://landintel.ng/schemas/invitation.schema.json",
+  "title": "OrganizationInvitation",
+  "type": "object",
+  "required": ["id", "organizationId", "email", "role", "expiresAt", "status"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "organizationId": { "type": "string", "format": "uuid" },
+    "email": { "type": "string", "format": "email" },
+    "role": {
+      "type": "string",
+      "enum": ["ADMIN", "MEMBER", "REVIEWER", "ANALYST", "VIEWER"]
+    },
+    "invitedBy": { "type": "string", "format": "uuid" },
+    "status": { "type": "string", "enum": ["PENDING", "ACCEPTED", "DECLINED", "REVOKED", "EXPIRED"] },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "createdAt": { "type": "string", "format": "date-time" }
+  }
+}
