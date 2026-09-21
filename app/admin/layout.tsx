@@ -94,10 +94,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [adminUser, setAdminUser] = useState<{ email: string; name: string; role: string } | null>(null);
+  const [nonAdminUser, setNonAdminUser] = useState<{ email: string; name: string; role: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState("");
-  const [emailInput, setEmailInput] = useState("admin@diasporaland.ai");
-  const [passwordInput, setPasswordInput] = useState("AdminPass123!");
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
   const [signingIn, setSigningIn] = useState(false);
 
   const checkAuth = async () => {
@@ -111,6 +112,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         if (parsed.role === "ADMIN" || parsed.role === "SUPER_ADMIN") {
           setAdminUser(parsed);
           setLoading(false);
+        } else {
+          setNonAdminUser(parsed);
+          setLoading(false);
         }
       } catch {}
     }
@@ -121,16 +125,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       const res = await fetch("/api/auth/me", { headers, credentials: "include" });
       const data = await res.json();
-      if (data.user && (data.user.role === "ADMIN" || data.user.role === "SUPER_ADMIN")) {
+      if (res.ok && data.user && (data.user.role === "ADMIN" || data.user.role === "SUPER_ADMIN")) {
         setAdminUser(data.user);
+        setNonAdminUser(null);
         if (typeof window !== "undefined") {
           localStorage.setItem("landintel_user", JSON.stringify(data.user));
         }
-      } else if (!savedUserStr) {
+      } else {
         setAdminUser(null);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("landintel_user");
+        }
+        if (data?.user) {
+          setNonAdminUser(data.user);
+        } else {
+          setNonAdminUser(null);
+        }
       }
     } catch {
-      if (!savedUserStr) setAdminUser(null);
+      if (!savedUserStr) {
+        setAdminUser(null);
+        setNonAdminUser(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -217,7 +233,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // If not logged in as Admin, display the dedicated Executive Clearance Gate
+  // 1. If logged in as a non-admin user, deny access explicitly (403 Forbidden)
+  if (nonAdminUser && !adminUser) {
+    return (
+      <div className="min-h-screen bg-[#050811] text-slate-100 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-[#0B101E] border border-rose-500/30 rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 text-center">
+          <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
+            <Lock className="w-6 h-6" />
+          </div>
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-mono tracking-wider font-bold uppercase">
+              ACCESS FORBIDDEN (403)
+            </div>
+            <h1 className="text-xl font-extrabold text-white">Elevated Privileges Required</h1>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Your active account (<span className="text-amber-400 font-mono">{nonAdminUser.email}</span>) does not have administrative permissions.
+            </p>
+          </div>
+
+          <div className="pt-2 flex flex-col gap-2.5">
+            <Link
+              href="/dashboard"
+              className="w-full py-2.5 px-4 bg-brand-blue hover:bg-brand-blue/90 text-white font-semibold text-xs rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <span>Return to Customer Dashboard</span>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="w-full py-2 px-4 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white text-xs rounded-lg transition-colors cursor-pointer"
+            >
+              Sign Out & Switch Account
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. If not logged in as Admin, display the secure Administrative Login Gate
   if (!adminUser) {
     return (
       <div className="min-h-screen bg-[#050811] text-slate-100 flex items-center justify-center p-4 relative overflow-hidden font-sans">
@@ -244,32 +297,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           )}
 
-          {/* Quick Demo Admin Auth */}
-          <div className="bg-slate-900/80 border border-amber-500/20 rounded-xl p-4 space-y-3">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Instant Operator Access</span>
-              </span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-400/10 text-amber-300 font-mono font-bold">
-                ROOT ADMIN
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400 leading-snug">
-              Authenticate instantly with pre-seeded operator credentials (`admin@diasporaland.ai`).
-            </p>
-            <button
-              onClick={() => handleAdminSignIn("admin@diasporaland.ai", "AdminPass123!")}
-              disabled={signingIn}
-              className="w-full py-2.5 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs rounded-lg shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-            >
-              <KeyRound className="w-3.5 h-3.5" />
-              <span>{signingIn ? "Authorizing Root Clearance..." : "1-Click Sign In as System Administrator"}</span>
-            </button>
-          </div>
-
-          {/* Manual Auth Form */}
-          <div className="pt-2 border-t border-slate-800/80 space-y-3">
+          {/* Secure Admin Auth Form */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleAdminSignIn();
+            }}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
                 Operator Email
@@ -278,8 +313,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 type="email"
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
+                required
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
-                placeholder="admin@diasporaland.ai"
+                placeholder="operator@landintel.ng"
               />
             </div>
             <div className="space-y-2">
@@ -290,26 +326,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 type="password"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
+                required
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
                 placeholder="••••••••••••"
               />
             </div>
             <button
-              onClick={() => handleAdminSignIn()}
+              type="submit"
               disabled={signingIn}
-              className="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs rounded-lg transition-colors cursor-pointer"
+              className="w-full py-2.5 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs rounded-lg shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              Authenticate With Custom Credentials
+              <KeyRound className="w-3.5 h-3.5" />
+              <span>{signingIn ? "Authorizing Root Clearance..." : "Authenticate Admin Session"}</span>
             </button>
-          </div>
+          </form>
 
           <div className="text-center pt-2">
             <Link
-              href="/dashboard"
+              href="/"
               className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Return to Customer Workspace</span>
+              <span>Return to Public Portal</span>
             </Link>
           </div>
         </div>

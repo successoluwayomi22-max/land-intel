@@ -239,37 +239,6 @@ export default function LoginPage() {
               {loading ? (t("signingIn") || "Signing in...") : (t("logIn") || "Sign In")}
             </Button>
           </form>
-
-          {/* Seed demo quick links for instant testing */}
-          <div className="pt-4 border-t border-brand-border text-center space-y-2">
-            <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider">
-              Quick Demo Logins
-            </span>
-            <div className="flex flex-col gap-1.5 text-xs">
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail("investor@diasporaland.ai");
-                  setPassword("UserPass123!");
-                  setCaptchaToken("recaptcha_demo_verified_investor");
-                }}
-                className="text-brand-blue hover:underline text-[11px]"
-              >
-                Free User: investor@diasporaland.ai
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail("admin@diasporaland.ai");
-                  setPassword("AdminPass123!");
-                  setCaptchaToken("recaptcha_demo_verified_admin");
-                }}
-                className="text-amber-600 hover:underline text-[11px]"
-              >
-                Admin User: admin@diasporaland.ai
-              </button>
-            </div>
-          </div>
         </Card>
       </div>
     </div>
