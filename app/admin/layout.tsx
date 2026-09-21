@@ -90,18 +90,28 @@ const ADMIN_NAV_GROUPS = [
   },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+interface AdminUserInfo {
+  email: string;
+  name: string;
+  role: string;
+}
+
+interface AdminLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const [adminUser, setAdminUser] = useState<{ email: string; name: string; role: string } | null>(null);
-  const [nonAdminUser, setNonAdminUser] = useState<{ email: string; name: string; role: string } | null>(null);
+  const [adminUser, setAdminUser] = useState<AdminUserInfo | null>(null);
+  const [nonAdminUser, setNonAdminUser] = useState<AdminUserInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [signingIn, setSigningIn] = useState(false);
 
-  const checkAuth = async () => {
+  const checkAuth = async (): Promise<void> => {
     // 1. Instant hydration from localStorage
     const savedUserStr = typeof window !== "undefined" ? localStorage.getItem("landintel_user") : null;
     const token = typeof window !== "undefined" ? localStorage.getItem("landintel_token") : null;
@@ -156,7 +166,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     checkAuth();
   }, []);
 
-  const handleAdminSignIn = async (emailToUse?: string, passToUse?: string) => {
+  const handleAdminSignIn = async (emailToUse?: string, passToUse?: string): Promise<void> => {
     setSigningIn(true);
     setAuthError("");
     try {
@@ -190,8 +200,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         localStorage.setItem("landintel_user", JSON.stringify(data.user));
       }
       setAdminUser(data.user);
-    } catch (err: any) {
-      setAuthError(err.message || "Network error while authenticating.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Network error while authenticating.";
+      setAuthError(msg);
     } finally {
       setSigningIn(false);
     }
