@@ -126,21 +126,22 @@ export default function LandingPage() {
     <div className="min-h-screen bg-brand-background flex flex-col">
       <Navbar />
 
-      {/* 1. HERO SECTION */}
-      <HeroSection />
+      <main id="main-content" className="flex-1">
+        {/* 1. HERO SECTION */}
+        <HeroSection />
 
-      {/* 2. TRUST / VALUE STATEMENT */}
-      <section className="py-12 bg-white border-b border-brand-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center sm:text-left">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-blue-50 text-brand-blue flex items-center justify-center shrink-0">
-                <FileCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-brand-textPrimary font-heading">
-                  {t("evidenceTitle") || "Evidence-Driven Provenance"}
-                </h4>
+        {/* 2. TRUST / VALUE STATEMENT */}
+        <section className="py-12 bg-white border-b border-brand-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center sm:text-left">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-brand-blue flex items-center justify-center shrink-0">
+                  <FileCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-brand-textPrimary font-heading">
+                    {t("evidenceTitle") || "Evidence-Driven Provenance"}
+                  </h3>
                 <p className="text-xs text-brand-textSecondary mt-1 leading-relaxed">
                   {t("evidenceDesc") ||
                     "Every finding links directly to specific document pages, beacon numbers, and covenant clauses. No synthetic guesswork."}
@@ -153,9 +154,9 @@ export default function LandingPage() {
                 <Lock className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-brand-textPrimary font-heading">
+                <h3 className="text-sm font-bold text-brand-textPrimary font-heading">
                   {t("privateStorageTitle") || "Private & Isolated Storage"}
-                </h4>
+                </h3>
                 <p className="text-xs text-brand-textSecondary mt-1 leading-relaxed">
                   {t("privateStorageDesc") ||
                     "Documents are stored in private encrypted repositories. Documents are never public and are accessed solely via temporary signed tokens."}
@@ -168,9 +169,9 @@ export default function LandingPage() {
                 <Scale className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-brand-textPrimary font-heading">
+                <h3 className="text-sm font-bold text-brand-textPrimary font-heading">
                   {t("transparentRiskTitle") || "Transparent Risk Scoring"}
-                </h4>
+                </h3>
                 <p className="text-xs text-brand-textSecondary mt-1 leading-relaxed">
                   {t("transparentRiskDesc") ||
                     "Explainable 0–100 score breaking down documentation, ownership, geographic, and consistency weights."}
@@ -235,7 +236,7 @@ export default function LandingPage() {
             {lifecycleSteps.map((s) => (
               <div key={s.step} className="bg-slate-50 border border-brand-border rounded-card p-4 space-y-2">
                 <span className="font-heading font-extrabold text-lg text-brand-blue block">{s.step}</span>
-                <h4 className="text-sm font-bold text-brand-textPrimary font-heading">{s.title}</h4>
+                <h3 className="text-sm font-bold text-brand-textPrimary font-heading">{s.title}</h3>
                 <p className="text-xs text-brand-textSecondary leading-relaxed">{s.desc}</p>
               </div>
             ))}
@@ -259,7 +260,7 @@ export default function LandingPage() {
             {documentItems.map((item) => (
               <div key={item.title} className="bg-white border border-brand-border rounded-card p-5 shadow-subtle space-y-2">
                 <FileText className="w-5 h-5 text-brand-blue" />
-                <h4 className="text-sm font-bold text-brand-textPrimary font-heading">{item.title}</h4>
+                <h3 className="text-sm font-bold text-brand-textPrimary font-heading">{item.title}</h3>
                 <p className="text-xs text-brand-textSecondary leading-relaxed">{item.desc}</p>
               </div>
             ))}
@@ -319,7 +320,7 @@ export default function LandingPage() {
               },
             ].map((faq, i) => (
               <div key={i} className="bg-white border border-brand-border rounded-card p-5 shadow-subtle space-y-2">
-                <h4 className="text-sm font-bold text-brand-textPrimary font-heading">{faq.q}</h4>
+                <h3 className="text-sm font-bold text-brand-textPrimary font-heading">{faq.q}</h3>
                 <p className="text-xs text-brand-textSecondary leading-relaxed">{faq.a}</p>
               </div>
             ))}
@@ -347,6 +348,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </main>
 
       <Footer />
     </div>
