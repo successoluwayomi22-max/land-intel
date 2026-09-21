@@ -255,17 +255,17 @@
       "ip": "::1",
       "status": "MONITOR",
       "firstSeen": "2026-09-19T21:30:15.177Z",
-      "lastSeen": "2026-09-19T21:32:08.596Z",
-      "requestCount": 5,
+      "lastSeen": "2026-09-20T12:09:10.165Z",
+      "requestCount": 6,
       "failedRequestCount": 2,
       "failedAuthCount": 0,
-      "successfulAuthCount": 3,
+      "successfulAuthCount": 4,
       "affectedAccounts": [
         "admin@diasporaland.ai"
       ],
       "affectedOrganizations": [],
       "threatScore": 10,
-      "updatedAt": "2026-09-19T21:32:08.596Z"
+      "updatedAt": "2026-09-20T12:09:10.165Z"
     },
     "192.0.2.77": {
       "ip": "192.0.2.77",
@@ -491,6 +491,20 @@
     }
   ],
   "malwareScans": [
+    {
+      "id": "SCAN_1789922329045_2r3d",
+      "scannedAt": "2026-09-20T16:38:49.045Z",
+      "fileId": "FILE_1789922329028_2980a97b",
+      "originalName": "ADVANCED_SECURI.docx",
+      "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "sizeBytes": 64550,
+      "status": "CLEAN",
+      "scanner": "DiasporaLand Heuristic Engine v2.4",
+      "scannerResult": "SCAN_PASSED_NO_THREATS",
+      "userId": "cmu2o3i2l00028cq4m8gk96zf",
+      "caseId": "cmua1iobc0007rt0r2a0qcv32",
+      "uploadTime": "2026-09-20T16:38:49.039Z"
+    },
     {
       "id": "SCAN_1789853528480_leqs",
       "scannedAt": "2026-09-19T21:32:08.480Z",
