@@ -3,8 +3,20 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import {
+  ShieldCheck,
+  CheckCircle2,
+  Lock,
+  Eye,
+  EyeOff,
+  Sparkles,
+  MapPin,
+  FileCheck2,
+  Scale,
+  Star,
+  Building2,
+  TrendingUp,
+} from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
@@ -147,35 +159,163 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-background flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
-      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
-        <LocaleSelector variant="light" compact />
-      </div>
+    <div className="min-h-screen bg-slate-950 flex flex-col lg:flex-row font-sans selection:bg-brand-blue/30 selection:text-blue-200">
+      {/* ============================================================ */}
+      {/* 1. LEFT BRANDING & VALUE SHOWCASE HERO (Split Screen)        */}
+      {/* ============================================================ */}
+      <aside className="hidden lg:flex lg:w-1/2 xl:w-5/12 bg-gradient-to-br from-[#060C1B] via-[#091326] to-[#0A1832] border-r border-slate-800/80 p-10 xl:p-14 flex-col justify-between relative overflow-hidden text-slate-100">
+        {/* Glow Effects */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-brand-blue/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
-        <Link href="/" className="inline-flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-brand-blue flex items-center justify-center font-black text-white shadow-subtle text-base">
-            L
+        {/* Brand Header */}
+        <div className="relative z-10 space-y-6">
+          <Link href="/" className="inline-flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/20 text-lg">
+              L
+            </div>
+            <div>
+              <span className="font-heading font-extrabold text-2xl tracking-tight text-white block">
+                LandIntel
+              </span>
+              <span className="text-[10px] tracking-widest text-emerald-400 font-mono font-bold uppercase block">
+                Institutional Due-Diligence
+              </span>
+            </div>
+          </Link>
+
+          <div className="space-y-3 pt-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+              <span>Zero-Trust Cadastral Verification</span>
+            </div>
+            <h1 className="text-3xl xl:text-4xl font-extrabold font-heading text-white tracking-tight leading-tight">
+              Protect your land capital before signing or transferring funds.
+            </h1>
+            <p className="text-sm text-slate-300 leading-relaxed max-w-lg">
+              Join thousands of diaspora and institutional investors verifying survey beacons, detecting root-of-title defects, and securing land across Nigeria.
+            </p>
           </div>
-          <div className="text-left">
-            <span className="font-heading font-extrabold text-xl tracking-tight text-brand-darkNavy block">
-              LandIntel
+
+          {/* Interactive Live Verification Card Simulation */}
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-4 backdrop-blur-sm max-w-md">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
+              <span className="flex items-center gap-2 font-mono text-slate-300 font-semibold">
+                <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Parcel #LAG-ETI-0928</span>
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-[10px] font-bold">
+                LOW RISK (12/100)
+              </span>
+            </div>
+
+            <div className="space-y-2.5 text-xs">
+              <div className="flex items-center justify-between text-slate-300">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Survey Beacons Match Deed</span>
+                </span>
+                <span className="font-mono text-emerald-400 text-[11px]">100% Match</span>
+              </div>
+              <div className="flex items-center justify-between text-slate-300">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Governor&apos;s Consent Validated</span>
+                </span>
+                <span className="font-mono text-emerald-400 text-[11px]">Statutory Approved</span>
+              </div>
+              <div className="flex items-center justify-between text-slate-300">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Committed Govt Acquisition</span>
+                </span>
+                <span className="font-mono text-emerald-400 text-[11px]">Clear / Unencumbered</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Trust Badges & Social Proof Footer */}
+        <div className="relative z-10 pt-8 border-t border-slate-800/80 space-y-5">
+          {/* Key Metrics */}
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <div className="text-xl font-black text-white font-heading">₦4.8B+</div>
+              <div className="text-[11px] text-slate-400 font-medium">Property Vetted</div>
+            </div>
+            <div>
+              <div className="text-xl font-black text-white font-heading">36 States</div>
+              <div className="text-[11px] text-slate-400 font-medium">Cadastral Coverage</div>
+            </div>
+            <div>
+              <div className="text-xl font-black text-emerald-400 font-heading">100%</div>
+              <div className="text-[11px] text-slate-400 font-medium">Defensible Findings</div>
+            </div>
+          </div>
+
+          {/* Social Proof Testimonial */}
+          <div className="bg-slate-900/50 border border-slate-800/60 rounded-xl p-3.5 space-y-2">
+            <div className="flex items-center gap-1 text-amber-400">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
+              ))}
+            </div>
+            <p className="text-xs text-slate-300 italic leading-relaxed">
+              &ldquo;LandIntel uncovered a 3-meter boundary overlap and missing consent on an Ibeju-Lekki plot before I sent ₦45M from the UK. Saved my family from a nightmare.&rdquo;
+            </p>
+            <div className="text-[11px] text-slate-400 font-semibold">
+              — Dr. Babatunde O. • NHS Consultant, London
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 text-[11px] text-slate-500">
+            <span className="flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-slate-400" />
+              <span>AES-256 Encrypted Vault</span>
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+              <span>Zero Document Training</span>
             </span>
           </div>
-        </Link>
-        <h2 className="text-xl font-bold font-heading text-brand-textPrimary">
-          {t("createFreeInvestorAccount") || "Create your free investor account"}
-        </h2>
-        <p className="text-xs text-brand-textSecondary">
-          {t("alreadyHaveAccount") || "Already have an account?"}{" "}
-          <Link href="/login" className="font-semibold text-brand-blue hover:underline">
-            {t("logIn") || "Sign in"}
-          </Link>
-        </p>
-      </div>
+        </div>
+      </aside>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <Card className="p-8 shadow-card space-y-5">
+      {/* ============================================================ */}
+      {/* 2. RIGHT FORM SECTION (Accessible & Clean)                   */}
+      {/* ============================================================ */}
+      <main className="w-full lg:w-1/2 xl:w-7/12 bg-white flex flex-col justify-center py-12 px-6 sm:px-12 xl:px-20 relative">
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+          <LocaleSelector variant="light" compact />
+        </div>
+
+        <div className="max-w-md w-full mx-auto space-y-6">
+          {/* Mobile Brand Header */}
+          <div className="lg:hidden text-center space-y-2 pb-2">
+            <Link href="/" className="inline-flex items-center gap-2">
+              <div className="w-9 h-9 rounded-lg bg-brand-blue flex items-center justify-center font-black text-white text-base">
+                L
+              </div>
+              <span className="font-heading font-extrabold text-xl text-brand-darkNavy">
+                LandIntel
+              </span>
+            </Link>
+          </div>
+
+          <div className="space-y-1.5">
+            <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 tracking-tight">
+              Create your investor account
+            </h2>
+            <p className="text-sm text-slate-600">
+              Already have an account?{" "}
+              <Link href="/login" className="font-bold text-brand-blue hover:underline">
+                Sign in &rarr;
+              </Link>
+            </p>
+          </div>
+
+          {/* Error Notice */}
           {error && (
             <div className="space-y-2">
               <ErrorAlert
@@ -212,15 +352,16 @@ export default function RegisterPage() {
             <div className="relative flex items-center justify-center">
               <div className="border-t border-slate-200 w-full" />
               <span className="bg-white px-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider shrink-0">
-                Or register with email
+                Or register with verified email
               </span>
               <div className="border-t border-slate-200 w-full" />
             </div>
           </div>
 
+          {/* Email / Password Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label={t("fullName") || "Full Name"}
+              label={t("fullName") || "Full Legal Name"}
               placeholder="e.g. Oluwaseun Adeleke"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -228,7 +369,7 @@ export default function RegisterPage() {
             />
 
             <Input
-              label={t("emailAddress") || "Email Address"}
+              label={t("emailAddress") || "Personal or Corporate Email"}
               type="email"
               placeholder="you@domain.com"
               value={email}
@@ -238,9 +379,9 @@ export default function RegisterPage() {
 
             <div>
               <Input
-                label={t("password") || "Password"}
+                label={t("password") || "Security Passcode"}
                 type={showPassword ? "text" : "password"}
-                placeholder="Create a strong password"
+                placeholder="Minimum 8 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -261,9 +402,9 @@ export default function RegisterPage() {
             </div>
 
             <Input
-              label={t("confirmPassword") || "Confirm Password"}
+              label={t("confirmPassword") || "Confirm Passcode"}
               type={showConfirmPassword ? "text" : "password"}
-              placeholder="Repeat password"
+              placeholder="Re-enter passcode"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
@@ -281,21 +422,21 @@ export default function RegisterPage() {
               }
             />
 
-            <label className="flex items-start gap-2 text-xs text-brand-textSecondary cursor-pointer pt-1">
+            <label className="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer pt-1 leading-normal">
               <input
                 type="checkbox"
                 checked={agreeTerms}
                 onChange={(e) => setAgreeTerms(e.target.checked)}
-                className="mt-0.5 rounded border-slate-300 text-brand-blue"
+                className="mt-0.5 rounded border-slate-300 text-brand-blue focus:ring-brand-blue"
               />
               <span>
                 I agree to the{" "}
-                <Link href="/terms" target="_blank" className="text-brand-blue hover:underline">
-                  {t("termsOfService") || "Terms of Service"}
+                <Link href="/terms" target="_blank" className="font-semibold text-brand-blue hover:underline">
+                  Terms of Service
                 </Link>{" "}
                 and acknowledge the{" "}
-                <Link href="/privacy" target="_blank" className="text-brand-blue hover:underline">
-                  {t("privacyPolicy") || "Privacy Policy"}
+                <Link href="/privacy" target="_blank" className="font-semibold text-brand-blue hover:underline">
+                  Privacy Policy
                 </Link>.
               </span>
             </label>
@@ -305,12 +446,30 @@ export default function RegisterPage() {
               <ReCaptcha onVerify={(token) => setCaptchaToken(token)} />
             </div>
 
-            <Button variant="primary" size="md" type="submit" isLoading={loading} className="w-full">
-              {loading ? (t("creatingAccount") || "Creating account...") : (t("register") || "Create Account")}
+            <Button
+              variant="primary"
+              size="lg"
+              type="submit"
+              isLoading={loading}
+              className="w-full shadow-md font-extrabold text-sm py-3"
+            >
+              {loading ? (t("creatingAccount") || "Provisioning Investor Account...") : "Create Free Investor Account"}
             </Button>
           </form>
-        </Card>
-      </div>
+
+          {/* Institutional Trust Indicators */}
+          <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <span className="flex items-center gap-1.5">
+              <FileCheck2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Free Cadastral Scan Included</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Scale className="w-3.5 h-3.5 text-blue-600" />
+              <span>Nigerian Land Law Grounded</span>
+            </span>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

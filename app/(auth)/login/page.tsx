@@ -3,8 +3,18 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, ArrowRight, Eye, EyeOff } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import {
+  ShieldCheck,
+  CheckCircle2,
+  Lock,
+  Eye,
+  EyeOff,
+  Sparkles,
+  MapPin,
+  FileCheck2,
+  Scale,
+  Star,
+} from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
@@ -39,7 +49,6 @@ export default function LoginPage() {
   // If already authenticated, redirect immediately
   React.useEffect(() => {
     if (typeof window !== "undefined" && window.location.search.includes("logged_out")) {
-      // User explicitly requested logout: clean any lingering storage and stay on login
       localStorage.removeItem("landintel_user");
       localStorage.removeItem("landintel_token");
       localStorage.removeItem("diasporaland_user");
@@ -124,35 +133,117 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-background flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
-      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
-        <LocaleSelector variant="light" compact />
-      </div>
+    <div className="min-h-screen bg-slate-950 flex flex-col lg:flex-row font-sans selection:bg-brand-blue/30 selection:text-blue-200">
+      {/* ============================================================ */}
+      {/* 1. LEFT BRANDING & SECURITY SHOWCASE (Split Screen)          */}
+      {/* ============================================================ */}
+      <aside className="hidden lg:flex lg:w-1/2 xl:w-5/12 bg-gradient-to-br from-[#060C1B] via-[#091326] to-[#0A1832] border-r border-slate-800/80 p-10 xl:p-14 flex-col justify-between relative overflow-hidden text-slate-100">
+        {/* Glow Effects */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-brand-blue/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
-        <Link href="/" className="inline-flex items-center gap-2.5 justify-center mb-2">
-          <div className="w-10 h-10 rounded-xl bg-brand-darkNavy flex items-center justify-center font-bold text-white shadow-subtle">
-            L
+        {/* Brand Header */}
+        <div className="relative z-10 space-y-6">
+          <Link href="/" className="inline-flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/20 text-lg">
+              L
+            </div>
+            <div>
+              <span className="font-heading font-extrabold text-2xl tracking-tight text-white block">
+                LandIntel
+              </span>
+              <span className="text-[10px] tracking-widest text-emerald-400 font-mono font-bold uppercase block">
+                Investor Portal Access
+              </span>
+            </div>
+          </Link>
+
+          <div className="space-y-3 pt-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+              <span>Institutional Due-Diligence Cockpit</span>
+            </div>
+            <h1 className="text-3xl xl:text-4xl font-extrabold font-heading text-white tracking-tight leading-tight">
+              Welcome back to your land due-diligence workspace.
+            </h1>
+            <p className="text-sm text-slate-300 leading-relaxed max-w-lg">
+              Access your active cadastral property cases, certified 15-section title reports, and beacon coordinate radar.
+            </p>
           </div>
-          <div className="text-left">
-            <span className="font-heading font-extrabold text-xl tracking-tight text-brand-darkNavy block">
-              LandIntel
+
+          {/* Quick Metrics Badge */}
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-3.5 backdrop-blur-sm max-w-md">
+            <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-800">
+              <span className="font-mono text-slate-300 font-semibold flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>Encrypted Session Vault</span>
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono font-bold">
+                TLS 1.3 SECURE
+              </span>
+            </div>
+            <div className="space-y-2 text-xs text-slate-300">
+              <div className="flex items-center justify-between">
+                <span>Active Title Audits</span>
+                <span className="font-mono font-bold text-white">Live Monitoring</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Certified PDF Reports</span>
+                <span className="font-mono font-bold text-emerald-400">Cryptographically Sealed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Metrics */}
+        <div className="relative z-10 pt-8 border-t border-slate-800/80 space-y-4">
+          <div className="flex items-center gap-4 text-[11px] text-slate-500">
+            <span className="flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-slate-400" />
+              <span>Private Document Isolation</span>
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1.5">
+              <Scale className="w-3.5 h-3.5 text-slate-400" />
+              <span>Nigerian Land Law Grounded</span>
             </span>
           </div>
-        </Link>
-        <h2 className="text-xl font-bold font-heading text-brand-textPrimary">
-          {t("logInToAccount") || "Log in to your account"}
-        </h2>
-        <p className="text-xs text-brand-textSecondary">
-          Or{" "}
-          <Link href="/register" className="font-semibold text-brand-blue hover:underline">
-            {t("createFreeInvestorAccount") || "create a free investor account"}
-          </Link>
-        </p>
-      </div>
+        </div>
+      </aside>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <Card className="p-8 shadow-card space-y-6">
+      {/* ============================================================ */}
+      {/* 2. RIGHT LOGIN FORM (Clean, High Contrast)                   */}
+      {/* ============================================================ */}
+      <main className="w-full lg:w-1/2 xl:w-7/12 bg-white flex flex-col justify-center py-12 px-6 sm:px-12 xl:px-20 relative">
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+          <LocaleSelector variant="light" compact />
+        </div>
+
+        <div className="max-w-md w-full mx-auto space-y-6">
+          {/* Mobile Header */}
+          <div className="lg:hidden text-center space-y-2 pb-2">
+            <Link href="/" className="inline-flex items-center gap-2">
+              <div className="w-9 h-9 rounded-lg bg-brand-blue flex items-center justify-center font-black text-white text-base">
+                L
+              </div>
+              <span className="font-heading font-extrabold text-xl text-brand-darkNavy">
+                LandIntel
+              </span>
+            </Link>
+          </div>
+
+          <div className="space-y-1.5">
+            <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 tracking-tight">
+              Sign in to your account
+            </h2>
+            <p className="text-sm text-slate-600">
+              Or{" "}
+              <Link href="/register" className="font-bold text-brand-blue hover:underline">
+                create a free investor account &rarr;
+              </Link>
+            </p>
+          </div>
+
           {error && (
             <div className="space-y-2">
               <ErrorAlert
@@ -221,7 +312,7 @@ export default function LoginPage() {
             />
 
             <div className="flex items-center justify-between text-xs">
-              <label className="flex items-center gap-2 text-brand-textSecondary cursor-pointer">
+              <label className="flex items-center gap-2 text-slate-600 cursor-pointer">
                 <input type="checkbox" defaultChecked className="rounded border-slate-300 text-brand-blue" />
                 <span>{t("rememberSession") || "Remember session"}</span>
               </label>
@@ -235,12 +326,30 @@ export default function LoginPage() {
               <ReCaptcha onVerify={(token) => setCaptchaToken(token)} />
             </div>
 
-            <Button variant="primary" size="md" type="submit" isLoading={loading} className="w-full">
-              {loading ? (t("signingIn") || "Signing in...") : (t("logIn") || "Sign In")}
+            <Button
+              variant="primary"
+              size="lg"
+              type="submit"
+              isLoading={loading}
+              className="w-full shadow-md font-extrabold text-sm py-3"
+            >
+              {loading ? (t("signingIn") || "Signing in...") : "Sign In to Workspace"}
             </Button>
           </form>
-        </Card>
-      </div>
+
+          {/* Institutional Trust Badges */}
+          <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <span className="flex items-center gap-1.5">
+              <FileCheck2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Certified Title Vault</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+              <span>Encrypted Session</span>
+            </span>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
