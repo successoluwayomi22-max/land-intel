@@ -56,12 +56,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
         <link rel="preconnect" href="https://translate.google.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://translate.googleapis.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://translate.google.com" />
         <link rel="dns-prefetch" href="https://translate.googleapis.com" />
       </head>
-      <body className={`${urbanist.variable} min-h-screen bg-brand-background text-brand-textPrimary font-sans antialiased selection:bg-blue-100 selection:text-blue-900`}>
+      <body className={`${urbanist.variable} font-urbanist min-h-screen bg-brand-background text-brand-textPrimary antialiased selection:bg-blue-100 selection:text-blue-900`}>
         <LocaleProvider>
           <GoogleTranslateIntegration />
           <ConnectionStatus />
