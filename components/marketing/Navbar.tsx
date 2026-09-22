@@ -94,7 +94,7 @@ export const Navbar: React.FC = () => {
     : "U";
 
   return (
-    <header dir="ltr" className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+    <header dir="ltr" className="sticky top-0 z-40 bg-[#060A14]/90 backdrop-blur-md border-b border-slate-800/80 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 min-h-[64px] max-h-[64px] flex items-center justify-between flex-nowrap min-w-0">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2.5 shrink-0 mr-3 lg:mr-6 group notranslate">
@@ -102,20 +102,20 @@ export const Navbar: React.FC = () => {
             L
           </div>
           <div>
-            <span className="font-heading font-extrabold text-lg tracking-tight text-slate-900 group-hover:text-emerald-700 transition-colors">
+            <span className="font-heading font-extrabold text-lg tracking-tight text-white group-hover:text-emerald-400 transition-colors">
               LandIntel
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs xl:text-[13px] font-semibold text-slate-600 shrink min-w-0">
+        <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs xl:text-[13px] font-semibold text-slate-300 shrink min-w-0">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               prefetch={true}
-              className="px-2 xl:px-3 py-1.5 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/60 transition-all whitespace-nowrap"
+              className="px-2 xl:px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all whitespace-nowrap"
             >
               {link.label}
             </Link>
@@ -124,7 +124,7 @@ export const Navbar: React.FC = () => {
 
         {/* Actions */}
         <div className="hidden lg:flex items-center gap-2 xl:gap-2.5 shrink-0">
-          <LocaleSelector variant="light" compact />
+          <LocaleSelector variant="dark" compact />
 
           {user ? (
             <div className="flex items-center gap-2.5">
@@ -132,7 +132,7 @@ export const Navbar: React.FC = () => {
               <Link
                 href="/properties/new"
                 prefetch={true}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-all whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-sm transition-all whitespace-nowrap"
               >
                 <PlusCircle className="w-3.5 h-3.5" />
                 <span>{t("newCase") || "New Property Case"}</span>
@@ -147,30 +147,30 @@ export const Navbar: React.FC = () => {
                   aria-expanded={userMenuOpen}
                   aria-label="User Account Menu"
                 >
-                  <div className="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center shadow-xs ring-1 ring-emerald-500/20 transition-all">
+                  <div className="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center shadow-xs ring-1 ring-emerald-500/20 transition-all">
                     {userInitial}
                   </div>
-                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-150 ${userMenuOpen ? "rotate-180 text-emerald-600" : ""}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-150 ${userMenuOpen ? "rotate-180 text-emerald-400" : ""}`} />
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-64 rounded-xl bg-white shadow-xl border border-slate-200/90 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                    <div className="px-3.5 py-2.5 border-b border-slate-100">
+                  <div className="absolute right-0 mt-2 w-64 rounded-xl bg-[#0B101E] shadow-2xl border border-slate-800 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-3.5 py-2.5 border-b border-slate-800">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
                           {userInitial}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-xs font-bold text-slate-900 truncate">
+                          <p className="text-xs font-bold text-white truncate">
                             {user.name || user.email}
                           </p>
-                          <p className="text-[11px] text-slate-500 truncate">
+                          <p className="text-[11px] text-slate-400 truncate">
                             {user.email}
                           </p>
                         </div>
                       </div>
-                      <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                         <span>{isAdmin ? "Administrator" : "Verified Investor"}</span>
                       </div>
                     </div>
@@ -180,9 +180,9 @@ export const Navbar: React.FC = () => {
                         href={dashboardHref}
                         prefetch={true}
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/50 transition-colors"
+                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-800/60 transition-colors"
                       >
-                        <LayoutDashboard className="w-4 h-4 text-emerald-600" />
+                        <LayoutDashboard className="w-4 h-4 text-emerald-400" />
                         <span>{isAdmin ? (t("adminConsole") || "Admin Cockpit") : (t("dashboard") || "Investor Workspace")}</span>
                       </Link>
 
@@ -190,9 +190,9 @@ export const Navbar: React.FC = () => {
                         href="/dashboard"
                         prefetch={true}
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/50 transition-colors"
+                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-800/60 transition-colors"
                       >
-                        <UserCheck className="w-4 h-4 text-slate-500" />
+                        <UserCheck className="w-4 h-4 text-slate-400" />
                         <span>{t("myProperties") || "My Property Cases"}</span>
                       </Link>
 
@@ -200,23 +200,23 @@ export const Navbar: React.FC = () => {
                         href="/security"
                         prefetch={true}
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/50 transition-colors"
+                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-800/60 transition-colors"
                       >
-                        <Shield className="w-4 h-4 text-slate-500" />
+                        <Shield className="w-4 h-4 text-slate-400" />
                         <span>Security &amp; Audit</span>
                       </Link>
                     </div>
 
-                    <div className="border-t border-slate-100 pt-1 mt-1">
+                    <div className="border-t border-slate-800 pt-1 mt-1">
                       <button
                         type="button"
                         onClick={() => {
                           setUserMenuOpen(false);
                           handleLogout();
                         }}
-                        className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50/60 transition-colors cursor-pointer text-left"
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors cursor-pointer text-left"
                       >
-                        <LogOut className="w-4 h-4 text-rose-500" />
+                        <LogOut className="w-4 h-4 text-rose-400" />
                         <span>{t("signOut") || "Sign Out"}</span>
                       </button>
                     </div>
@@ -229,14 +229,14 @@ export const Navbar: React.FC = () => {
               <Link
                 href="/login"
                 prefetch={true}
-                className="text-xs font-bold text-slate-700 hover:text-emerald-700 px-3 py-2 transition-colors whitespace-nowrap"
+                className="text-xs font-bold text-slate-300 hover:text-white px-3 py-2 rounded-lg hover:bg-slate-800/60 transition-colors whitespace-nowrap"
               >
                 {t("logIn") || "Sign In"}
               </Link>
               <Link
                 href="/register"
                 prefetch={true}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-all whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 shadow-md transition-all whitespace-nowrap"
               >
                 <span>{t("analyzeProperty") || "Analyze a Property"}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -247,10 +247,10 @@ export const Navbar: React.FC = () => {
 
         {/* Mobile menu toggle */}
         <div className="flex items-center gap-2 lg:hidden">
-          <LocaleSelector variant="light" compact />
+          <LocaleSelector variant="dark" compact />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-1.5 text-brand-textPrimary rounded-md hover:bg-slate-100"
+            className="p-1.5 text-slate-300 hover:text-white rounded-md hover:bg-slate-800"
             aria-label="Toggle Navigation"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -260,37 +260,37 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-b border-brand-border bg-white px-4 py-4 space-y-3">
-          <nav className="flex flex-col space-y-2 text-sm font-semibold text-brand-textPrimary">
+        <div className="lg:hidden border-b border-slate-800 bg-[#080D19] px-4 py-4 space-y-3">
+          <nav className="flex flex-col space-y-2 text-sm font-semibold text-slate-200">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 prefetch={true}
                 onClick={() => setMobileOpen(false)}
-                className="py-1.5 hover:text-brand-blue transition-colors"
+                className="py-1.5 hover:text-emerald-400 transition-colors"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="pt-3 border-t border-brand-border flex flex-col gap-2">
+          <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs font-semibold text-slate-500">Currency &amp; Language</span>
-              <LocaleSelector variant="light" />
+              <span className="text-xs font-semibold text-slate-400">Currency &amp; Language</span>
+              <LocaleSelector variant="dark" />
             </div>
 
             {user ? (
               <div className="space-y-2 pt-1">
-                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
                   <div className="flex items-center gap-2">
-                    <UserCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="text-xs font-bold text-brand-darkNavy truncate">
+                    <UserCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span className="text-xs font-bold text-white truncate">
                       {user.name || user.email}
                     </span>
                   </div>
-                  <span className="text-[10px] text-slate-500 block truncate mt-0.5">
+                  <span className="text-[10px] text-slate-400 block truncate mt-0.5">
                     {user.email} ({user.role})
                   </span>
                 </div>
@@ -299,7 +299,7 @@ export const Navbar: React.FC = () => {
                   href={dashboardHref}
                   prefetch={true}
                   onClick={() => setMobileOpen(false)}
-                  className="block text-center py-2 text-xs font-bold text-white bg-brand-darkNavy rounded-lg hover:bg-slate-800 transition-colors"
+                  className="block text-center py-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
                 >
                   {isAdmin ? (t("adminConsole") || "Admin Cockpit") : (t("dashboard") || "Investor Dashboard")}
                 </Link>
@@ -317,7 +317,7 @@ export const Navbar: React.FC = () => {
                     setMobileOpen(false);
                     handleLogout();
                   }}
-                  className="w-full text-center py-2 text-xs font-bold text-rose-600 hover:text-rose-700 transition-colors cursor-pointer"
+                  className="w-full text-center py-2 text-xs font-bold text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
                 >
                   {t("signOut") || "Sign Out"}
                 </button>
@@ -328,7 +328,7 @@ export const Navbar: React.FC = () => {
                   href="/login"
                   prefetch={true}
                   onClick={() => setMobileOpen(false)}
-                  className="text-center py-2 text-xs font-bold text-brand-textPrimary"
+                  className="text-center py-2 text-xs font-bold text-slate-200 hover:text-white"
                 >
                   {t("logIn") || "Sign In"}
                 </Link>
