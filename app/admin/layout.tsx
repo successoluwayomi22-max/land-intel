@@ -208,7 +208,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     }
   };
 
-  const handleLogout = async () => {
+  const handleLogout = async (): Promise<void> => {
     try {
       if (typeof window !== "undefined") {
         localStorage.removeItem("landintel_token");
@@ -222,7 +222,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         } catch {}
       }
       await fetch("/api/auth/logout", { method: "POST" });
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
     } finally {
       window.location.replace("/login?logged_out=true");
