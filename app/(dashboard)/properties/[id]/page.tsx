@@ -648,7 +648,7 @@ export default function PropertyCaseHubPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Nigerian Cadastral & Legal Verification Checklist</CardTitle>
+              <CardTitle>Cadastral & Legal Due-Diligence Checklist</CardTitle>
               <CardDescription>
                 11 essential due-diligence milestones. Items marked &quot;Professional Required&quot; require an independent surveyor or property lawyer.
               </CardDescription>

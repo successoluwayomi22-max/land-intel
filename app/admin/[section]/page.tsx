@@ -283,7 +283,7 @@ export default function AdminSectionPage() {
     errors: { title: "Error Logs & Incident Telemetry", subtitle: "Centralized server diagnostics, failed worker jobs, and exception tracking", icon: ShieldAlert },
     security: { title: "Security Operations & Access Control", subtitle: "Multi-Factor Authentication (MFA), rate limiting, and session verification", icon: Shield },
     audit: { title: "Immutable Audit Trail", subtitle: "Cryptographic activity logs across administrative, billing, and analysis actions", icon: Terminal },
-    jurisdictions: { title: "Jurisdiction Adapters", subtitle: "Configured national cadastral rules (Nigeria, Ghana, Kenya, UK, US, etc.)", icon: Globe },
+    jurisdictions: { title: "Jurisdiction Adapters", subtitle: "Configured multi-regional cadastral frameworks and zoning rules", icon: Globe },
     currencies: { title: "Global Currency Registry", subtitle: "ISO 4217 currencies and live FX exchange rates against NGN/USD", icon: Coins },
     languages: { title: "Localization & RTL Coverage", subtitle: "Supported global languages, translations, and bidirectional layouts", icon: Languages },
     providers: { title: "External Source Providers", subtitle: "Lands bureaus, cadastral registries, planning departments, and maps APIs", icon: Radio },

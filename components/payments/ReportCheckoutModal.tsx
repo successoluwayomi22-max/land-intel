@@ -318,13 +318,13 @@ export const ReportCheckoutModal: React.FC<ReportCheckoutModalProps> = ({
           {activeTab === "paystack" && (
             <div className="space-y-4 bg-slate-50/80 p-4 rounded-xl border border-slate-200">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-slate-700">Nigerian Debit Card / Bank Transfer</span>
+                <span className="font-semibold text-slate-700">Direct Card / Bank Transfer Gateway</span>
                 <span className="text-[11px] font-bold font-mono text-emerald-700">
                   {formatPrice(taxBreakdown.total, { showCode: true })}
                 </span>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Seamlessly pay with Nigerian Mastercard, Visa, Verve, Bank Transfer, or USSD via Paystack&apos;s secured checkout. Your certified audit report unlocks automatically upon payment.
+                Seamlessly pay with Mastercard, Visa, Verve, direct Bank Transfer, or USSD via secured instant checkout. Your certified audit report unlocks automatically upon payment.
               </p>
               <button
                 type="button"

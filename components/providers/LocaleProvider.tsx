@@ -90,8 +90,8 @@ export const LANGUAGES: Record<SupportedLanguage, LanguageConfig> = {
 
 export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
   en: {
-    heroTitle: "Verify Nigerian Land Before You Pay Millions.",
-    heroSubtitle: "Institutional property due-diligence and cadastral boundary verification engineered for diaspora buyers, remote investors, and families.",
+    heroTitle: "Verify Real Estate Before You Wire Millions.",
+    heroSubtitle: "Institutional property due-diligence and cadastral boundary verification engineered for diaspora buyers, remote investors, and institutions.",
     analyzeProperty: "Analyze a Property",
     dashboard: "Investor Workspace",
     myProperties: "My Property Cases",
@@ -293,7 +293,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     faqQ6: "Can my property lawyer or surveyor review the generated report?",
     faqA6: "Yes. The generated 15-section PDF report is formatted specifically for professional review. It includes targeted questions to ask your surveyor at the Surveyor General's office and questions for your property attorney at the Lands Bureau.",
     // Footer
-    footerTagline: "Diaspora Land Solutions — Securing Nigerian Land for the Global Nigerian. Independent cadastral verification, document provenance analysis, and title intelligence for remote investors.",
+    footerTagline: "Diaspora Land Solutions — Securing High-Value Real Estate for Remote & Diaspora Investors. Independent cadastral verification, document provenance analysis, and title intelligence.",
     privateStorageEncrypted: "Private object storage • Encrypted data transmission",
     product: "Product",
     contactAndSupport: "Contact & Support",

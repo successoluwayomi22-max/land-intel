@@ -23,7 +23,7 @@ export default function FAQPage() {
     },
     {
       q: t("faqQ4") || "What payment methods are supported for unlocking reports?",
-      a: t("faqA4") || "We support Nigerian debit cards, bank transfers, and USSD directly through Paystack (in NGN), with multi-currency payment options available for diaspora buyers.",
+      a: t("faqA4") || "We support global debit/credit cards, bank transfers, and digital payment options with multi-currency checkout available for international and remote investors.",
     },
     {
       q: t("faqQ5") || "What if my documents are photocopies or blurry scans?",
@@ -48,7 +48,7 @@ export default function FAQPage() {
             {t("faq") || "Frequently Asked Questions"}
           </h1>
           <p className="text-sm text-brand-textSecondary leading-relaxed">
-            {t("faqSubtitle") || "Detailed answers regarding Nigerian land due diligence, document handling, and report certification."}
+            {t("faqSubtitle") || "Detailed answers regarding property due diligence, cadastral coordinates, and title certification."}
           </p>
         </div>
 

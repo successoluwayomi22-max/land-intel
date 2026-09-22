@@ -710,10 +710,10 @@ export default function SettingsPage() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <FileDown className="w-4 h-4 text-brand-blue" />
-                <CardTitle>Data Portability & NDPR Privacy</CardTitle>
+                <CardTitle>Data Portability & Privacy</CardTitle>
               </div>
               <CardDescription>
-                Export your personal data archive in compliance with Nigerian NDPR & GDPR standards
+                Export your personal data archive in compliance with statutory Data Protection & GDPR standards
               </CardDescription>
             </CardHeader>
 

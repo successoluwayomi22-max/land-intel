@@ -44,14 +44,14 @@ export const HeroSection: React.FC = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold backdrop-blur-md shadow-inner">
             <Sparkles className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
-            <span>AI Cadastral Due-Diligence for Nigerian Real Estate</span>
+            <span>AI Cadastral Due-Diligence & Title Intelligence</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span className="text-emerald-400 font-mono text-[11px]">36 States & FCT Abuja</span>
+            <span className="text-emerald-400 font-mono text-[11px]">Universal Cadastral Grid</span>
           </div>
 
           {/* Heading */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white font-heading tracking-tight leading-[1.08]">
-            Never Buy Land in Nigeria on Blind Faith.{" "}
+            Never Purchase Land on Blind Faith.{" "}
             <span className="bg-gradient-to-r from-blue-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
               Verify Coordinates & Title First.
             </span>
