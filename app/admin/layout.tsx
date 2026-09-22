@@ -297,7 +297,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
             <h1 className="text-xl font-extrabold font-heading text-white">LandIntel Admin Command Center</h1>
             <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
-              Diaspora Land Solutions Executive Cockpit. Elevated root access required to inspect cadastral registries, audit accounts, and override verified parcels.
+              LandIntel Global Executive Cockpit. Elevated root access required to inspect cadastral registries, audit accounts, and override verified parcels.
             </p>
           </div>
 

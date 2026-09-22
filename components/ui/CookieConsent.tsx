@@ -76,7 +76,7 @@ export const CookieConsent: React.FC = () => {
           <div className="flex-1 text-xs">
             <h4 className="text-sm font-bold text-white mb-1">Privacy &amp; Cookie Preferences</h4>
             <p className="text-slate-300 leading-relaxed mb-3">
-              We use essential cookies to maintain secure authentication and due-diligence sessions. Non-essential cookies help optimize cadastral verification performance under NDPR and GDPR.
+              We use essential cookies to maintain secure authentication and due-diligence sessions. Non-essential cookies help optimize cadastral verification performance under GDPR and applicable privacy regulations.
             </p>
 
             {showPreferences && (

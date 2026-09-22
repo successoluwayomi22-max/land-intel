@@ -109,13 +109,13 @@ export const Navbar: React.FC = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs xl:text-[13px] font-semibold text-slate-700 shrink min-w-0">
+        <nav className="hidden xl:flex items-center gap-1.5 text-xs font-semibold text-slate-700 shrink min-w-0">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               prefetch={true}
-              className="px-2 xl:px-3 py-1.5 rounded-lg text-slate-700 hover:text-emerald-700 hover:bg-slate-50 transition-all whitespace-nowrap"
+              className="px-2.5 py-1.5 rounded-lg text-slate-700 hover:text-emerald-700 hover:bg-slate-50 transition-all whitespace-nowrap"
             >
               {link.label}
             </Link>
@@ -123,7 +123,7 @@ export const Navbar: React.FC = () => {
         </nav>
 
         {/* Actions */}
-        <div className="hidden lg:flex items-center gap-2 xl:gap-2.5 shrink-0">
+        <div className="hidden xl:flex items-center gap-2.5 shrink-0">
           <LocaleSelector variant="light" compact />
 
           {user ? (

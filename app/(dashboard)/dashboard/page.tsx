@@ -122,7 +122,7 @@ export default function DashboardOverviewPage() {
           <span className="text-2xl font-bold font-heading text-brand-textPrimary mt-1 block" suppressHydrationWarning>
             {loading ? "..." : totalDocuments}
           </span>
-          <span className="text-[11px] text-brand-textSecondary block mt-1">Surveys, Deeds & C of Os</span>
+          <span className="text-[11px] text-brand-textSecondary block mt-1">Surveys, Deeds & Title Certificates</span>
         </div>
 
         <div className="bg-white border border-brand-border rounded-card p-4 shadow-subtle">

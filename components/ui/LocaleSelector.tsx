@@ -377,9 +377,7 @@ export const LocaleSelector: React.FC<{
 
                       <div className="text-right flex items-center gap-3">
                         <div className="text-[10px] text-slate-400 font-mono">
-                          {c.code === "NGN"
-                            ? "Origin (₦1)"
-                            : `1 ${c.code} ≈ ₦${Math.round(rateToNgn).toLocaleString()}`}
+                          {isSelected ? "Selected" : "Instant Settle"}
                         </div>
                         {isSelected && (
                           <Check className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />

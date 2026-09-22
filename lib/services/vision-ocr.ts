@@ -25,19 +25,19 @@ export async function extractCadastralTextFromDocument(
     if (GEMINI_API_KEY && isImage) {
       try {
         const base64Data = buffer.toString("base64");
-        const prompt = `You are an expert Cadastral Surveyor and Nigerian Land Registry Due-Diligence Specialist.
-Examine this uploaded document image (Survey Plan, Deed of Assignment, Certificate of Occupancy, or Land Document).
+        const prompt = `You are an expert Cadastral Surveyor and International Land Registry Due-Diligence Specialist.
+Examine this uploaded document image (Survey Plan, Deed of Conveyance/Assignment, Certificate of Title / Occupancy, or Land Document).
 Extract and transcribe ALL visible cadastral text, including:
-1. Document Type & Title (e.g. Survey Plan, Deed of Assignment, C of O, Gazette)
-2. State & Local Government Area (LGA)
-3. Cadastral Survey Plan Number (e.g. LAG/1842/2019)
-4. Boundary Beacon Numbers (e.g. BK101, BK102, SC/1234)
-5. Surveyor Name and Registration (e.g. Surv. Babatunde Alabi, MNIS)
-6. Plot Number, Block Number, Scheme/Layout Name
-7. Parties Involved: Assignor (Seller/Vendor) and Assignee (Buyer/Purchaser)
-8. Consideration/Purchase Price in Naira
-9. Dates of Execution and Survey
-10. All general text, statutory recitals, and official stamps.
+1. Document Type & Title (e.g. Survey Plan, Deed of Conveyance, Title Certificate, Boundary Plat)
+2. Country, Jurisdiction, Region / State / County
+3. Cadastral Survey / Parcel Plan Number
+4. Boundary Beacon / Corner Pin Numbers
+5. Surveyor Name and Professional Accreditation / License
+6. Parcel / Plot Number, Block Number, Subdivision / Layout Name
+7. Parties Involved: Grantor / Assignor (Seller/Vendor) and Grantee / Assignee (Buyer/Purchaser)
+8. Consideration / Purchase Price and Currency
+9. Dates of Execution, Recording, and Survey
+10. All general text, statutory recitals, covenants, and official stamps.
 
 Transcribe the details accurately as raw searchable text.`;
 

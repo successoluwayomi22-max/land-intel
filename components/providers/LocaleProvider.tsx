@@ -90,8 +90,8 @@ export const LANGUAGES: Record<SupportedLanguage, LanguageConfig> = {
 
 export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
   en: {
-    heroTitle: "Verify Real Estate Before You Wire Millions.",
-    heroSubtitle: "Institutional property due-diligence and cadastral boundary verification engineered for diaspora buyers, remote investors, and institutions.",
+    heroTitle: "Verify Any Property Before You Wire Millions.",
+    heroSubtitle: "Institutional property due-diligence, cadastral boundary verification, and title intelligence — engineered for diaspora buyers, remote investors, and global institutions.",
     analyzeProperty: "Analyze a Property",
     dashboard: "Investor Workspace",
     myProperties: "My Property Cases",
@@ -119,7 +119,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     freeScreening: "Preliminary Screening",
     exportData: "Export My Data Archive (.JSON)",
     cadastralQueue: "Cadastral Audit Queue",
-    revenueLedger: "Paystack Live Ledger",
+    revenueLedger: "Revenue & Payments Ledger",
     systemHealth: "System Engine Health",
     dashboardOverview: "Dashboard Overview",
     dueDiligenceCases: "Due-Diligence Cases",
@@ -155,21 +155,21 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     transparentRiskDesc: "Explainable 0–100 score breaking down documentation, ownership, geographic, and consistency weights.",
     // Problem Section
     realityTag: "The Reality of Remote Buying",
-    realityTitle: "Cross-Border Property Transactions Carry Subtle Cadastral Pitfalls",
-    realitySubtitle: "High-value land acquisitions across dynamic property corridors frequently encounter conflicting paperwork that appears legitimate at casual glance.",
-    problem1Title: "Plot & Beacon Mismatches",
-    problem1Desc: "The vendor delivers a registered survey for Plot 24, but the Deed of Assignment conveys Plot 42 or an adjacent layout parcel, leading to rival claims.",
-    problem2Title: "Unconsented Root of Title",
-    problem2Desc: "Deeds transferring interest without requisite statutory Governor's consent under the Land Use Act 1978 leave buyers with legally incomplete equitable claims.",
-    problem3Title: "Uncharted Coordinates",
-    problem3Desc: "Land sold with promises of 'excision in progress' that actually overlaps committed government acquisitions, road setbacks, or flood drainage plains.",
+    realityTitle: "Cross-Border Property Transactions Carry Hidden Cadastral Pitfalls",
+    realitySubtitle: "High-value land acquisitions across dynamic global property corridors frequently encounter conflicting paperwork that appears legitimate at first glance.",
+    problem1Title: "Plot & Boundary Mismatches",
+    problem1Desc: "The vendor delivers a registered survey for one parcel, but the Deed of Assignment conveys a different plot — leading to rival ownership claims.",
+    problem2Title: "Missing Statutory Authority Consent",
+    problem2Desc: "Deeds transferring land interests without the requisite statutory authority consent leave buyers with legally incomplete and unenforceable claims.",
+    problem3Title: "Government Acquisition Overlaps",
+    problem3Desc: "Land sold with promises of 'excision in progress' that actually overlaps committed government acquisitions, road reservations, or protected drainage zones.",
     // Lifecycle
     lifecycleTag: "Due-Diligence Lifecycle",
     lifecycleTitle: "Five Systematic Steps to Complete Clarity",
     step1Title: "Create Case",
-    step1Desc: "Specify state, LGA, parcel address, vendor names, and cadastral GPS coordinates.",
+    step1Desc: "Specify jurisdiction, region, parcel address, vendor names, and cadastral GPS coordinates.",
     step2Title: "Upload Files",
-    step2Desc: "Submit Survey Plans, Deeds, C of O, Gazette Excision, or receipts in private storage.",
+    step2Desc: "Submit Survey Plans, Deeds, Occupancy Certificates, Gazette Excision, or receipts in private storage.",
     step3Title: "Extraction",
     step3Desc: "OCR & legal heuristics map beacon coordinates, plot numbers, and assignor lineage.",
     step4Title: "Cross-Check",
@@ -180,17 +180,17 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "Document Coverage",
     docCoverageTitle: "What LandIntel Evaluates",
     doc1Title: "Cadastral Survey Plans",
-    doc1Desc: "Beacon boundary numbers, surveyor SURCON accreditation, coordinate plotting, and area dimensions.",
+    doc1Desc: "Beacon boundary numbers, licensed surveyor accreditation, coordinate plotting, and area dimensions.",
     doc2Title: "Deeds of Assignment",
     doc2Desc: "Title covenants, assignor/assignee lineage, consideration tranches, and statutory execution stamps.",
-    doc3Title: "Certificate of Occupancy (C of O)",
-    doc3Desc: "State registration volumes, 99-year leasehold commencement dates, and designated land use.",
-    doc4Title: "Governor's Consent",
-    doc4Desc: "Endorsements by State Land Commissioners validating legal transfer of statutory occupancy rights.",
-    doc5Title: "Government Gazette Notices",
-    doc5Desc: "Excision notices, formal gazette volume numbers, and de-acquisition releases.",
+    doc3Title: "Certificate of Occupancy / Title Deed",
+    doc3Desc: "Land registry registration volumes, leasehold commencement dates, and designated land use classification.",
+    doc4Title: "Statutory Authority Consent",
+    doc4Desc: "Endorsements by the appropriate land registry authority validating legal transfer of statutory occupancy rights.",
+    doc5Title: "Government Gazette & Official Notices",
+    doc5Desc: "Excision notices, formal gazette volume numbers, and government de-acquisition releases.",
     doc6Title: "Allocation Letters & Receipts",
-    doc6Desc: "Developer allocations, provisional booking terms, and family acknowledgment receipts.",
+    doc6Desc: "Developer allocation letters, provisional booking terms, and community or family acknowledgment receipts.",
     // Offline / Connection
     offlineTitle: "You Are Currently Offline",
     offlineSubtitle: "We detected that your internet connection is down. Don't worry, your progress and uploaded documents are cached safely.",
@@ -252,7 +252,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     howItWorksTitle: "How LandIntel Works",
     howItWorksSubtitle: "From raw scanned documents to an explainable land-risk intelligence report in minutes.",
     howStep1Title: "Create a Property Case",
-    howStep1Desc: "Provide the property title, state, LGA, street location, and disclosed seller/agent particulars. Add GPS coordinates if available.",
+    howStep1Desc: "Provide the property title, jurisdiction, region, street location, and disclosed seller/agent particulars. Add GPS coordinates if available.",
     howStep2Title: "Upload Your Documents Privately",
     howStep2Desc: "Upload scans or PDF copies of Survey Plans, Deeds of Assignment, Certificates of Occupancy, Allocation Letters, or Purchase Receipts.",
     howStep3Title: "Document Classification & Provenance OCR",
@@ -262,7 +262,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     howStep5Title: "Risk Score & Verification Checklist",
     howStep5Desc: "Review your explainable 0–100 Risk Indicator Score, examine identified flags, and track progress through an 11-point cadastral checklist.",
     howStep6Title: "Download Genuine PDF Due-Diligence Report",
-    howStep6Desc: "Unlock the full 15-section report via Paystack in your preferred local currency (₦45,000 / $30 USD). Download a publication-grade PDF certification to send to your surveyor and lawyer.",
+    howStep6Desc: "Unlock the full 15-section report via secure checkout in your preferred local currency ($30 USD equivalent). Download a publication-grade PDF certification to send to your surveyor and lawyer.",
     // Marketing - Security
     securityArch: "Security & Privacy Architecture",
     enterpriseDocSecurity: "Enterprise Document Security",
@@ -277,7 +277,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     serverSideEntitlementsDesc: "All payment and premium feature gating is evaluated server-side. Unlocked data is redacted from the API response for free users, preventing client-side inspection leaks.",
     // Marketing - Pricing
     pricingTitle: "Know The Land Risk Before Committing Millions",
-    pricingSubtitle: "No recurring monthly subscriptions. Use preliminary screening for free, or unlock comprehensive certified 15-section due-diligence reports via Paystack in your local currency.",
+    pricingSubtitle: "No recurring monthly subscriptions. Use preliminary screening for free, or unlock comprehensive certified 15-section due-diligence reports via secure checkout in your local currency.",
     // Marketing - FAQ
     faqSubtitle: "Detailed answers regarding property due diligence, document handling, and report certification.",
     faqQ1: "Does LandIntel establish legal ownership or certify title?",
@@ -291,9 +291,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     faqQ5: "What if my documents are photocopies or blurry scans?",
     faqA5: "Our multi-pass OCR extracts legible text and flags uncertain items as 'Uncertain' rather than inventing data. If a beacon number is unreadable, we advise physical beacon pickup by a surveyor on site.",
     faqQ6: "Can my property lawyer or surveyor review the generated report?",
-    faqA6: "Yes. The generated 15-section PDF report is formatted specifically for professional review. It includes targeted questions to ask your surveyor at the Surveyor General's office and questions for your property attorney at the Lands Bureau.",
+    faqA6: "Yes. The generated 15-section PDF report is formatted specifically for professional review. It includes targeted questions to ask your surveyor at the land registry and questions for your property attorney at the appropriate government office.",
     // Footer
-    footerTagline: "Diaspora Land Solutions — Securing High-Value Real Estate for Remote & Diaspora Investors. Independent cadastral verification, document provenance analysis, and title intelligence.",
+    footerTagline: "LandIntel Global — Securing High-Value Real Estate for Remote & International Investors. Independent cadastral verification, document provenance analysis, and title intelligence.",
     privateStorageEncrypted: "Private object storage • Encrypted data transmission",
     product: "Product",
     contactAndSupport: "Contact & Support",
@@ -398,7 +398,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     step1Title: "创建档案",
     step1Desc: "指定所在州、地方政府区域、地址、卖家姓名与GPS坐标。",
     step2Title: "上传文件",
-    step2Desc: "提交测绘图、转让契约、土地占用证书(C of O)或收据至加密存储。",
+    step2Desc: "提交测绘图、转让契约、产权证书或收据至加密存储。",
     step3Title: "智能提取",
     step3Desc: "OCR与法律启发式算法解析界标坐标、宗地号和让与人血统传承。",
     step4Title: "交叉比对",
@@ -408,12 +408,12 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "支持的文件范围",
     docCoverageTitle: "LandIntel 严格审查的文件类型",
     doc1Title: "地籍测绘图 (Survey Plans)",
-    doc1Desc: "界标编号、测量员SURCON认证、真实坐标绘图与面积核验。",
+    doc1Desc: "界标编号、持证测绘师认证、真实坐标绘图与面积核验。",
     doc2Title: "转让契约 (Deed of Assignment)",
     doc2Desc: "所有权立约条款、前手权属传承链条、交易款项及法定印花税盖章。",
-    doc3Title: "土地占用证书 (C of O)",
+    doc3Title: "土地使用权证书 (Certificate of Occupancy)",
     doc3Desc: "州政府土地登记册卷宗号、99年租赁起始日期与核准土地用途。",
-    doc4Title: "州长同意书 (Governor's Consent)",
+    doc4Title: "法定主管机构同意书 (Statutory Consent)",
     doc4Desc: "州土地事务专员背书，依法确认法定土地所有权益转移。",
     doc5Title: "政府公报公告 (Gazette)",
     doc5Desc: "免征批复文件、官方公报正式卷号及政府解征放行记录。",
@@ -446,7 +446,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "已启用实时汇率换算",
   },
   es: {
-    heroTitle: "Verifique Terrenos en Nigeria Antes de Pagar Millones.",
+    heroTitle: "Verifique Bienes Raíces Antes de Transferir Millones.",
     heroSubtitle: "Auditoría catastral institucional y verificación de linderos diseñada para compradores de la diáspora e inversionistas remotos.",
     analyzeProperty: "Analizar una Propiedad",
     dashboard: "Espacio del Inversionista",
@@ -475,7 +475,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     freeScreening: "Evaluación Preliminar Gratuita",
     exportData: "Exportar Archivo de Datos (.JSON)",
     cadastralQueue: "Cola de Auditoría Catastral",
-    revenueLedger: "Libro de Ingresos Paystack",
+    revenueLedger: "Libro de Ingresos y Pagos",
     systemHealth: "Estado del Sistema",
     dashboardOverview: "Resumen del Panel",
     dueDiligenceCases: "Casos de Propiedad",
@@ -509,8 +509,8 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     transparentRiskTitle: "Puntuación de Riesgo Transparente",
     transparentRiskDesc: "Puntuación de 0 a 100 ponderando riesgos geográficos, de titularidad y coherencia legal.",
     realityTag: "La Realidad de Comprar a Distancia",
-    realityTitle: "Comprar Propiedades en Nigeria Desde el Extranjero Conlleva Peligros Ocultos",
-    realitySubtitle: "Las transacciones inmobiliarias en Lagos y Abuya con frecuencia involucran documentación conflictiva que parece legítima a primera vista.",
+    realityTitle: "Comprar Propiedades a Distancia Conlleva Peligros Catastrales Ocultos",
+    realitySubtitle: "Las transacciones inmobiliarias transfronterizas con frecuencia involucran documentación conflictiva que parece legítima a primera vista.",
     problem1Title: "Discrepancias en Lotes e Hitos",
     problem1Desc: "El vendedor presenta un plano para el Lote 24 pero la Escritura transfiere el Lote 42, generando disputas con terceros.",
     problem2Title: "Falta de Consentimiento del Gobernador",
@@ -532,10 +532,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "Documentos Cubiertos",
     docCoverageTitle: "Qué Audita LandIntel",
     doc1Title: "Planos Topográficos Registrados",
-    doc1Desc: "Verificación de hitos perimetrales y acreditación oficial SURCON.",
+    doc1Desc: "Verificación de hitos perimetrales y acreditación de agrimensor certificado.",
     doc2Title: "Escrituras de Cesión (Deed)",
     doc2Desc: "Cadenas de transmisión de propiedad, pactos y sellos de timbrado.",
-    doc3Title: "Certificado de Ocupación (C of O)",
+    doc3Title: "Certificado de Ocupación",
     doc3Desc: "Volúmenes de registro estatal y plazos de arrendamiento.",
     doc4Title: "Consentimiento del Gobernador",
     doc4Desc: "Validación estatal que perfecciona el traspaso de derechos estatutarios.",
@@ -656,10 +656,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "जांचे जाने वाले दस्तावेज",
     docCoverageTitle: "LandIntel किन दस्तावेजों का परीक्षण करता है",
     doc1Title: "कैडस्ट्रल सर्वे प्लान",
-    doc1Desc: "बीकन नंबर, आधिकारिक SURCON अनुमोदन और सटीक जीपीएस मैपिंग।",
+    doc1Desc: "बीकन नंबर, प्रमाणित सर्वेक्षक अनुमोदन और सटीक जीपीएस मैपिंग।",
     doc2Title: "असाइनमेंट का डीड",
     doc2Desc: "स्वामित्व की वंशावली, कानूनी शर्तें और वैधानिक टिकटें।",
-    doc3Title: "अधिभोग प्रमाणपत्र (C of O)",
+    doc3Title: "अधिभोग प्रमाणपत्र",
     doc3Desc: "राज्य पंजीकरण संख्या और 99-वर्षीय लीज की वैधता।",
     doc4Title: "राज्यपाल की सहमति",
     doc4Desc: "राज्य द्वारा स्वामित्व हस्तांतरण की आधिकारिक कानूनी पुष्टि।",
@@ -694,8 +694,8 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "लाइव मुद्रा विनिमय दरें सक्रिय",
   },
   fr: {
-    heroTitle: "Vérifiez les Terrains Nigérians Avant de Payer des Millions.",
-    heroSubtitle: "Audit cadastral institutionnel et vérification des bornes conçu pour les acheteurs de la diaspora et les investisseurs distants.",
+    heroTitle: "Vérifiez Tout Bien Immobilier Avant de Virer des Millions.",
+    heroSubtitle: "Audit cadastral institutionnel, vérification des bornes et intelligence foncière conçus pour les acheteurs de la diaspora et les investisseurs distants dans le monde entier.",
     analyzeProperty: "Analyser un Terrain",
     dashboard: "Espace Investisseur",
     myProperties: "Mes Dossiers Immobiliers",
@@ -723,7 +723,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     freeScreening: "Évaluation Préliminaire Gratuite",
     exportData: "Exporter mes Données (.JSON)",
     cadastralQueue: "File d'Attente Cadastrale",
-    revenueLedger: "Grand Livre Paystack",
+    revenueLedger: "Grand Livre des Paiements",
     systemHealth: "État du Moteur",
     dashboardOverview: "Aperçu du Tableau de Bord",
     dueDiligenceCases: "Dossiers Fonciers",
@@ -757,20 +757,20 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     transparentRiskTitle: "Score de Risque Transparent",
     transparentRiskDesc: "Un score de 0 à 100 décomposant la consistance géographique, la propriété et les risques de consentement légal.",
     realityTag: "La Réalité de l'Achat à Distance",
-    realityTitle: "Acheter un Terrain au Nigeria Depuis l'Étranger Comporte des Pièges Cadastraux",
-    realitySubtitle: "Les transactions foncières à Lagos et Abuja comportent fréquemment des documents contradictoires qui semblent authentiques à première vue.",
+    realityTitle: "Les Transactions Foncières Transfrontalières Comportent des Pièges Cadastraux Cachés",
+    realitySubtitle: "Les acquisitions immobilières de grande valeur comportent fréquemment des documents contradictoires qui semblent authentiques à première vue.",
     problem1Title: "Discordance de Parcelles et de Bornes",
-    problem1Desc: "Le vendeur fournit un plan de bornage pour la parcelle 24 alors que l'acte d'assignation transfère la parcelle 42.",
-    problem2Title: "Absence de Consentement du Gouverneur",
-    problem2Desc: "Les actes transférant des droits fonciers sans le consentement obligatoire du gouverneur sont juridiquement invalides.",
+    problem1Desc: "Le vendeur fournit un plan pour une parcelle, mais l'acte d'assignation transfère une parcelle différente, créant des conflits de propriété.",
+    problem2Title: "Absence de Consentement de l'Autorité Compétente",
+    problem2Desc: "Les actes transférant des droits fonciers sans le consentement obligatoire de l'autorité d'enregistrement foncier sont juridiquement invalides.",
     problem3Title: "Coordonnées en Zone d'Acquisition Publique",
-    problem3Desc: "Terrains vendus avec de fausses promesses d'excision qui chevauchent des emprises publiques ou zones inondables.",
+    problem3Desc: "Terrains vendus avec de fausses promesses d'excision qui chevauchent des réserves gouvernementales, emprises routières ou zones inondables.",
     lifecycleTag: "Cycle de Diligence Raisonnée",
     lifecycleTitle: "Cinq Étapes Rigoureuses Vers la Sécurité Totale",
     step1Title: "Créer le Dossier",
-    step1Desc: "Renseignez l'État, la localité, l'adresse du terrain et les coordonnées GPS.",
+    step1Desc: "Renseignez la juridiction, la localité, l'adresse du terrain et les coordonnées GPS.",
     step2Title: "Déposer les Fichiers",
-    step2Desc: "Téléversez les plans de bornage, actes, C of O et reçus dans votre espace sécurisé.",
+    step2Desc: "Téléversez les plans de bornage, actes, titres de propriété et reçus dans votre espace sécurisé.",
     step3Title: "Extraction Intelligente",
     step3Desc: "L'OCR et les algorithmes juridiques extraient les coordonnées et la lignée de propriété.",
     step4Title: "Recoupement Algorithmique",
@@ -780,17 +780,17 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "Documents Analysés",
     docCoverageTitle: "Ce Que LandIntel Vérifie",
     doc1Title: "Plans Cadastraux de Bornage",
-    doc1Desc: "Numéros de bornes, accréditation SURCON du géomètre et calcul des superficies.",
+    doc1Desc: "Numéros de bornes, accréditation du géomètre certifié et calcul des superficies.",
     doc2Title: "Actes d'Assignation (Deeds)",
     doc2Desc: "Conventions de propriété, chaîne des cédants et cachets d'enregistrement officiels.",
-    doc3Title: "Certificat d'Occupation (C of O)",
-    doc3Desc: "Numéros de registre d'État, baux de 99 ans et affectation d'usage du sol.",
-    doc4Title: "Consentement du Gouverneur",
-    doc4Desc: "Approbation obligatoire par le Commissaire aux Terres confirmant la validité du transfert.",
+    doc3Title: "Certificat d'Occupation / Titre de Propriété",
+    doc3Desc: "Numéros de registre foncier, dates de commencement de bail et affectation d'usage du sol.",
+    doc4Title: "Consentement de l'Autorité Foncière",
+    doc4Desc: "Approbation obligatoire par l'autorité d'enregistrement foncier compétente confirmant la validité du transfert.",
     doc5Title: "Avis de Gazette Gouvernementale",
     doc5Desc: "Arrêtés d'excision officielle et mainlevées d'acquisitions publiques.",
     doc6Title: "Lettres d'Attribution et Reçus",
-    doc6Desc: "Attributions de promoteurs et reçus d'indemnisation coutumière familiale.",
+    doc6Desc: "Attributions de promoteurs et reçus de familles ou communautés.",
     offlineTitle: "Vous Êtes Hors Ligne",
     offlineSubtitle: "Votre connexion internet est actuellement coupée. Vos documents et votre avancement sont conservés en toute sécurité.",
     offlineNotice: "Connexion Interrompue",
@@ -907,7 +907,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     doc1Desc: "أرقام العلامات المساحية واعتماد المساح وتوقيع الإحداثيات الدقيقة.",
     doc2Title: "عقود التنازل والبيوع",
     doc2Desc: "شروط العقد وتسلسل الملاك السابقين والأختام القانونية.",
-    doc3Title: "شهادة الإشغال الرسمية (C of O)",
+    doc3Title: "شهادة الإشغال الرسمية",
     doc3Desc: "أرقام السجلات الحكومية وعقود الإيجار لـ 99 عاماً والاستخدام المصرح به.",
     doc4Title: "موافقة الحاكم القانونية",
     doc4Desc: "تأشيرات مفوض الأراضي الحكومي للتأكيد على نقل حقوق الانتفاع.",
@@ -942,7 +942,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "أسعار الصرف المباشرة مفعلة",
   },
   pcm: {
-    heroTitle: "Check Nigerian Land Papers Well Well Before You Pay Millions.",
+    heroTitle: "Check Land Papers Well Well Before You Wire Millions.",
     heroSubtitle: "Engine wey dey verify survey plans, beacon coordinates, and land registry records so nobody go fit scam you from abroad.",
     analyzeProperty: "Check Your Land Paper",
     dashboard: "Your Property Desk",
@@ -971,7 +971,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     freeScreening: "Free First Check",
     exportData: "Download My Data Archive (.JSON)",
     cadastralQueue: "Queue of Land We Dey Check",
-    revenueLedger: "Paystack Money Record",
+    revenueLedger: "Revenue & Payment Record",
     systemHealth: "Engine Health Status",
     dashboardOverview: "Main Desk Overview",
     dueDiligenceCases: "My Land Cases",
@@ -1006,11 +1006,11 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     transparentRiskDesc: "We go give you simple score from 0 to 100 so you go know whether wahala dey or not.",
     realityTag: "As e dey be for abroad buyers",
     realityTitle: "To Buy Land from Abroad Carry Plenty Corner-Corner Wey fit Make Person Cry",
-    realitySubtitle: "Land people for Lagos and Abuja sabi arrange paper wey go look original, but when lawyer check am, na duplicate.",
+    realitySubtitle: "Land people fit arrange paper wey go look original, but when lawyer check am, na duplicate.",
     problem1Title: "Survey Beacon and Deed No Agree",
     problem1Desc: "Vendor go show you survey paper for Plot 24, but the Deed paper go carry Plot 42.",
-    problem2Title: "Governor Consent No Dey",
-    problem2Desc: "Land paper without Governor Consent mean say government fit cancel the deal anytime.",
+    problem2Title: "Statutory Consent No Dey",
+    problem2Desc: "Land paper without official statutory consent mean say government fit cancel the deal anytime.",
     problem3Title: "Land Dey Inside Government Acquisition",
     problem3Desc: "Dem go tell you say excision dey process, but na lie, road or water channel dey there.",
     lifecycleTag: "How We Dey Check Am",
@@ -1018,7 +1018,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     step1Title: "Open Case",
     step1Desc: "Tell us where the land dey, state, and vendor name.",
     step2Title: "Upload Papers",
-    step2Desc: "Put the Survey Plan, Deed, or C of O inside our secure box.",
+    step2Desc: "Put the Survey Plan, Deed, or Title Certificate inside our secure box.",
     step3Title: "Computer Check",
     step3Desc: "Our smart machine go read all the beacon numbers and dates.",
     step4Title: "Cross Matching",
@@ -1031,10 +1031,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     doc1Desc: "Beacon numbers, surveyor signature, and GPS coordinates.",
     doc2Title: "Deed of Assignment",
     doc2Desc: "Who sell give who, how much dem pay, and government stamp.",
-    doc3Title: "Certificate of Occupancy (C of O)",
+    doc3Title: "Certificate of Occupancy",
     doc3Desc: "State government registration book and 99 years lease date.",
-    doc4Title: "Governor Consent",
-    doc4Desc: "Official signature from Alausa or ministry verifying the land.",
+    doc4Title: "Statutory Authority Consent",
+    doc4Desc: "Official signature from land ministry or statutory registry verifying the parcel.",
     doc5Title: "Official Gazette",
     doc5Desc: "Government gazette publication wey release the land from acquisition.",
     doc6Title: "Developer Allocation & Receipts",
@@ -1095,7 +1095,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     freeScreening: "Ayẹwo Akọkọ Ọfẹ",
     exportData: "Gba Awọn Faili Mi (.JSON)",
     cadastralQueue: "Awọn Ilẹ Ti A N Ṣayẹwo",
-    revenueLedger: "Akọsilẹ Owo Paystack",
+    revenueLedger: "Akọsilẹ Owo Wiwọle",
     systemHealth: "Ipo Ẹrọ Ayelujara",
     dashboardOverview: "Akopọ Dasibodu",
     dueDiligenceCases: "Awọn Ẹjọ Ilẹ Mi",
@@ -1130,11 +1130,11 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     transparentRiskDesc: "Aami 0 de 100 ti o pin ewu ilẹ, akọle ati aṣiṣe si ọna ti o ye gbogbo eniyan.",
     realityTag: "Otitọ Nipa Rira Ilẹ Lati Okeere",
     realityTitle: "Rira Ilẹ Naijiria Lati Ilu Okeere Lẹgbẹ Ewu Nla",
-    realitySubtitle: "Awọn tita ilẹ ni Eko ati Abuja ma n ni awọn iwe aṣẹ ti o tako ara wọn botilẹjẹpe wọn dabi tootọ.",
+    realitySubtitle: "Awọn tita ilẹ ma n ni awọn iwe aṣẹ ti o tako ara wọn botilẹjẹpe wọn dabi tootọ.",
     problem1Title: "Aisọri Nọmba Ilẹ ati Beacon",
     problem1Desc: "Oniduro le gbe survey Plot 24 wa ṣugbọn Deed Assignment rẹ n sọ nipa Plot 42.",
-    problem2Title: "Aisi Ifọwọsi Gomina (Governor's Consent)",
-    problem2Desc: "Iwe adehun laisi ifọwọsi gomina labẹ ofin Land Use Act 1978 fi olura sinu ipo ewu nla.",
+    problem2Title: "Aisi Ifọwọsi Alaṣẹ (Statutory Consent)",
+    problem2Desc: "Iwe adehun laisi ifọwọsi alaṣẹ to tọ fi olura sinu ipo ewu nla labẹ ofin.",
     problem3Title: "Ilẹ Ti Ijọba Ti Gba",
     problem3Desc: "Ilẹ ti a ta pẹlu ileri pe 'excision' n lọ lọwọ ti o si jẹ pe ijọba ti pinnu lati kọ ọna tabi idalẹnu si ibẹ.",
     lifecycleTag: "Igbese Ayẹwo",
@@ -1142,7 +1142,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     step1Title: "Ṣẹda Ẹjọ",
     step1Desc: "Pato ipinle, ijoba ibile, adiresi ati GPS ilẹ naa.",
     step2Title: "Gbe Awọn Faili Wọle",
-    step2Desc: "Gbe Survey Plan, Deed, C of O wọle si ibi ipamọ to ni aabo.",
+    step2Desc: "Gbe Survey Plan, Deed, Iwe-ẹri akọle wọle si ibi ipamọ to ni aabo.",
     step3Title: "Ayẹwo Imọ-Ẹrọ",
     step3Desc: "OCR ati ẹrọ wa yoo ka awọn nọmba beacon ati itan awọn ti o ni ilẹ tẹlẹ.",
     step4Title: "Ifiwera Iwe",
@@ -1152,12 +1152,12 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "Awọn Iwe Ti A N Ṣayẹwo",
     docCoverageTitle: "Awọn Iwe Ti LandIntel N Ṣayẹwo",
     doc1Title: "Eto Iwadi Ilẹ (Survey Plans)",
-    doc1Desc: "Nọmba awọn beacon, ifọwọsi SURCON ti olupilẹṣẹ, ati iwọn ilẹ to peye.",
+    doc1Desc: "Nọmba awọn beacon, ifọwọsi olupilẹṣẹ to ni iwe-aṣẹ, ati iwọn ilẹ to peye.",
     doc2Title: "Iwe Adehun Tita (Deed of Assignment)",
     doc2Desc: "Awọn adehun gbigbe, itan olutaja, ati awọn ami owo-ori ijọba.",
-    doc3Title: "Iwe-ẹri Ibugbe (C of O)",
+    doc3Title: "Iwe-ẹri Ibugbe",
     doc3Desc: "Nọmba iforukọsilẹ ti ipinlẹ, ọjọ iyalo ọdun 99 ati lilo ti a gba laaye.",
-    doc4Title: "Ifọwọsi Gomina (Governor's Consent)",
+    doc4Title: "Ifọwọsi Alaṣẹ Ijọba (Statutory Consent)",
     doc4Desc: "Ifọwọsi pataki lati ọdọ kọmiṣanna ilẹ ti o n fi idi gbigbe ẹtọ mulẹ.",
     doc5Title: "Iwe Iroyin Ijọba (Gazette)",
     doc5Desc: "Akiyesi idasilẹ ilẹ ati awọn idasile ijọba to ti kọja.",
@@ -1219,7 +1219,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     freeScreening: "Nyocha Mbụ n'Efukwuru",
     exportData: "Mbupu Data M (.JSON)",
     cadastralQueue: "Ahịrị Nyocha Cadastral",
-    revenueLedger: "Ndekọ Ego Paystack",
+    revenueLedger: "Ndekọ Ego Mgbakọta",
     systemHealth: "Ọnọdụ Usoro Anyị",
     dashboardOverview: "Nchịkọta Ebe Ọrụ",
     dueDiligenceCases: "Okwu Ala M",
@@ -1254,11 +1254,11 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     transparentRiskDesc: "Akara 0 ruo 100 na-egosi nchekwa ala na ihe ndekọ gbasara ya.",
     realityTag: "Eziokwu Banyere Ịzụta Ala Site na Mba Ọzọ",
     realityTitle: "Ịzụta Ala Na Naijiria Site na Mba Ọzọ Nwere Ọtụtụ Ihe Egwu",
-    realitySubtitle: "Azụmahịa ala na Lagos na Abuja na-enwekarị akwụkwọ na-emegide onwe ha n'agbanyeghị na ha yiri ezigbo akwụkwọ.",
+    realitySubtitle: "Azụmahịa ala na-enwekarị akwụkwọ na-emegide onwe ha n'agbanyeghị na ha yiri ezigbo akwụkwọ.",
     problem1Title: "Nọmba Ala na Beacon Ekwekọrịtaghị",
     problem1Desc: "Onye na-ere ere na-egosi nyocha maka Plot 24 mana Deed na-ekwu maka Plot 42.",
     problem2Title: "Enweghị Nkwenye Gọvanọ",
-    problem2Desc: "Ihe ndekọ enweghị nkwenye gọvanọ n'okpuru Land Use Act 1978 na-etinye onye zụrụ n'ihe egwu.",
+    problem2Desc: "Ihe ndekọ enweghị nkwenye ndị isi na-etinye onye zụrụ n'ihe egwu n'okpuru iwu.",
     problem3Title: "Ala Dị n'Ebe Gọọmentị Weghaara",
     problem3Desc: "Ala a na-ere na-ekwu na 'excision' na-aga n'ihu ma ọ bụ na gọọmentị chọrọ iji ya mee okporo ụzọ.",
     lifecycleTag: "Usoro Nyocha",
@@ -1266,7 +1266,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     step1Title: "Mepụta Okwu",
     step1Desc: "Tinye steeti, gọọmentị ime obodo, adreesị na GPS.",
     step2Title: "Bulite Faịlụ",
-    step2Desc: "Tinye Survey Plan, Deed, na C of O n'ebe nchekwa.",
+    step2Desc: "Tinye Survey Plan, Deed, na Akwụkwọ ikike n'ebe nchekwa.",
     step3Title: "Nchọpụta Akwụkwọ",
     step3Desc: "Ngwa teknụzụ anyị ga-agụ nọmba beacon na nkọwa niile.",
     step4Title: "Ntụle Ọnụ",
@@ -1276,12 +1276,12 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "Akwụkwọ Anyị Na-enyocha",
     docCoverageTitle: "Ihe LandIntel Na-enyocha",
     doc1Title: "Atụmatụ Nyocha E Debanyere Aha",
-    doc1Desc: "Nọmba beacon, nkwado SURCON nke onye nyocha na nyocha ebe.",
+    doc1Desc: "Nọmba beacon, nkwado onye nyocha nwere ikike na nyocha ebe.",
     doc2Title: "Akwụkwọ Nkwekọrịta (Deed)",
     doc2Desc: "Usoro nnyefe, akụkọ ndị nwe ala mbụ na stampụ ụtụ isi.",
-    doc3Title: "Akwụkwọ Ikike Ibi (C of O)",
+    doc3Title: "Akwụkwọ Ikike Ibi",
     doc3Desc: "Nọmba ndebanye aha gọọmentị na oge mgbazinye afọ 99.",
-    doc4Title: "Nkwenye Gọvanọ (Governor's Consent)",
+    doc4Title: "Nkwenye Ndị Ọchịchị (Statutory Consent)",
     doc4Desc: "Nkwado n'aka kọmishọna ala na-egosi na nnyefe ahụ ziri ezi.",
     doc5Title: "Akwụkwọ Akụkọ Gọọmentị (Gazette)",
     doc5Desc: "Akwụkwọ na-egosi na ewepụla ala ahụ n'aka gọọmentị.",
@@ -1343,7 +1343,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     freeScreening: "Farkon Bincike Kyauta",
     exportData: "Sauke Bayanaina (.JSON)",
     cadastralQueue: "Layin Binciken Filaye",
-    revenueLedger: "Rikodin Kudaden Paystack",
+    revenueLedger: "Rikodin Kudaden Shiga",
     systemHealth: "Lafiyar Tsarin",
     dashboardOverview: "Bayanin Dashboard",
     dueDiligenceCases: "Filayena da Ake Bincike",
@@ -1378,7 +1378,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     transparentRiskDesc: "Maki daga 0 zuo 100 yana nuna matsayin fili da dokokin da suka shafe shi.",
     realityTag: "Gaskiyar Sayan Fili Daga Ketare",
     realityTitle: "Sayan Fili a Najeriya Daga Kasashen Waje Yana Dauke Da Hatsari",
-    realitySubtitle: "Ma'amalolin filaye a Legas da Abuja sukan hada da takardu masu cin karo da juna duk da cewa suna kama da na gaskiya.",
+    realitySubtitle: "Ma'amalolin filaye sukan hada da takardu masu cin karo da juna duk da cewa suna kama da na gaskiya.",
     problem1Title: "Kuskuren Lambar Fili da Siminti",
     problem1Desc: "Mai siyarwa zai nuna muku takardar binciken Plot 24 amma Deed din yana magana ne kan Plot 42.",
     problem2Title: "Rashin Sa Hannun Gwamna",
@@ -1390,7 +1390,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     step1Title: "Bude Shari'a",
     step1Desc: "Bayyana jiha, karamar hukuma, adireshin fili da lambobin GPS.",
     step2Title: "Loda Takardu",
-    step2Desc: "Sanya takardun Survey Plan, Deed da C of O cikin aminci.",
+    step2Desc: "Sanya takardun Survey Plan, Deed da Takardar Mallaka cikin aminci.",
     step3Title: "Binciken Na'ura",
     step3Desc: "Na'urorinmu za su karanta dukkan lambobin siminti da tarihin filin.",
     step4Title: "Kwatanta Takardu",
@@ -1400,12 +1400,12 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "Takardun Da Muke Dubawa",
     docCoverageTitle: "Takardun Da LandIntel Ke Bincike",
     doc1Title: "Rijistar Tsarin Taswira (Survey Plan)",
-    doc1Desc: "Lambobin siminti, amincewar masanin taswira SURCON da ainihin girman fili.",
+    doc1Desc: "Lambobin siminti, amincewar masanin taswira mai lasisi da ainihin girman fili.",
     doc2Title: "Yarjejeniyar Mallaka (Deed)",
     doc2Desc: "Tarihin wadanda suka mallaki filin a baya da tambarin haraji na gwamnati.",
-    doc3Title: "Shaidar Mallakar Kasa (C of O)",
+    doc3Title: "Shaidar Mallakar Kasa",
     doc3Desc: "Lambar rajistar gwamnatin jiha da wa'adin hayar shekaru 99.",
-    doc4Title: "Amincewar Gwamna (Governor's Consent)",
+    doc4Title: "Amincewar Hukumar Filaye (Statutory Consent)",
     doc4Desc: "Sa hannun kwamishinan filaye mai tabbatar da canja ikon mallaka a hukumance.",
     doc5Title: "Sanarwar Gwamnati (Gazette)",
     doc5Desc: "Takardar da ke nuna cewa gwamnati ta saki filin daga ikon ta.",
@@ -1438,7 +1438,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "Farashin canjin kudi na aiki kai tsaye",
   },
   de: {
-    heroTitle: "Prüfen Sie nigerianisches Land, bevor Sie Millionen zahlen.",
+    heroTitle: "Prüfen Sie Grundstücke weltweit, bevor Sie Millionen zahlen.",
     heroSubtitle: "Institutionelle Due-Diligence-Prüfung und Katasterverifikation für Diaspora-Käufer und Ferninvestoren.",
     analyzeProperty: "Grundstück Analysieren",
     dashboard: "Investoren-Arbeitsbereich",
@@ -1467,7 +1467,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     freeScreening: "Kostenlose Vorprüfung",
     exportData: "Datenarchiv Exportieren (.JSON)",
     cadastralQueue: "Kataster-Warteschlange",
-    revenueLedger: "Paystack-Hauptbuch",
+    revenueLedger: "Einnahmen-Hauptbuch",
     systemHealth: "Systemstatus",
     dashboardOverview: "Dashboard-Übersicht",
     dueDiligenceCases: "Grundstücksfälle",
@@ -1501,8 +1501,8 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     transparentRiskTitle: "Transparente Risikobewertung",
     transparentRiskDesc: "Nachvollziehbarer Score von 0 bis 100 mit detaillierter Aufschlüsselung der Rechts- und Katasterrisiken.",
     realityTag: "Die Realität von Ferninvestitionen",
-    realityTitle: "Der Kauf von Grundstücken in Nigeria birgt subtile katasterrechtliche Gefahren",
-    realitySubtitle: "Immobilientransaktionen in Lagos und Abuja weisen oft widersprüchliche Dokumente auf, die auf den ersten Blick echt wirken.",
+    realityTitle: "Der Kauf von Auslandsimmobilien birgt subtile katasterrechtliche Gefahren",
+    realitySubtitle: "Internationale Immobilientransaktionen weisen oft widersprüchliche Dokumente auf, die auf den ersten Blick echt wirken.",
     problem1Title: "Flurstück- & Grenzstein-Diskrepanzen",
     problem1Desc: "Der Verkäufer liefert einen Vermessungsplan für Parzelle 24, die Abtretungsurkunde überträgt jedoch Parzelle 42.",
     problem2Title: "Fehlende Zustimmung des Gouverneurs",
@@ -1524,10 +1524,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "Geprüfte Dokumente",
     docCoverageTitle: "Was LandIntel Analysiert",
     doc1Title: "Amtliche Vermessungspläne",
-    doc1Desc: "Grenzstein-Nummern, SURCON-Akkreditierung des Vermessers und Koordinaten-Plotting.",
+    doc1Desc: "Grenzstein-Nummern, Akkreditierung des lizenzierten Vermessers und Koordinaten-Plotting.",
     doc2Title: "Abtretungsurkunden (Deeds)",
     doc2Desc: "Eigentumsübertragungen, Vorbesitzerketten und gesetzliche Stempel.",
-    doc3Title: "Nutzungszertifikat (C of O)",
+    doc3Title: "Nutzungszertifikat",
     doc3Desc: "Registrierungsbände der Bundesstaaten und 99-jährige Pachtfristen.",
     doc4Title: "Zustimmung des Gouverneurs",
     doc4Desc: "Behördliche Bestätigungen, die den rechtskräftigen Eigentumsübergang sichern.",
@@ -1626,7 +1626,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     transparentRiskDesc: "Pontuação clara de 0 a 100 detalhando riscos fundiários, documentais e de histórico possessório.",
     realityTag: "A Realidade de Comprar à Distância",
     realityTitle: "Comprar Imóveis na Nigéria a Partir do Exterior Envolve Armadilhas Ocultas",
-    realitySubtitle: "Transações imobiliárias em Lagos e Abuja com frequência apresentam documentação conflitante que parece legítima à primeira vista.",
+    realitySubtitle: "Transações imobiliárias internacionais com frequência apresentam documentação conflitante que parece legítima à primeira vista.",
     problem1Title: "Discrepâncias de Lote e Marco",
     problem1Desc: "O vendedor entrega uma planta topográfica para o Lote 24, mas a Escritura de Cessão transfere o Lote 42.",
     problem2Title: "Ausência de Consentimento do Governador",
@@ -1638,7 +1638,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     step1Title: "Criar Caso",
     step1Desc: "Especifique estado, município, endereço do lote e coordenadas GPS.",
     step2Title: "Enviar Arquivos",
-    step2Desc: "Envie plantas topográficas, escrituras, C of O e recibos em cofre privado.",
+    step2Desc: "Envie plantas topográficas, escrituras, títulos de propriedade e recibos em cofre privado.",
     step3Title: "Extração Inteligente",
     step3Desc: "OCR e análise jurídica para mapear coordenadas e cadeia dominial.",
     step4Title: "Cruzamento e Validação",
@@ -1648,10 +1648,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "Documentos Analisados",
     docCoverageTitle: "O Que a LandIntel Audita",
     doc1Title: "Plantas Topográficas Registradas",
-    doc1Desc: "Números de marcos, credenciamento SURCON do agrimensor e cálculo de coordenadas.",
+    doc1Desc: "Números de marcos, credenciamento de agrimensor licenciado e cálculo de coordenadas.",
     doc2Title: "Escrituras de Cessão (Deed)",
     doc2Desc: "Pactos contratuais, cadeia de transmitentes e selos fiscais oficiais.",
-    doc3Title: "Certificado de Ocupação (C of O)",
+    doc3Title: "Certificado de Ocupação",
     doc3Desc: "Volumes de registro estatal e prazos de concessão de 99 anos.",
     doc4Title: "Consentimento do Governador",
     doc4Desc: "Aprovação do Comissário de Terras validando a transmissão dos direitos.",
@@ -1715,7 +1715,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     freeScreening: "Предварительная Оценка",
     exportData: "Экспорт Архива (.JSON)",
     cadastralQueue: "Очередь Проверок",
-    revenueLedger: "Книга Платежей Paystack",
+    revenueLedger: "Книга Платежей и Доходов",
     systemHealth: "Состояние Системы",
     dashboardOverview: "Обзор Панели",
     dueDiligenceCases: "Земельные Дела",
@@ -1762,7 +1762,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     step1Title: "Создайте Дело",
     step1Desc: "Укажите штат, район, адрес участка и координаты GPS.",
     step2Title: "Загрузите Файлы",
-    step2Desc: "Добавьте межевой план, договор передачи, C of O в защищенное хранилище.",
+    step2Desc: "Добавьте межевой план, договор передачи, свидетельство о собственности в защищенное хранилище.",
     step3Title: "Извлечение Данных",
     step3Desc: "OCR и алгоритмы определяют координаты и историю предыдущих владельцев.",
     step4Title: "Сверка Документов",
@@ -1772,10 +1772,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "Проверяемые Документы",
     docCoverageTitle: "Что Анализирует LandIntel",
     doc1Title: "Зарегистрированные Межевые Планы",
-    doc1Desc: "Номера межевых знаков, сертификация геодезиста SURCON и точные координаты.",
+    doc1Desc: "Номера межевых знаков, сертификация лицензированного геодезиста и точные координаты.",
     doc2Title: "Договоры Цессии (Deeds)",
     doc2Desc: "Условия передачи прав, цепочка собственников и государственные штампы.",
-    doc3Title: "Свидетельство о Праве Владения (C of O)",
+    doc3Title: "Свидетельство о Праве Владения",
     doc3Desc: "Номера реестровых книг штата и 99-летние сроки аренды.",
     doc4Title: "Согласие Губернатора",
     doc4Desc: "Официальное подтверждение министерства земельных ресурсов о законности передачи.",
@@ -1877,7 +1877,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     realitySubtitle: "ラゴスやアブジャでの取引では、一見合法に見えながら相互に矛盾する書類が頻繁に見受けられます。",
     problem1Title: "区画番号と境界標の不一致",
     problem1Desc: "売主が提示した測量図は区画24であるのに対し、譲渡契約書には区画42と記載されているような重複主張トラブル。",
-    problem2Title: "知事承認 (Governor's Consent) の欠落",
+    problem2Title: "法定機関承認 (Statutory Consent) の欠落",
     problem2Desc: "1978年土地収用法に基づく知事の法定承認がない譲渡証書は、買主の権利を脆弱にします。",
     problem3Title: "政府収用地域との重複",
     problem3Desc: "「免除認可申請中」と謳われながら、実際には公道や洪水遊水池などの政府収用線と重なっている土地。",
@@ -1886,7 +1886,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     step1Title: "案件の作成",
     step1Desc: "州、地方自治体、住所、売主情報、GPS座標を入力します。",
     step2Title: "書類のアップロード",
-    step2Desc: "測量図、譲渡証書、C of O、領収書などを暗号化スペースに提出。",
+    step2Desc: "測量図、譲渡証書、権利証書、領収書などを暗号化スペースに提出。",
     step3Title: "インテリジェント抽出",
     step3Desc: "OCRと法的アルゴリズムが境界座標や前所有者の権利系譜を解析。",
     step4Title: "クロス検証",
@@ -1896,12 +1896,12 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "対象書類",
     docCoverageTitle: "LandIntelが調査する公的書類",
     doc1Title: "公式測量図 (Survey Plans)",
-    doc1Desc: "境界標番号、SURCON公認測量士の登録番号、座標プロットと実測面積。",
+    doc1Desc: "境界標番号、公認測量士の登録番号、座標プロットと実測面積。",
     doc2Title: "譲渡証書 (Deed of Assignment)",
     doc2Desc: "譲渡条項、歴代所有者の権利関係、法定印紙税スタンプ。",
-    doc3Title: "占有証明書 (C of O)",
+    doc3Title: "占有証明書",
     doc3Desc: "州登録巻番号、99年の賃借開始日、認可された土地用途区分。",
-    doc4Title: "知事承認 (Governor's Consent)",
+    doc4Title: "法定機関承認 (Statutory Consent)",
     doc4Desc: "州土地委員会による法定権利移転の最終公認承認。",
     doc5Title: "政府官報告示 (Gazette)",
     doc5Desc: "公用収用解除の官報告示番号と公式免除記録。",
@@ -1997,8 +1997,8 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     transparentRiskTitle: "Kiwango cha Hatari Kilicho Wazi",
     transparentRiskDesc: "Alama kutoka 0 hadi 100 zinazochambua hatari za ardhi, mipaka na umiliki halisi.",
     realityTag: "Ukweli Kuhusu Kununua Ukiwa Mbali",
-    realityTitle: "Kununua Ardhi Nigeria Kutoka Nchi za Nje Hubeba Hatari Zisizoonekana Kirahisi",
-    realitySubtitle: "Miamala ya ardhi huko Lagos na Abuja mara nyingi huwa na nyaraka zinazokinzana zinazoonekana kuwa halisi kwa mtazamo wa kwanza.",
+    realityTitle: "Kununua Ardhi Kutoka Nchi za Nje Hubeba Hatari Zisizoonekana Kirahisi",
+    realitySubtitle: "Miamala ya ardhi ya kimataifa mara nyingi huwa na nyaraka zinazokinzana zinazoonekana kuwa halisi kwa mtazamo wa kwanza.",
     problem1Title: "Hitilafu za Namba ya Kiwanja na Mipaka",
     problem1Desc: "Muuzaji anatoa ramani ya Kiwanja 24 lakini Hati ya Makubaliano inahamisha Kiwanja 42.",
     problem2Title: "Kukosekana kwa Ridhaa ya Gavana",
@@ -2020,12 +2020,12 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     docCoverageTag: "Nyaraka Zinazochunguzwa",
     docCoverageTitle: "LandIntel Inachunguza Nyaraka Gani",
     doc1Title: "Ramani za Upimaji Zilizosajiliwa",
-    doc1Desc: "Namba za alama za mipaka, usajili wa mpimaji SURCON na vipimo sahihi.",
+    doc1Desc: "Namba za alama za mipaka, usajili wa mpimaji mwenye leseni na vipimo sahihi.",
     doc2Title: "Hati ya Makubaliano (Deed of Assignment)",
     doc2Desc: "Vifungu vya makubaliano, mlolongo wa wamiliki na mihuri rasmi ya kodi.",
-    doc3Title: "Hati ya Umiliki (C of O)",
+    doc3Title: "Hati ya Umiliki",
     doc3Desc: "Namba za usajili za jimbo na muda wa umiliki wa miaka 99.",
-    doc4Title: "Ridhaa ya Gavana (Governor's Consent)",
+    doc4Title: "Ridhaa ya Mamlaka ya Kisheria (Statutory Consent)",
     doc4Desc: "Uthibitisho rasmi wa kamishna wa ardhi unaohalalisha uhamishaji wa haki.",
     doc5Title: "Matangazo ya Gazeti la Serikali",
     doc5Desc: "Nyaraka zinazothibitisha kuondolewa kwa ardhi kwenye zuio la serikali.",
@@ -2059,7 +2059,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
   },
   // Additional top languages with clean fallbacks
   bn: {
-    heroTitle: "কোটি টাকা দেওয়ার আগে নাইজেরিয়ার জমি যাচাই করুন।",
+    heroTitle: "কোটি টাকা দেওয়ার আগে জমি ও নথিপত্র যাচাই করুন।",
     heroSubtitle: "প্রবাসী ক্রেতা, দূরবর্তী বিনিয়োগকারী এবং পরিবারের জন্য প্রাতিষ্ঠানিক রিয়েল এস্টেট তদন্ত এবং জমির সীমানা যাচাইকরণ ব্যবস্থা।",
     analyzeProperty: "জমি বিশ্লেষণ করুন",
     dashboard: "বিনিয়োগকারী ড্যাশবোর্ড",
@@ -2142,7 +2142,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "রিয়েল-টাইম বিনিময় হার সক্রিয়",
   },
   ur: {
-    heroTitle: "کروڑوں روپے ادا کرنے سے پہلے نائجیرین اراضی کی تصدیق کریں۔",
+    heroTitle: "کروڑوں روپے ادا کرنے سے پہلے اراضی کی تصدیق کریں۔",
     heroSubtitle: "اوورسیز خریداروں، دور دراز سرمایہ کاروں اور خاندانوں کے لیے قانونی جانچ اور ملکیتی حدود کی مستند تصدیق۔",
     analyzeProperty: "زمین کی جانچ کریں",
     dashboard: "انویسٹر ورک اسپیس",
@@ -2225,7 +2225,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "براہ راست شرح تبادلہ فعال ہے",
   },
   id: {
-    heroTitle: "Verifikasi Tanah Nigeria Sebelum Membayar Miliaran.",
+    heroTitle: "Verifikasi Tanah Sebelum Membayar Miliaran.",
     heroSubtitle: "Uji tuntas properti institusional dan verifikasi batas kadaster untuk pembeli diaspora dan investor jarak jauh.",
     analyzeProperty: "Analisis Properti",
     dashboard: "Ruang Kerja Investor",
@@ -2308,7 +2308,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "Kurs valuta asing langsung aktif",
   },
   tr: {
-    heroTitle: "Milyonlarca Lira Ödemeden Önce Nijerya Arazilerini Doğrulayın.",
+    heroTitle: "Milyonlarca Lira Ödemeden Önce Arazileri Doğrulayın.",
     heroSubtitle: "Gurbetçi alıcılar ve uzaktan yatırımcılar için geliştirilmiş kurumsal gayrimenkul durum tespiti ve kadastro sınır doğrulama sistemi.",
     analyzeProperty: "Mülkü İnceleyin",
     dashboard: "Yatırımcı Çalışma Alanı",
@@ -2391,7 +2391,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "Canlı döviz kurları aktif",
   },
   it: {
-    heroTitle: "Verifica i Terreni in Nigeria Prima di Pagare Milioni.",
+    heroTitle: "Verifica i Terreni Prima di Pagare Milioni.",
     heroSubtitle: "Due diligence immobiliare istituzionale e verifica dei confini catastali per acquirenti della diaspora e investitori remoti.",
     analyzeProperty: "Analizza Proprietà",
     dashboard: "Area Investitore",
@@ -2474,7 +2474,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "Tassi di cambio in tempo reale attivi",
   },
   nl: {
-    heroTitle: "Verifieer Nigeriaans Land Voordat U Miljoenen Betaalt.",
+    heroTitle: "Verifieer Vastgoed Voordat U Miljoenen Betaalt.",
     heroSubtitle: "Institutionele vastgoed due diligence en kadastrale grenscontrole voor diaspora-kopers en investeerders op afstand.",
     analyzeProperty: "Analyseer Vastgoed",
     dashboard: "Investeerders Workspace",
@@ -2557,7 +2557,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "Live wisselkoersen actief",
   },
   ko: {
-    heroTitle: "수억 원을 지불하기 전에 나이지리아 토지를 검증하세요.",
+    heroTitle: "수억 원을 지불하기 전에 토지를 검증하세요.",
     heroSubtitle: "해외 거주 교포, 원격 투자자 및 가족을 위해 설계된 기관급 부동산 실사 및 지적 경계 검증 솔루션.",
     analyzeProperty: "부동산 분석하기",
     dashboard: "투자자 워크스페이스",
@@ -2640,7 +2640,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "실시간 환율 적용 중",
   },
   vi: {
-    heroTitle: "Xác Minh Đất Đai Nigeria Trước Khi Chi Hàng Triệu USD.",
+    heroTitle: "Xác Minh Đất Đai Trước Khi Chi Hàng Triệu USD.",
     heroSubtitle: "Hệ thống thẩm định bất động sản và đo đạc ranh giới địa chính tiêu chuẩn tổ chức dành cho người mua hải ngoại và nhà đầu tư từ xa.",
     analyzeProperty: "Phân Tích Bất Động Sản",
     dashboard: "Không Gian Nhà Đầu Tư",
@@ -2723,7 +2723,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     liveRatesUpdated: "Tỷ giá quy đổi trực tiếp đang hoạt động",
   },
   pl: {
-    heroTitle: "Zweryfikuj Działkę w Nigerii, Zanim Zapłacisz Miliony.",
+    heroTitle: "Zweryfikuj Działkę, Zanim Zapłacisz Miliony.",
     heroSubtitle: "Instytucjonalny audyt nieruchomości i weryfikacja granic katastralnych dla inwestorów z diaspory i kupujących na odległość.",
     analyzeProperty: "Analizuj Nieruchomość",
     dashboard: "Panel Inwestora",
@@ -2825,7 +2825,7 @@ const LocaleContext = createContext<LocaleContextType>({
   language: "en",
   setLanguage: () => {},
   isRtl: false,
-  formatPrice: (amt) => `₦${amt.toLocaleString()}`,
+  formatPrice: (amt) => `${Math.round(amt / 1500).toLocaleString()}`,
   t: (k) => k,
   detectedCountry: "NG",
   liveRates: { NGN: 1, USD: 1500, GBP: 1950, EUR: 1650, CAD: 1100, AUD: 1000, GHS: 100, KES: 11.5, ZAR: 85, AED: 408 },
@@ -2939,47 +2939,51 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       const googleCode = GOOGLE_LANG_MAP[l] || l;
       const hostname = window.location.hostname;
+      const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname.includes(":");
 
       if (l === "en") {
-        // Clear cookies across all domain levels including tunnel subdomains and root
-        document.cookie = "googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-        document.cookie = "googtrans=; path=/; max-age=0;";
-        document.cookie = `googtrans=; path=/; domain=${hostname}; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-        document.cookie = `googtrans=; path=/; domain=${hostname}; max-age=0;`;
-        document.cookie = `googtrans=; path=/; domain=.${hostname}; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-        document.cookie = `googtrans=; path=/; domain=.${hostname}; max-age=0;`;
+        // Clear root cookies
+        document.cookie = "googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; max-age=0;";
+        if (!isLocal) {
+          document.cookie = `googtrans=; path=/; domain=${hostname}; expires=Thu, 01 Jan 1970 00:00:00 UTC; max-age=0;`;
+          document.cookie = `googtrans=; path=/; domain=.${hostname}; expires=Thu, 01 Jan 1970 00:00:00 UTC; max-age=0;`;
 
-        // Clear parent domain cookies (e.g. .trycloudflare.com, .landintel.ng)
-        const parts = hostname.split(".");
-        for (let i = 0; i < parts.length - 1; i++) {
-          const domainPart = "." + parts.slice(i).join(".");
-          document.cookie = `googtrans=; path=/; domain=${domainPart}; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-          document.cookie = `googtrans=; path=/; domain=${domainPart}; max-age=0;`;
+          const parts = hostname.split(".");
+          for (let i = 0; i < parts.length - 1; i++) {
+            const domainPart = "." + parts.slice(i).join(".");
+            document.cookie = `googtrans=; path=/; domain=${domainPart}; expires=Thu, 01 Jan 1970 00:00:00 UTC; max-age=0;`;
+          }
         }
       } else {
         const transVal = `/en/${googleCode}`;
         document.cookie = `googtrans=${transVal}; path=/; max-age=31536000; SameSite=Lax;`;
-        document.cookie = `googtrans=${transVal}; path=/; domain=${hostname}; max-age=31536000; SameSite=Lax;`;
-        document.cookie = `googtrans=${transVal}; path=/; domain=.${hostname}; max-age=31536000; SameSite=Lax;`;
+        if (!isLocal) {
+          document.cookie = `googtrans=${transVal}; path=/; domain=${hostname}; max-age=31536000; SameSite=Lax;`;
+          document.cookie = `googtrans=${transVal}; path=/; domain=.${hostname}; max-age=31536000; SameSite=Lax;`;
+        }
       }
 
       const applyToCombo = (): boolean => {
         const combo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
         if (!combo) return false;
 
+        // If options are not populated yet, keep waiting
+        if (combo.options.length <= 1 && l !== "en") return false;
+
         if (l === "en") {
-          // In Google Translate, original English is represented by empty string value ""
           const englishOption = Array.from(combo.options).find(
             (opt) => opt.value === "" || opt.value === "en"
           );
           if (englishOption) {
             if (combo.value !== englishOption.value) {
               combo.value = englishOption.value;
+              if (typeof (combo as any).onchange === "function") {
+                try { (combo as any).onchange(); } catch {}
+              }
               combo.dispatchEvent(new Event("change", { bubbles: true }));
               combo.dispatchEvent(new Event("input", { bubbles: true }));
             }
           }
-          // Restore visual cleanliness
           document.documentElement.classList.remove("translated-ltr", "translated-rtl");
           document.documentElement.dir = "ltr";
           document.body.style.top = "0px";
@@ -2989,8 +2993,23 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
 
         const targetVal = googleCode;
-        if (combo.value !== targetVal) {
-          combo.value = targetVal;
+        const targetOption = Array.from(combo.options).find(
+          (opt) =>
+            opt.value === targetVal ||
+            opt.value.toLowerCase() === targetVal.toLowerCase() ||
+            (targetVal.includes("-") && opt.value === targetVal.split("-")[0]) ||
+            opt.value.startsWith(targetVal + "-")
+        );
+        if (!targetOption) {
+          // Option not yet in select, keep retrying
+          return false;
+        }
+
+        if (combo.value !== targetOption.value) {
+          combo.value = targetOption.value;
+          if (typeof (combo as any).onchange === "function") {
+            try { (combo as any).onchange(); } catch {}
+          }
           combo.dispatchEvent(new Event("change", { bubbles: true }));
           combo.dispatchEvent(new Event("input", { bubbles: true }));
         }
@@ -3000,14 +3019,14 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       // 1. Immediate trigger (0ms)
       if (applyToCombo()) return;
 
-      // 2. High-speed adaptive pulse: retry every 25ms up to 20 times (max 500ms)
+      // 2. Resilient adaptive pulse: retry every 50ms up to 60 times (3,000ms max)
       let attempts = 0;
       const pulse = setInterval(() => {
         attempts++;
-        if (applyToCombo() || attempts >= 20) {
+        if (applyToCombo() || attempts >= 60) {
           clearInterval(pulse);
         }
-      }, 25);
+      }, 50);
     } catch {}
   };
 

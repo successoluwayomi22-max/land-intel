@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    useWasmBinary: true,
+  },
   headers: async () => [
     {
       source: '/:path*',
@@ -14,7 +17,7 @@ const nextConfig = {
         { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self)' },
         {
           key: 'Content-Security-Policy',
-          value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://translate.google.com https://translate.googleapis.com https://www.google.com https://www.gstatic.com https://js.paystack.co https://checkout.paystack.com; style-src 'self' 'unsafe-inline' https://translate.googleapis.com https://fonts.googleapis.com; img-src 'self' blob: data: https: http:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://checkout.paystack.com https://www.google.com https://recaptcha.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;",
+          value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.google.com https://www.gstatic.com https://js.paystack.co https://checkout.paystack.com; style-src 'self' 'unsafe-inline' https://translate.googleapis.com https://translate.google.com https://www.gstatic.com https://fonts.googleapis.com; img-src 'self' blob: data: https: http: https://translate.google.com https://translate.googleapis.com https://www.gstatic.com https://www.google.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: https://translate.googleapis.com https://translate-pa.googleapis.com https://translate.google.com; frame-src 'self' https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://checkout.paystack.com https://www.google.com https://recaptcha.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;",
         },
       ],
     },

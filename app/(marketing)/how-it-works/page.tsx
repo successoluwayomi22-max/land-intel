@@ -40,7 +40,7 @@ export default function HowItWorksPage() {
     {
       num: "06",
       title: t("howStep6Title") || "Download Genuine PDF Due-Diligence Report",
-      desc: t("howStep6Desc") || "Unlock the full 15-section report via Paystack in your preferred local currency (₦45,000 / $30 USD). Download a publication-grade PDF certification to send to your surveyor and lawyer.",
+      desc: t("howStep6Desc") || "Unlock the full 15-section report via secure payment in your preferred local currency ($30 USD equivalent). Download a publication-grade PDF certification to send to your surveyor and lawyer.",
     },
   ];
 

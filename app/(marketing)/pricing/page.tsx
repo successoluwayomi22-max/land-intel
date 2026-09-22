@@ -23,7 +23,7 @@ export default function PricingPage() {
           </h1>
           <p className="text-sm text-brand-textSecondary leading-relaxed">
             {t("pricingSubtitle") ||
-              "No recurring monthly subscriptions. Use preliminary screening for free, or unlock comprehensive certified 15-section due-diligence reports via Paystack in your local currency."}
+              "No recurring monthly subscriptions. Use preliminary screening for free, or unlock comprehensive certified 15-section due-diligence reports via secure payment in your local currency."}
           </p>
         </div>
 

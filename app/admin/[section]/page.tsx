@@ -267,7 +267,7 @@ export default function AdminSectionPage() {
     users: { title: "User Governance & Roles", subtitle: "Manage registered accounts, platform permissions, and authentication states", icon: Users },
     organizations: { title: "Organization Multi-Tenancy", subtitle: "Enterprise workspaces, membership bounds, and tenant isolation", icon: Building2 },
     cases: { title: "Property Investigations", subtitle: "All due-diligence files across national and global cadastral jurisdictions", icon: FolderOpen },
-    documents: { title: "Document Vault & Storage", subtitle: "Ingested deeds, survey plans, and C of O documents in private storage", icon: FileText },
+    documents: { title: "Document Vault & Storage", subtitle: "Ingested deeds, survey plans, and title certificates in private storage", icon: FileText },
     analysis: { title: "Cadastral Analysis & Risks", subtitle: "Cross-document findings, boundary discrepancies, and title radar", icon: PieChart },
     analytics: { title: "Cadastral Risk & Geographic Analytics", subtitle: "Cadastral radar, state-by-state geographic distribution, case throughput, and conversion funnel", icon: Activity },
     reports: { title: "Generated Property Reports", subtitle: "Multi-page 15-section publication-grade PDF packages and unlocked buyer archives", icon: FileCheck2 },
@@ -1283,7 +1283,7 @@ export default function AdminSectionPage() {
                 {data?.metrics?.totalDocuments || 0}
               </div>
               <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">
-                Deeds, Surveys, C of O
+                Deeds, Surveys, Title Certificates
               </span>
             </div>
           </div>

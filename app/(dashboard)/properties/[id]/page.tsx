@@ -470,7 +470,7 @@ export default function PropertyCaseHubPage() {
             <CardHeader>
               <CardTitle>Upload Property Documents</CardTitle>
               <CardDescription>
-                Upload scanned Survey Plans, Deeds of Assignment, C of O, Gazette Excision, or Receipts. Documents are stored privately and encrypted.
+                Upload scanned Survey Plans, Deeds of Assignment, Occupancy Certificates, Gazette Excision, or Receipts. Documents are stored privately and encrypted.
               </CardDescription>
             </CardHeader>
 
@@ -755,7 +755,7 @@ export default function PropertyCaseHubPage() {
                     LANDINTEL DUE-DILIGENCE CERTIFICATION
                   </h4>
                   <p className="text-[11px] font-medium text-brand-blue">
-                    Diaspora Land Solutions — Global Property Due-Diligence & Cadastral Verification
+                    LandIntel Global — Property Due-Diligence & Cadastral Verification
                   </p>
                   <p className="text-xs text-brand-textSecondary mt-0.5">
                     Case: {propertyCase.title} | Cadastral Scope: {propertyCase.lga}, {propertyCase.state}, {propertyCase.country || "International"}

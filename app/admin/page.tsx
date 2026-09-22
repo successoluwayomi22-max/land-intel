@@ -1165,7 +1165,7 @@ export default function AdminProDashboardPage() {
                 {payments.filter((p: any) => p.status === "SUCCESSFUL").length}
               </span>
               <span className="text-[10px] text-slate-400 block mt-1 font-mono">
-                Average ticket: ₦35,000 NGN
+                Average ticket: $30 USD eq.
               </span>
             </div>
 
@@ -1411,7 +1411,7 @@ export default function AdminProDashboardPage() {
                 <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
                   <div className="flex justify-between font-semibold">
                     <span className="text-white">Due-Diligence Report Unlock</span>
-                    <span className="font-mono text-amber-400">₦35,000 NGN</span>
+                    <span className="font-mono text-amber-400">$30 USD eq.</span>
                   </div>
                   <p className="text-[11px] text-slate-500">
                     Standard unlocking fee for 15-section publication-grade PDF reports.

@@ -167,7 +167,7 @@ export default function NewPropertyCasePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Property Identifier / Name"
-                placeholder="e.g. Lekki Phase 1 Residential Plot 24B"
+                placeholder="e.g. Cadastral Sector 4 Residential Parcel 24B"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
@@ -238,7 +238,7 @@ export default function NewPropertyCasePage() {
 
             <Input
               label="Full Address / Location Description"
-              placeholder="e.g. Plot 24, Block 8, Off Admiralty Way, Lekki Phase 1"
+              placeholder="e.g. Parcel 42, Block 8, Outer Perimeter Way"
               name="address"
               value={formData.address}
               onChange={handleChange}
@@ -273,11 +273,7 @@ export default function NewPropertyCasePage() {
                 name="purchasePrice"
                 value={formData.purchasePrice}
                 onChange={handleChange}
-                helperText={
-                  currency !== "NGN" && formData.purchasePrice
-                    ? `Estimated: ~₦${Math.round(parseFloat(formData.purchasePrice) * activeCurrConfig.rateToNgn).toLocaleString()} NGN equivalent`
-                    : "Optional - used to calibrate financial risk magnitude"
-                }
+                helperText="Used to calibrate financial risk magnitude and transaction limits"
               />
             </div>
           </div>
@@ -310,8 +306,8 @@ export default function NewPropertyCasePage() {
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
-                label="Latitude (e.g. 6.4474)"
-                placeholder="6.4474"
+                label="Latitude (e.g. 40.7128)"
+                placeholder="40.7128"
                 type="number"
                 step="any"
                 name="latitude"
@@ -319,8 +315,8 @@ export default function NewPropertyCasePage() {
                 onChange={handleChange}
               />
               <Input
-                label="Longitude (e.g. 3.4842)"
-                placeholder="3.4842"
+                label="Longitude (e.g. -74.0060)"
+                placeholder="-74.0060"
                 type="number"
                 step="any"
                 name="longitude"
@@ -339,7 +335,7 @@ export default function NewPropertyCasePage() {
               rows={3}
               value={formData.description}
               onChange={handleChange}
-              placeholder="Include any known history (e.g. vendor claims land is excised, family receipt offered, C of O in progress)..."
+              placeholder="Include any known history (e.g. vendor claims land is excised, formal deed offered, statutory certificate in progress)..."
               className="w-full px-3.5 py-2.5 bg-white border border-brand-border rounded-input text-sm text-brand-textPrimary focus:outline-none focus:ring-2 focus:ring-brand-blue"
             />
           </div>

@@ -43,44 +43,114 @@
   background: #94A3B8;
 }
 
-/* Hide Google Translate top banner, tooltips, and iframe badges */
+/* ==========================================================================
+   Google Translate Artifact Suppression
+   Hides ALL injected Google Translate DOM elements: banners, spinners,
+   iframes, tooltips, and loading containers that cause layout shifts.
+   ========================================================================== */
+
+/* Banner frame (top bar) */
 .goog-te-banner-frame,
 .goog-te-banner-frame.skiptranslate,
 iframe.goog-te-banner-frame {
   display: none !important;
   visibility: hidden !important;
   height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
 }
 
+/* Loading spinner & overlay container (dynamically injected) */
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+[class*="VIpgJd-ZVi9od"],
+[class*="VIpgJd-suEOdc"],
+.goog-te-spinner-pos,
+div.skiptranslate.goog-te-spinner-pos {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  top: -9999px !important;
+  left: -9999px !important;
+}
+
+/* Top-level skiptranslate divs injected by Google */
+body > .skiptranslate:not(#google_translate_element) {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+}
+
+/* Force body to not be pushed down by Translate banner */
 body {
   top: 0px !important;
   position: static !important;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
+/* Ensure html is also not shifted */
+html {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Tooltip popups when hovering translated text */
 #goog-gt-tt,
-.goog-te-balloon-frame {
+.goog-te-balloon-frame,
+.goog-te-menu-frame {
   display: none !important;
 }
 
+/* Text highlight styles on translated content */
 .goog-text-highlight {
   background: transparent !important;
   box-shadow: none !important;
 }
 
-.skiptranslate > iframe {
+/* Hidden iframes */
+.skiptranslate > iframe,
+iframe.skiptranslate,
+iframe[name="c-translation"] {
   display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  position: absolute !important;
+  top: -9999px !important;
 }
 
+/* Our hidden widget container — visually invisible */
 #google_translate_element {
-  position: absolute !important;
+  position: fixed !important;
   left: -9999px !important;
   top: -9999px !important;
   width: 1px !important;
   height: 1px !important;
   overflow: hidden !important;
   clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
   opacity: 0 !important;
   pointer-events: none !important;
+  z-index: -9999 !important;
 }
 
 /* ==========================================================================

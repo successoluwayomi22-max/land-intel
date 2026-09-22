@@ -240,7 +240,7 @@ export default function RegisterPage() {
           {/* Key Metrics */}
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <div className="text-xl font-black text-white font-heading">₦4.8B+</div>
+              <div className="text-xl font-black text-white font-heading">$3.2M+</div>
               <div className="text-[11px] text-slate-300 font-medium">Property Vetted</div>
             </div>
             <div>

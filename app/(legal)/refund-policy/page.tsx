@@ -20,14 +20,14 @@ export default function RefundPolicyPage() {
           <section className="space-y-2">
             <h2 className="text-sm font-bold text-brand-textPrimary font-heading">1. Digital Goods Delivery</h2>
             <p>
-              Due to the immediate digital delivery of full due-diligence reports and generated PDF assets, report unlock payments (₦45,000 NGN) are generally non-refundable once the full report has been made accessible to your account.
+              Due to the immediate digital delivery of full due-diligence reports and generated PDF assets, report unlock payments ($30 USD equivalent in your local currency) are generally non-refundable once the full report has been made accessible to your account.
             </p>
           </section>
 
           <section className="space-y-2">
             <h2 className="text-sm font-bold text-brand-textPrimary font-heading">2. Duplicate Charges & Technical Errors</h2>
             <p>
-              If you experience a duplicate payment or a server error where your payment is verified but the report fails to unlock within 24 hours, contact <strong>support@landintel.ng</strong> with your Paystack transaction reference for immediate reconciliation or full refund.
+              If you experience a duplicate payment or a server error where your payment is verified but the report fails to unlock within 24 hours, contact <strong>support@landintel.ng</strong> with your payment transaction reference for immediate reconciliation or full refund.
             </p>
           </section>
         </div>

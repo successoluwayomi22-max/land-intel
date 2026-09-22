@@ -264,7 +264,7 @@ export default function ContactPage() {
 
                   <Input
                     label={t("subject") || "Subject"}
-                    placeholder="e.g. Coordinate discrepancy in Lekki survey plan"
+                    placeholder="e.g. Coordinate discrepancy in boundary survey plan"
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     required
