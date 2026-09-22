@@ -1,8 +1,8 @@
 export const APP_CONFIG = {
   name: "LandIntel",
-  tagline: "Diaspora Land Solutions — Securing Nigerian Land for the Global Nigerian",
-  description: "LandIntel provides verified land due-diligence, cadastral boundary intelligence, and title search certification for global Nigerian property investors.",
-  url: process.env.NEXT_PUBLIC_APP_URL || "https://landintel.ng",
+  tagline: "Global Property Intelligence — Institutional Cadastral Verification & Title Protection",
+  description: "LandIntel provides verified land due-diligence, cadastral boundary intelligence, and title search certification for global real estate and diaspora property investors.",
+  url: process.env.NEXT_PUBLIC_APP_URL || "https://land-intel-omega.vercel.app",
   supportEmail: "successoluwayomi22@gmail.com",
   legalEmail: "successoluwayomi22@gmail.com",
   
@@ -24,7 +24,7 @@ export const APP_CONFIG = {
   },
 
   // Primary market
-  primaryMarket: "Nigeria",
+  primaryMarket: "Global Cadastral Systems",
   
   // Pricing & Monetization
   pricing: {

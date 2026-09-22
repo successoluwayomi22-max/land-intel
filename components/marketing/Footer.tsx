@@ -28,9 +28,9 @@ export const Footer: React.FC = () => {
                 LandIntel
               </span>
             </Link>
-            <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
+            <p className="text-slate-300 text-xs leading-relaxed max-w-sm">
               {t("footerTagline") ||
-                "Diaspora Land Solutions — Securing Nigerian Land for the Global Nigerian. Independent cadastral verification, document provenance analysis, and title intelligence for remote investors."}
+                "Global Land Solutions — Securing High-Value Real Estate for Remote & Diaspora Investors. Independent cadastral verification, document provenance analysis, and title intelligence."}
             </p>
             <div className="flex items-center gap-2 text-[11px] text-slate-400">
               <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -154,9 +154,9 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-500 text-[11px]">
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-400 text-[11px]">
           <p suppressHydrationWarning>
-            © {currentYear} LandIntel — Diaspora Land Solutions. {t("allRightsReserved") || "All rights reserved."}
+            © {currentYear} LandIntel — Global Land Intelligence. {t("allRightsReserved") || "All rights reserved."}
           </p>
           <p className="text-center md:text-right max-w-xl text-slate-400">
             {APP_CONFIG.legalDisclaimer}

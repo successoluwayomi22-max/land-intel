@@ -90,7 +90,7 @@ export default function DashboardOverviewPage() {
             {getGreeting()}, {mounted && user?.name ? user.name.split(" ")[0] : "Investor"}
           </h1>
           <p className="text-xs sm:text-sm text-brand-textSecondary mt-1">
-            Track and examine Nigerian real-estate investigations, boundary covenants, and title risk indicators.
+            Track and examine property due-diligence investigations, boundary covenants, and title risk indicators.
           </p>
         </div>
         <Link

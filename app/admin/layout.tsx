@@ -389,7 +389,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </Link>
           <div className="mt-2.5 flex items-center gap-1.5 text-[10px] text-emerald-400 font-mono bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/40">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            <span>NODE: LAGOS-CENTRAL [ONLINE]</span>
+            <span>NODE: CADASTRAL-CENTRAL [ONLINE]</span>
           </div>
         </div>
 
@@ -489,7 +489,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 TACTICAL COMMAND DECK
               </span>
               <span>•</span>
-              <span className="text-slate-300">CLUSTER: LAGOS-01</span>
+              <span className="text-slate-300">CLUSTER: GRID-01</span>
               <span>•</span>
               <span className="text-emerald-400 font-semibold">DB: SQLITE (HEALTHY)</span>
             </div>

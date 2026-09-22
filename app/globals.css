@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,8 +8,9 @@
   :root {
     --background: 210 40% 98%;
     --foreground: 222 47% 11%;
-    --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-manrope: 'Manrope', system-ui, -apple-system, sans-serif;
+    --font-urbanist: 'Urbanist', system-ui, -apple-system, sans-serif;
+    --font-inter: 'Urbanist', system-ui, -apple-system, sans-serif;
+    --font-manrope: 'Urbanist', system-ui, -apple-system, sans-serif;
   }
 
   body {

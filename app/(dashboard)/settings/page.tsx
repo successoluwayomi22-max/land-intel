@@ -634,8 +634,8 @@ export default function SettingsPage() {
 
               <div className="flex items-center justify-between pt-3">
                 <div>
-                  <strong className="text-brand-textPrimary block">Nigerian Real Estate Regulatory Digest</strong>
-                  <span className="text-brand-textSecondary">Monthly updates on Lagos State & FCT cadastral guidelines</span>
+                  <strong className="text-brand-textPrimary block">Property Regulatory & Cadastral Digest</strong>
+                  <span className="text-brand-textSecondary">Monthly updates on statutory land guidelines and title protections</span>
                 </div>
                 <input
                   type="checkbox"
@@ -872,7 +872,7 @@ export default function SettingsPage() {
               </p>
               <p className="flex items-center gap-2 text-slate-700">
                 <CheckCircle2 className="w-3.5 h-3.5 text-brand-success shrink-0" />
-                <span>Nigerian 11-Point Verification Checklist</span>
+                <span>Institutional 11-Point Verification Checklist</span>
               </p>
               <p className="flex items-center gap-2 text-slate-700">
                 <CheckCircle2 className="w-3.5 h-3.5 text-brand-success shrink-0" />
@@ -898,7 +898,7 @@ export default function SettingsPage() {
               Need Verification Assistance?
             </h4>
             <p className="text-xs text-slate-300 leading-relaxed">
-              If your property involves complex family land excision or unregistered Governor's Consents, our Nigerian surveyor network can assist.
+              If your property involves complex family land excision or unregistered statutory consents, our licensed surveyor network can assist.
             </p>
             <Link
               href="/contact"

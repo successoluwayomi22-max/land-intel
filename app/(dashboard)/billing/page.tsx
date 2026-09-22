@@ -847,7 +847,7 @@ export default function BillingPage() {
                     <div className="text-[11px] text-slate-500 mt-2.5 space-y-0.5 font-sans">
                       <p><span className="font-semibold text-slate-700">TIN / FIRS VAT Reg:</span> 24198273-0001 (FIRS Tax Compliant)</p>
                       <p><span className="font-semibold text-slate-700">RC Number:</span> RC 1984291 • Corporate Affairs Commission</p>
-                      <p className="text-slate-400">Head Office: 14B Karimu Kotun St, Victoria Island, Lagos • Diaspora Desk: London / NYC</p>
+                      <p className="text-slate-400">Global Operations Center • International Due-Diligence Desk</p>
                     </div>
                   </div>
                   <div className="text-left sm:text-right shrink-0">
@@ -871,7 +871,7 @@ export default function BillingPage() {
                     <p className="font-bold text-slate-900 text-sm">{selectedReceipt.customerName || "Valued Diaspora Investor"}</p>
                     <p className="text-slate-600 font-mono text-[11px] mt-0.5">{selectedReceipt.customerEmail || "N/A"}</p>
                     <p className="text-slate-400 text-[10px] mt-1">
-                      Tax Jurisdiction: {selectedReceipt.resolvedCurrency === "USD" ? "International Investor (Cross-Border)" : "Federal Republic of Nigeria"}
+                      Tax Jurisdiction: {selectedReceipt.resolvedCurrency === "USD" ? "International Investor (Cross-Border)" : "Primary Statutory Jurisdiction"}
                     </p>
                   </div>
 
@@ -990,7 +990,7 @@ export default function BillingPage() {
                   </div>
 
                   <p className="text-[10px] text-slate-400 leading-normal">
-                    This electronic VAT receipt is legally binding under the Nigerian Tax Administration Act and Section 34 of the FIRS Value Added Tax Act. Retain this invoice as proof of statutory payment for due-diligence expenditure.
+                    This electronic statutory receipt is generated in compliance with applicable cross-border tax administration standards. Retain this invoice as proof of statutory payment for due-diligence expenditure.
                   </p>
 
                   {/* Action Buttons (Hidden during print) */}

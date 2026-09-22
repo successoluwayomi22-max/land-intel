@@ -19,11 +19,11 @@ export default function AboutPage() {
             {t("aboutLandIntel") || "About LandIntel"}
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
-            {t("aboutTitle") || "Diaspora Land Solutions — Securing Nigerian Land for the Global Nigerian"}
+            {t("aboutTitle") || "Global Land Solutions — Securing High-Value Land for Remote & Diaspora Investors"}
           </h1>
           <p className="text-base text-brand-textSecondary leading-relaxed">
             {t("aboutSubtitle") ||
-              "LandIntel was founded to address the systematic information asymmetry faced by Nigerians living abroad, remote investors, and families purchasing real estate across Nigeria."}
+              "LandIntel was founded to address the systematic information asymmetry faced by cross-border buyers, remote investors, and families purchasing real estate across complex property jurisdictions."}
           </p>
         </div>
 

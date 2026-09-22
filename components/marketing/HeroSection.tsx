@@ -124,15 +124,15 @@ export const HeroSection: React.FC = () => {
                 <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
                 <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
                 <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
-                <span className="ml-3 font-mono text-[11px] text-slate-400 hidden sm:inline">
-                  landintel.ng/analysis/CAS-2026-ETI-0941
+                <span className="ml-3 font-mono text-[11px] text-slate-300 hidden sm:inline">
+                  landintel-omega.vercel.app/analysis/CAS-2026-METRO-0941
                 </span>
               </div>
               <div className="flex items-center gap-2 font-mono text-[11px]">
                 <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                 <span className="text-emerald-400 font-bold">RADAR ACTIVE</span>
-                <span className="text-slate-600">|</span>
-                <span className="text-slate-400">IBEJU-LEKKI SECTOR 3</span>
+                <span className="text-slate-500">|</span>
+                <span className="text-slate-300">CADASTRAL SECTOR 03</span>
               </div>
             </div>
 
@@ -157,7 +157,7 @@ export const HeroSection: React.FC = () => {
                   {/* Cadastral Polygon Line Simulation */}
                   <div className="absolute w-36 h-36 border-2 border-dashed border-emerald-400/80 bg-emerald-500/10 rounded-lg transform rotate-6 flex items-center justify-center shadow-lg shadow-emerald-500/10">
                     <span className="font-mono text-[10px] text-emerald-300 font-bold bg-slate-950/80 px-2 py-0.5 rounded border border-emerald-500/30">
-                      PLOT 42 • CERTIFIED
+                      PARCEL 42 • CERTIFIED
                     </span>
                     {/* Beacons */}
                     <div className="absolute -top-2 -left-2 w-4 h-4 rounded-full bg-emerald-400 border-2 border-slate-950 shadow-md flex items-center justify-center text-[7px] font-mono text-slate-950 font-black">
@@ -175,23 +175,23 @@ export const HeroSection: React.FC = () => {
                   </div>
 
                   {/* Buffer warning line (Committed Acquisition Buffer) */}
-                  <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between text-[10px] font-mono text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded border border-slate-800">
+                  <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between text-[10px] font-mono text-slate-300 bg-slate-900/90 px-2.5 py-1 rounded border border-slate-800">
                     <span className="text-emerald-400 flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                      Buffer: 48m outside Coastal Road reserve
+                      Buffer: 48m outside Arterial Road reserve
                     </span>
-                    <span className="text-slate-500 font-mono">No Encroachment</span>
+                    <span className="text-slate-400 font-mono">No Encroachment</span>
                   </div>
                 </div>
 
                 {/* Beacon Coordinates Table Snippet */}
                 <div className="grid grid-cols-2 gap-2 font-mono text-[11px]">
                   <div className="bg-slate-900/60 p-2 rounded border border-slate-800/60 flex justify-between">
-                    <span className="text-slate-400">BC-LAG/1042A</span>
+                    <span className="text-slate-300">BC-CAD/1042A</span>
                     <span className="text-emerald-400">E: 542918.42</span>
                   </div>
                   <div className="bg-slate-900/60 p-2 rounded border border-slate-800/60 flex justify-between">
-                    <span className="text-slate-400">BC-LAG/1042B</span>
+                    <span className="text-slate-300">BC-CAD/1042B</span>
                     <span className="text-emerald-400">N: 712049.18</span>
                   </div>
                 </div>
@@ -270,8 +270,8 @@ export const HeroSection: React.FC = () => {
             <div className="text-xs text-slate-400 font-medium mt-1">Undetected Beacon Clashes</div>
           </div>
           <div>
-            <div className="text-2xl sm:text-3xl font-black text-white font-heading">36 States</div>
-            <div className="text-xs text-slate-400 font-medium mt-1">+ FCT Abuja Land Registries</div>
+            <div className="text-2xl sm:text-3xl font-black text-white font-heading">Universal</div>
+            <div className="text-xs text-slate-400 font-medium mt-1">Multi-Jurisdiction Registries</div>
           </div>
         </div>
       </div>

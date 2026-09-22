@@ -192,17 +192,17 @@ export default function RegisterPage() {
             <h1 className="text-3xl xl:text-4xl font-extrabold font-heading text-white tracking-tight leading-tight">
               Protect your land capital before signing or transferring funds.
             </h1>
-            <p className="text-sm text-slate-300 leading-relaxed max-w-lg">
-              Join thousands of diaspora and institutional investors verifying survey beacons, detecting root-of-title defects, and securing land across Nigeria.
+            <p className="text-sm text-slate-200 leading-relaxed max-w-lg">
+              Join thousands of diaspora and institutional investors verifying survey beacons, detecting root-of-title defects, and securing land across global jurisdictions.
             </p>
           </div>
 
           {/* Interactive Live Verification Card Simulation */}
           <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-4 backdrop-blur-sm max-w-md">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
-              <span className="flex items-center gap-2 font-mono text-slate-300 font-semibold">
+              <span className="flex items-center gap-2 font-mono text-slate-200 font-semibold">
                 <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Parcel #LAG-ETI-0928</span>
+                <span>Parcel #CAD-METRO-0928</span>
               </span>
               <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-[10px] font-bold">
                 LOW RISK (12/100)
@@ -220,14 +220,14 @@ export default function RegisterPage() {
               <div className="flex items-center justify-between text-slate-300">
                 <span className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>Governor&apos;s Consent Validated</span>
+                  <span>Statutory Consent Validated</span>
                 </span>
                 <span className="font-mono text-emerald-400 text-[11px]">Statutory Approved</span>
               </div>
               <div className="flex items-center justify-between text-slate-300">
                 <span className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>Committed Govt Acquisition</span>
+                  <span>Government Acquisition Check</span>
                 </span>
                 <span className="font-mono text-emerald-400 text-[11px]">Clear / Unencumbered</span>
               </div>
@@ -241,15 +241,15 @@ export default function RegisterPage() {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <div className="text-xl font-black text-white font-heading">₦4.8B+</div>
-              <div className="text-[11px] text-slate-400 font-medium">Property Vetted</div>
+              <div className="text-[11px] text-slate-300 font-medium">Property Vetted</div>
             </div>
             <div>
-              <div className="text-xl font-black text-white font-heading">36 States</div>
-              <div className="text-[11px] text-slate-400 font-medium">Cadastral Coverage</div>
+              <div className="text-xl font-black text-white font-heading">Multi-Zone</div>
+              <div className="text-[11px] text-slate-300 font-medium">Cadastral Coverage</div>
             </div>
             <div>
               <div className="text-xl font-black text-emerald-400 font-heading">100%</div>
-              <div className="text-[11px] text-slate-400 font-medium">Defensible Findings</div>
+              <div className="text-[11px] text-slate-300 font-medium">Defensible Findings</div>
             </div>
           </div>
 
@@ -260,22 +260,22 @@ export default function RegisterPage() {
                 <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
               ))}
             </div>
-            <p className="text-xs text-slate-300 italic leading-relaxed">
-              &ldquo;LandIntel uncovered a 3-meter boundary overlap and missing consent on an Ibeju-Lekki plot before I sent ₦45M from the UK. Saved my family from a nightmare.&rdquo;
+            <p className="text-xs text-slate-200 italic leading-relaxed">
+              &ldquo;LandIntel uncovered a 3-meter boundary overlap and missing consent on a high-growth parcel before I wired funds from overseas. Saved my family from a nightmare.&rdquo;
             </p>
             <div className="text-[11px] text-slate-400 font-semibold">
-              — Dr. Babatunde O. • NHS Consultant, London
+              — Dr. B. Olawale • Healthcare Executive & Diaspora Buyer
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] text-slate-500">
+          <div className="flex items-center gap-4 text-[11px] text-slate-400">
             <span className="flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-slate-400" />
+              <Lock className="w-3.5 h-3.5 text-slate-300" />
               <span>AES-256 Encrypted Vault</span>
             </span>
             <span>•</span>
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+              <ShieldCheck className="w-3.5 h-3.5 text-slate-300" />
               <span>Zero Document Training</span>
             </span>
           </div>
@@ -465,7 +465,7 @@ export default function RegisterPage() {
             </span>
             <span className="flex items-center gap-1.5">
               <Scale className="w-3.5 h-3.5 text-blue-600" />
-              <span>Nigerian Land Law Grounded</span>
+              <span>Statutory Property Law Grounded</span>
             </span>
           </div>
         </div>

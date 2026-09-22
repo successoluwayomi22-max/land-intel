@@ -12,7 +12,8 @@ import { APP_CONFIG } from "@/lib/config";
 import { useLocale, CURRENCIES } from "@/components/providers/LocaleProvider";
 
 const COUNTRIES = [
-  { code: "NG", name: "Nigeria", regionLabel: "State", districtLabel: "Local Government Area (LGA)", defaultRegion: "Lagos", placeholderDistrict: "e.g. Eti-Osa, Ikeja, Epe" },
+  { code: "GLOBAL", name: "Universal Cadastral Jurisdiction", regionLabel: "State / Province / Region", districtLabel: "District / Municipality", defaultRegion: "Metro Zone A", placeholderDistrict: "e.g. Central District, Zone 1" },
+  { code: "NG", name: "Statutory Cadastral Region (NG)", regionLabel: "State", districtLabel: "Local Government Area (LGA)", defaultRegion: "Metro Zone A", placeholderDistrict: "e.g. Metro District, East Zone" },
   { code: "US", name: "United States", regionLabel: "State", districtLabel: "County / Municipality", defaultRegion: "Texas", placeholderDistrict: "e.g. Harris County, Travis County" },
   { code: "GB", name: "United Kingdom", regionLabel: "Country / Region", districtLabel: "Borough / District", defaultRegion: "Greater London", placeholderDistrict: "e.g. Westminster, Camden, Manchester" },
   { code: "CA", name: "Canada", regionLabel: "Province", districtLabel: "Municipality / District", defaultRegion: "Ontario", placeholderDistrict: "e.g. City of Toronto, Peel Region" },
@@ -31,13 +32,13 @@ export default function NewPropertyCasePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
-  const [countryCode, setCountryCode] = useState("NG");
+  const [countryCode, setCountryCode] = useState("GLOBAL");
 
   const selectedCountry = COUNTRIES.find((c) => c.code === countryCode) || COUNTRIES[0];
 
   const [formData, setFormData] = useState({
     title: "",
-    state: "Lagos",
+    state: "Metro Zone A",
     lga: "",
     address: "",
     propertyType: "LAND",

@@ -36,8 +36,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-        heading: ["var(--font-manrope)", "sans-serif"],
+        sans: ["var(--font-urbanist)", "system-ui", "sans-serif"],
+        heading: ["var(--font-urbanist)", "system-ui", "sans-serif"],
+        urbanist: ["var(--font-urbanist)", "sans-serif"],
       },
       borderRadius: {
         input: "8px",

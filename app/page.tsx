@@ -45,49 +45,49 @@ export default function LandingPage() {
   const caseStudies = [
     {
       id: "case-01",
-      tag: "CASE STUDY 01: IBEJU-LEKKI CORRIDOR",
-      title: "The ₦48,000,000 'Ghost Beacon' in the Coastal Buffer",
-      investor: "Dr. Tunde B. — NHS Consultant, Manchester UK",
-      lossPrevented: "₦48,000,000 ($32,000 USD)",
-      riskType: "Drainage Basin & Coastal Highway Setback",
+      tag: "CASE STUDY 01: METROPOLITAN COASTAL CORRIDOR",
+      title: "The $32,000 'Ghost Beacon' in the Infrastructure Buffer",
+      investor: "Dr. Tunde B. — Healthcare Director & Cross-Border Investor",
+      lossPrevented: "$32,000 (₦48,000,000)",
+      riskType: "Drainage Basin & Arterial Highway Setback",
       summary:
-        "The vendor presented an immaculate Registered Survey Plan with genuine-looking SURCON beacon coordinates and an attractive family layout. The buyer was within 48 hours of wiring the closing deposit from the UK.",
+        "The vendor presented an immaculate Registered Survey Plan with authentic-looking beacon coordinates and an attractive community layout. The buyer was within 48 hours of wiring the closing deposit from abroad.",
       deception:
-        "Physical site visit videos arranged via WhatsApp showed dry sand and neighboring perimeter walls. However, the vendor's surveyor had shifted the site boundary on paper by 140 meters to mask where the land actually lay.",
+        "Physical site visit videos arranged via messaging apps showed dry ground and neighboring perimeter walls. However, the vendor's surveyor had shifted the site boundary on paper by 140 meters to mask where the parcel actually lay.",
       detection:
-        "LandIntel's Cadastral Engine mathematically plotted the 4 boundary coordinates (WGS-84) against Lagos State Masterplan GIS layers. The coordinates plotted squarely into a gazetted coastal highway setback buffer with zero development rights.",
+        "LandIntel's Cadastral Engine mathematically plotted the 4 boundary coordinates (WGS-84) against official Cadastral Masterplan GIS layers. The coordinates plotted squarely into a gazetted arterial highway setback buffer with zero development rights.",
       verdict: "CRITICAL RISK (Score: 92/100) — Transaction Aborted Safely",
       badgeColor: "bg-rose-500/10 border-rose-500/30 text-rose-400",
     },
     {
       id: "case-02",
-      tag: "CASE STUDY 02: SANGOTEDO / AJAH AXIS",
-      title: "The ₦65M 'Family Land' with Three Conflicting Deeds",
-      investor: "Chidinma & Obinna E. — Software Engineers, Toronto Canada",
-      lossPrevented: "₦65,000,000 ($43,500 USD)",
-      riskType: "Rival Deed of Assignment & Split Family Lineage",
+      tag: "CASE STUDY 02: HIGH-GROWTH METRO CORRIDOR",
+      title: "The $43,500 'Family Land' with Three Conflicting Deeds",
+      investor: "Chidinma & Obinna E. — Software Engineers & Remote Purchasers",
+      lossPrevented: "$43,500 (₦65,000,000)",
+      riskType: "Rival Deed of Assignment & Split Lineage Claim",
       summary:
         "A prominent real-estate marketing firm marketed two serviced plots in a gated community. The vendor provided a Deed of Assignment executed by an accredited family representative.",
       deception:
-        "The Deed cited an ancestral root of title, but omitted the statutory Principal Family Head power of attorney. The surveyor plan also referenced a 1996 layout survey with expired beacon numbering.",
+        "The Deed cited an ancestral root of title, but omitted the statutory Principal Family Head power of attorney. The surveyor plan also referenced a layout survey with expired beacon numbering.",
       detection:
-        "LandIntel's Cross-Document Heuristic engine detected that the Assignor named in the 2023 Deed lacked legal nexus to the root grant registered at Alausa Lands Registry. A secondary search revealed the same parcel had already been assigned to an institutional buyer in 2021.",
+        "LandIntel's Cross-Document Heuristic engine detected that the Assignor named in the recent Deed lacked legal nexus to the root grant registered at the Central Lands Registry. A secondary search revealed the same parcel had already been assigned to an institutional buyer.",
       verdict: "FATAL DEFECT (Score: 88/100) — Dual Conveyance Averted",
       badgeColor: "bg-amber-500/10 border-amber-500/30 text-amber-400",
     },
     {
       id: "case-03",
-      tag: "CASE STUDY 03: EPE EXPRESSWAY AXIS",
-      title: "The 'Gazette in Progress' 4th Mainland Bridge Trap",
-      investor: "Engr. Emeka O. — Energy Infrastructure Lead, Houston USA",
-      lossPrevented: "₦35,000,000 ($23,300 USD)",
-      riskType: "Committed State Government Acquisition",
+      tag: "CASE STUDY 03: PERI-URBAN ARTERIAL EXPANSION",
+      title: "The 'Gazette in Progress' Transit Right-of-Way Trap",
+      investor: "Engr. Emeka O. — Energy Infrastructure Lead & Cross-Border Investor",
+      lossPrevented: "$23,300 (₦35,000,000)",
+      riskType: "Committed Statutory Government Acquisition",
       summary:
         "A residential estate developer was actively selling 500 SQM plots with aggressive social media ads promising 'Excision in Progress' and guaranteed 200% appreciation within 18 months.",
       deception:
-        "The developer produced a gazette file tracking number from the Ministry of Lands, assuring diaspora buyers that the formal government excision release was merely an administrative formality.",
+        "The developer produced a gazette tracking receipt from the Ministry of Lands, assuring diaspora buyers that the formal government excision release was merely an administrative formality.",
       detection:
-        "LandIntel's Gazette & Acquisition Matching layer parsed the survey polygon. The parcel overlapped the gazetted 120-meter right-of-way corridor designated for the 4th Mainland Bridge Infrastructure Project, meaning mandatory future demolition with zero compensation.",
+        "LandIntel's Gazette & Acquisition Matching layer parsed the survey polygon. The parcel overlapped the gazetted 120-meter right-of-way corridor designated for a major Transit Infrastructure Project, meaning mandatory future forfeiture with zero compensation.",
       verdict: "UNENCUMBERED TITLE IMPOSSIBLE (Score: 95/100) — Saved Capital",
       badgeColor: "bg-rose-500/10 border-rose-500/30 text-rose-400",
     },
@@ -96,13 +96,13 @@ export default function LandingPage() {
   const comparisonRows = [
     {
       feature: "Verification Method",
-      traditional: "Family friend or agent WhatsApp video walk-through",
+      traditional: "Intermediary or agent video walk-through",
       landIntel: "Mathematical coordinate plotting & multi-document cross-examination",
     },
     {
       feature: "Survey Plan Audit",
-      traditional: "Visual check of red ink stamps on scanned paper",
-      landIntel: "OCR parsing of Easting/Northing beacons with SURCON surveyor registry cross-check",
+      traditional: "Visual check of ink stamps on scanned paper",
+      landIntel: "OCR parsing of Easting/Northing beacons with official surveyor registry cross-check",
     },
     {
       feature: "State Acquisition Check",
@@ -115,9 +115,9 @@ export default function LandingPage() {
       landIntel: "Automated heuristic flag for plot number, square meter, and assignor name mismatches",
     },
     {
-      feature: "Governor's Consent Review",
-      traditional: "Overlooked until buyer attempts to register at Alausa months later",
-      landIntel: "Statutory Section 22 Land Use Act 1978 compliance check before capital commitment",
+      feature: "Statutory Consent Review",
+      traditional: "Overlooked until buyer attempts to register at the central lands registry months later",
+      landIntel: "Statutory Land Act legal compliance check before capital commitment",
     },
     {
       feature: "Turnaround Time",
@@ -179,33 +179,33 @@ export default function LandingPage() {
   const testimonials = [
     {
       name: "Dr. Tunde Balogun",
-      role: "Consultant Radiologist",
-      location: "Manchester, United Kingdom",
+      role: "Consultant Physician",
+      location: "Cross-Border Property Investor",
       avatar: "TB",
       quote:
-        "I was on the verge of wiring £32,000 for two plots in Ibeju-Lekki. The agent was persuasive, and the survey looked official. LandIntel's coordinate plotting revealed the beacons sat squarely in a committed government coastal setback. That 5-minute scan saved my life savings.",
-      property: "Ibeju-Lekki Sector 3",
-      saving: "£32,000 ($41,500)",
+        "I was on the verge of wiring funds for two plots in a high-growth corridor. The agent was persuasive, and the survey looked official. LandIntel's coordinate plotting revealed the beacons sat squarely in a committed government infrastructure setback. That 5-minute scan saved my life savings.",
+      property: "Coastal Corridor Sector 3",
+      saving: "$41,500 (£32,000)",
     },
     {
       name: "Chidinma & Obinna Eke",
       role: "Senior Software Engineers",
-      location: "Toronto, Canada",
+      location: "Remote Real Estate Buyers",
       avatar: "CE",
       quote:
-        "When buying from abroad, you are constantly told 'trust me, my brother is on the ground.' LandIntel gave us mathematical proof. The Deed had a different plot number than the registered survey plan. We forced the developer to fix the conveyance before signing.",
-      property: "Sangotedo Residential Enclave",
-      saving: "₦65,000,000 ($43,500)",
+        "When buying from abroad, you are constantly told 'trust me, my representative is on the ground.' LandIntel gave us mathematical proof. The Deed had a different plot number than the registered survey plan. We forced the developer to fix the conveyance before signing.",
+      property: "Prime Residential Enclave",
+      saving: "$43,500 (₦65,000,000)",
     },
     {
       name: "Engr. Emeka Okonkwo",
       role: "Infrastructure Project Director",
-      location: "Houston, Texas, USA",
+      location: "Energy Sector Executive",
       avatar: "EO",
       quote:
-        "The 15-section Due-Diligence PDF is institutional grade. I handed it directly to my Nigerian property attorney, and it gave him exact beacon numbers and land registry volume references to cross-check at AGIS Abuja. No guesswork.",
-      property: "Guzape District, FCT Abuja",
-      saving: "₦110,000,000 ($73,000)",
+        "The 15-section Due-Diligence PDF is institutional grade. I handed it directly to my independent property attorney, and it gave him exact beacon numbers and land registry volume references to cross-check against central archives. No guesswork.",
+      property: "Metropolitan Cadastral Zone 04",
+      saving: "$73,000 (₦110,000,000)",
     },
   ];
 
@@ -225,7 +225,7 @@ export default function LandingPage() {
                 <span className="text-2xl sm:text-3xl font-black font-heading text-white tracking-tight">
                   ₦4.8B+
                 </span>
-                <p className="text-xs text-slate-400 font-medium mt-1">
+                <p className="text-xs text-slate-300 font-medium mt-1">
                   Contested Land Capital Scrutinized
                 </p>
               </div>
@@ -234,16 +234,16 @@ export default function LandingPage() {
                 <span className="text-2xl sm:text-3xl font-black font-heading text-emerald-400 tracking-tight">
                   1,420+
                 </span>
-                <p className="text-xs text-slate-400 font-medium mt-1">
+                <p className="text-xs text-slate-300 font-medium mt-1">
                   Cadastral Beacons Cross-Examined
                 </p>
               </div>
 
               <div className="text-center sm:text-left border-l-2 border-cyan-500/50 pl-4 py-1">
                 <span className="text-2xl sm:text-3xl font-black font-heading text-cyan-400 tracking-tight">
-                  36 States + FCT
+                  Multi-Grid
                 </span>
-                <p className="text-xs text-slate-400 font-medium mt-1">
+                <p className="text-xs text-slate-300 font-medium mt-1">
                   WGS-84 Coordinate Grid Coverage
                 </p>
               </div>
@@ -252,25 +252,25 @@ export default function LandingPage() {
                 <span className="text-2xl sm:text-3xl font-black font-heading text-purple-400 tracking-tight">
                   100%
                 </span>
-                <p className="text-xs text-slate-400 font-medium mt-1">
+                <p className="text-xs text-slate-300 font-medium mt-1">
                   Defensible Page-Linked Evidence
                 </p>
               </div>
             </div>
 
             {/* Regulatory Grounding Badges */}
-            <div className="mt-8 pt-6 border-t border-slate-800/60 flex flex-wrap items-center justify-center gap-y-3 gap-x-8 text-xs text-slate-400">
+            <div className="mt-8 pt-6 border-t border-slate-800/60 flex flex-wrap items-center justify-center gap-y-3 gap-x-8 text-xs text-slate-300">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Land Use Act 1978 Statutory Heuristics</span>
+                <span>Statutory Land Act Legal Heuristics</span>
               </div>
               <div className="flex items-center gap-2">
                 <Compass className="w-4 h-4 text-blue-400" />
-                <span>SURCON Survey Plan Seal Integrity</span>
+                <span>Survey Plan Seal & Beacon Integrity</span>
               </div>
               <div className="flex items-center gap-2">
                 <Landmark className="w-4 h-4 text-cyan-400" />
-                <span>Alausa (Lagos) & AGIS (Abuja) Cadastral Alignment</span>
+                <span>Official Cadastral & Land Registry Alignment</span>
               </div>
               <div className="flex items-center gap-2">
                 <Lock className="w-4 h-4 text-purple-400" />
@@ -286,13 +286,13 @@ export default function LandingPage() {
             <div className="max-w-3xl mx-auto text-center space-y-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold">
                 <AlertOctagon className="w-3.5 h-3.5 text-rose-400" />
-                <span>The Diaspora Property Dilemma</span>
+                <span>The Remote Property Dilemma</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-heading tracking-tight">
-                The Anatomy of a ₦50,000,000 Property Trap
+                The Anatomy of a $50,000+ Land Due-Diligence Trap
               </h2>
-              <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
-                Every year, thousands of Nigerians in the UK, US, and Canada lose hard-earned foreign currency to smooth-talking agents, falsified surveys, and unconsented ancestral family lands. Here is how three real investors almost lost everything — and how LandIntel caught it.
+              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-normal">
+                Every year, thousands of diaspora and remote investors lose hard-earned capital to smooth-talking intermediaries, falsified surveys, and unconsented ancestral claims. Here is how three real investors almost lost everything — and how LandIntel caught it.
               </p>
             </div>
 
@@ -526,10 +526,10 @@ export default function LandingPage() {
                 Document Scrutiny
               </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-heading tracking-tight">
-                Complete Coverage of Nigerian Land Instruments
+                Complete Coverage of Statutory Land Instruments
               </h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                Whether purchasing in an uncommitted layout in Epe, a planned GRA in Ikeja, or an ancestral plot in Enugu, LandIntel evaluates the entire chain of title.
+              <p className="text-sm text-slate-200 leading-relaxed">
+                Whether purchasing in an uncommitted peri-urban layout, a planned residential scheme, or an ancestral family parcel, LandIntel evaluates the entire chain of title.
               </p>
             </div>
 
@@ -545,7 +545,7 @@ export default function LandingPage() {
                       <Icon className="w-5 h-5" />
                     </div>
                     <h3 className="text-base font-bold text-white font-heading">{item.title}</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+                    <p className="text-xs text-slate-300 leading-relaxed">{item.desc}</p>
                   </div>
                 );
               })}
@@ -562,10 +562,10 @@ export default function LandingPage() {
                 <span>Verified Due-Diligence Case Reports</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-heading tracking-tight">
-                Trusted by Nigerians Investing from Across the Globe
+                Trusted by Cross-Border & Remote Investors Worldwide
               </h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                Real diaspora investors who protected their life savings from real-estate fraud before signing or wiring funds.
+              <p className="text-sm text-slate-200 leading-relaxed">
+                Real diaspora investors who protected their capital from real-estate fraud before signing or wiring funds.
               </p>
             </div>
 
@@ -598,16 +598,12 @@ export default function LandingPage() {
 
                   <div className="pt-4 border-t border-slate-800/80 space-y-1.5 text-[11px]">
                     <div className="flex items-center justify-between text-slate-400">
-                      <span>Location:</span>
-                      <span className="text-slate-200 font-medium">{tItem.location}</span>
+                      <span>Vetted Parcel:</span>
+                      <span className="font-mono text-white font-semibold">{tItem.property}</span>
                     </div>
-                    <div className="flex items-center justify-between text-slate-400">
-                      <span>Property Scrutinized:</span>
-                      <span className="text-blue-400 font-mono">{tItem.property}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-emerald-400 font-semibold font-mono pt-1">
-                      <span>Loss Prevented:</span>
-                      <span>{tItem.saving}</span>
+                    <div className="flex items-center justify-between text-emerald-400 font-bold">
+                      <span>Capital Protected:</span>
+                      <span className="font-mono">{tItem.saving}</span>
                     </div>
                   </div>
                 </div>
@@ -635,27 +631,30 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 9. FAQ SECTION */}
-        <section className="py-20 bg-[#060A14] border-b border-slate-800/80" id="faq">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="text-center space-y-4">
+        {/* 8. FREQUENTLY ASKED QUESTIONS */}
+        <section className="py-20 bg-[#080D19] border-b border-slate-800/80" id="faq">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            <div className="text-center space-y-3">
               <span className="text-xs font-bold uppercase tracking-wider text-blue-400">
-                Got Questions?
+                Transparent Intelligence
               </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-heading tracking-tight">
                 Frequently Asked Questions
               </h2>
+              <p className="text-sm text-slate-200">
+                Direct answers regarding cadastral risk detection, document privacy, and legal report boundaries.
+              </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
                 {
-                  q: "Does LandIntel establish legal ownership or certify title?",
-                  a: "No. LandIntel is an advanced property due-diligence intelligence platform. It analyzes submitted documents, cross-examines cadastral coordinates against government acquisition boundaries, identifies discrepancies, and organizes evidence. It empowers buyers with defensible findings, but does NOT establish legal ownership, certify title, or replace licensed surveyors and property lawyers.",
+                  q: "Does LandIntel replace a licensed surveyor or property lawyer?",
+                  a: "No. LandIntel is an automated algorithmic intelligence engine. We cross-examine coordinates against official acquisition boundaries, extract beacon lines, and detect deed discrepancies. We recommend taking your 15-section report directly to your licensed surveyor and attorney to conduct physical beacon verification and official ministry registry searches.",
                 },
                 {
-                  q: "How does the system compare Survey Plans and Deeds of Assignment?",
-                  a: "Our cadastral heuristics extract beacon numbers, plot identifiers, surveyor registration references, and land areas. The cross-document engine flags variances between documents (e.g., Plot 24 in the survey vs Plot 42 in the deed) to prevent rival ownership conflicts.",
+                  q: "How does the platform detect 'Ghost Beacons' and layout shifts?",
+                  a: "Our Cadastral Engine parses the Easting and Northing coordinates on your uploaded survey plan, converts them to standard WGS-84 GPS coordinates, and overlays them directly against government gazettes, drainage channels, and arterial road reservation buffers.",
                 },
                 {
                   q: "Are my uploaded property documents private and secure?",
@@ -663,11 +662,11 @@ export default function LandingPage() {
                 },
                 {
                   q: "Can I pay in foreign currency like USD, GBP, or CAD from abroad?",
-                  a: "Yes. We support multi-currency payment options including international cards, Apple Pay, UK/US cards, as well as direct Nigerian debit cards, bank transfers, and USSD directly through Paystack.",
+                  a: "Yes. We support multi-currency payment options including international cards, Apple Pay, global debit/credit cards, as well as bank transfers and secure digital payment gateways.",
                 },
                 {
                   q: "What should I do if LandIntel reports a High Risk score on a parcel?",
-                  a: "Do not wire purchase funds. Review the page-linked evidence checklist in your report. Hand the PDF directly to your property attorney or request that the vendor provide official Alausa/AGIS regularisation documents that resolve the specific coordinate overlap or missing consent.",
+                  a: "Do not wire purchase funds. Review the page-linked evidence checklist in your report. Hand the PDF directly to your property attorney or request that the vendor provide official land registry regularisation documents that resolve the specific coordinate overlap or missing consent.",
                 },
               ].map((faq, i) => (
                 <div

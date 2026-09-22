@@ -34,8 +34,8 @@ export default function DisclaimerPage() {
               <li>It does <strong>NOT</strong> establish legal ownership or root of title.</li>
               <li>It does <strong>NOT</strong> certify cadastral survey plans or authenticate official seals.</li>
               <li>It does <strong>NOT</strong> confirm government approval, gazette status, or excision validity without official ministry verification.</li>
-              <li>It does <strong>NOT</strong> replace a certified, registered surveyor (SURCON).</li>
-              <li>It does <strong>NOT</strong> replace a qualified real estate lawyer or Nigerian legal counsel.</li>
+              <li>It does <strong>NOT</strong> replace a certified, registered surveyor.</li>
+              <li>It does <strong>NOT</strong> replace a qualified real estate lawyer or licensed legal counsel.</li>
               <li>It does <strong>NOT</strong> guarantee that any real-estate transaction will succeed or is free from fraud.</li>
             </ul>
           </section>
@@ -43,7 +43,7 @@ export default function DisclaimerPage() {
           <section className="space-y-2">
             <h2 className="text-sm font-bold text-brand-textPrimary font-heading">Recommended Action Protocol</h2>
             <p>
-              Buyers should always take the generated findings and questions from LandIntel to an independent property attorney to conduct a search at the State Lands Bureau (e.g. Alausa or AGIS), and commission a registered surveyor to chart the boundary beacons directly on site.
+              Buyers should always take the generated findings and questions from LandIntel to an independent property attorney to conduct an in-person physical search at the official Lands Registry or Cadastral Bureau, and commission a licensed surveyor to chart the boundary beacons directly on site.
             </p>
           </section>
         </div>

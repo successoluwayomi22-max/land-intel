@@ -283,7 +283,7 @@ export default function AdminProDashboardPage() {
                 </span>
               </div>
               <p className="text-xs text-rose-200/90 mt-0.5">
-                Customer(s) have formally submitted an account & data erasure request. Under Nigerian NDPR / GDPR regulations, review their records before the statutory grace period expires.
+                Customer(s) have formally submitted an account & data erasure request. Under statutory privacy standards (GDPR / NDPR), review their records before the statutory grace period expires.
               </p>
             </div>
           </div>
@@ -307,7 +307,7 @@ export default function AdminProDashboardPage() {
             </span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Real-time management for cadastral AI analysis, user entitlements, Nigerian land risk scores, and Paystack revenues.
+            Real-time management for cadastral AI analysis, user entitlements, property risk scores, and platform revenues.
           </p>
         </div>
 
@@ -652,7 +652,7 @@ export default function AdminProDashboardPage() {
                   Cadastral Risk Breakdown (All Property Cases)
                 </h3>
                 <p className="text-[11px] text-slate-400">
-                  Distribution of evaluated Nigerian properties by AI risk indicator rating.
+                  Distribution of evaluated properties by AI risk indicator rating.
                 </p>
               </div>
               <div className="flex items-center gap-3 text-xs font-mono">
@@ -1404,7 +1404,7 @@ export default function AdminProDashboardPage() {
                     <span className="font-mono text-amber-400">7.5% (Enforced by Law)</span>
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    Nigerian VAT Act 2020 compliance automatically calculated on transactions.
+                    Statutory VAT compliance automatically calculated on transactions.
                   </p>
                 </div>
 

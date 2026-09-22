@@ -266,7 +266,7 @@ export default function AdminSectionPage() {
   const SECTION_METADATA: Record<string, { title: string; subtitle: string; icon: any }> = {
     users: { title: "User Governance & Roles", subtitle: "Manage registered accounts, platform permissions, and authentication states", icon: Users },
     organizations: { title: "Organization Multi-Tenancy", subtitle: "Enterprise workspaces, membership bounds, and tenant isolation", icon: Building2 },
-    cases: { title: "Property Investigations", subtitle: "All due-diligence files across Nigerian and global cadastral jurisdictions", icon: FolderOpen },
+    cases: { title: "Property Investigations", subtitle: "All due-diligence files across national and global cadastral jurisdictions", icon: FolderOpen },
     documents: { title: "Document Vault & Storage", subtitle: "Ingested deeds, survey plans, and C of O documents in private storage", icon: FileText },
     analysis: { title: "Cadastral Analysis & Risks", subtitle: "Cross-document findings, boundary discrepancies, and title radar", icon: PieChart },
     analytics: { title: "Cadastral Risk & Geographic Analytics", subtitle: "Cadastral radar, state-by-state geographic distribution, case throughput, and conversion funnel", icon: Activity },
@@ -1380,7 +1380,7 @@ export default function AdminSectionPage() {
               <span>Geographic Distribution (State-by-State Cadastral Activity)</span>
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-              {Object.entries(data?.geographicDistribution || { Lagos: 8, "Abuja (FCT)": 4, Ogun: 3, Rivers: 2, Oyo: 1, Enugu: 1 }).map(
+              {Object.entries(data?.geographicDistribution || { "Sector Alpha": 8, "District Beta": 4, "Zone Gamma": 3, "East Corridor": 2, "North Sector": 1, "West Zone": 1 }).map(
                 ([state, count]) => (
                   <div key={state} className="p-3 bg-slate-950 border border-slate-800 rounded-lg text-center space-y-1">
                     <span className="text-[11px] font-semibold text-slate-300 block truncate">{state}</span>
@@ -1562,7 +1562,7 @@ export default function AdminSectionPage() {
                           </span>
                         </td>
                         <td className="py-3 px-4 font-mono text-slate-300">
-                          {r.propertyCase?.state || "Lagos"}, {r.propertyCase?.country || "Nigeria"}
+                          {r.propertyCase?.state || "Sector Alpha"}, {r.propertyCase?.country || "Global"}
                         </td>
                         <td className="py-3 px-4">
                           <div className="text-slate-200">{r.propertyCase?.user?.name || "Investor"}</div>
@@ -1793,7 +1793,7 @@ export default function AdminSectionPage() {
               <span>FIRS (Federal Inland Revenue Service) VAT Compliance Matrix</span>
             </div>
             <p className="text-[11px] text-amber-300/80">
-              In accordance with the Nigerian VAT Act 2020 and global cross-border digital taxation standards, statutory
+              In accordance with applicable statutory VAT standards and global cross-border digital taxation standards, statutory
               7.5% Value Added Tax is automatically calculated and isolated on all paid report unlocks and recurring
               enterprise subscriptions.
             </p>

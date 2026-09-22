@@ -42,8 +42,8 @@ export default function NotFound() {
           </Link>
         </div>
 
-        <div className="pt-4 border-t border-slate-800/80 text-[11px] text-slate-500 font-mono">
-          Looking for a specific Nigerian property? Verify title references in{" "}
+        <div className="pt-4 border-t border-slate-800/80 text-[11px] text-slate-400 font-mono">
+          Looking for a specific property case? Verify title references in{" "}
           <Link href="/properties" className="text-amber-400 hover:underline">
             Properties
           </Link>

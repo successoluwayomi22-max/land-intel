@@ -204,8 +204,8 @@ export default function LoginPage() {
             </span>
             <span>•</span>
             <span className="flex items-center gap-1.5">
-              <Scale className="w-3.5 h-3.5 text-slate-400" />
-              <span>Nigerian Land Law Grounded</span>
+              <Scale className="w-3.5 h-3.5 text-slate-300" />
+              <span>Statutory Property Law Grounded</span>
             </span>
           </div>
         </div>
