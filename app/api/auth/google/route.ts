@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { hashPassword, createSessionToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 import { logAudit } from "@/lib/services/audit";
 import { sendWelcomeEmail } from "@/lib/email/send";
+import { GOOGLE_CLIENT_ID } from "@/lib/security/credentials";
 import crypto from "crypto";
 
 const GoogleAuthSchema = z.object({
@@ -19,14 +20,13 @@ const GoogleAuthSchema = z.object({
 export async function GET(request: NextRequest) {
   const origin = request.nextUrl.origin;
   const redirectUri = `${origin}/api/auth/google/callback`;
-  const clientId =
-    process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const clientId = GOOGLE_CLIENT_ID;
 
   if (!clientId) {
     console.error("[GOOGLE_AUTH] Missing GOOGLE_CLIENT_ID in environment");
     return NextResponse.redirect(
       new URL(
-        "/login?error=Google+Sign-In+requires+GOOGLE_CLIENT_ID+in+Vercel+settings.",
+        "/login?error=Google+Sign-In+is+not+configured+on+this+domain.",
         origin
       )
     );
@@ -49,8 +49,7 @@ export async function GET(request: NextRequest) {
 async function verifyGoogleToken(
   credential: string
 ): Promise<{ email: string; name: string; sub: string; picture?: string } | null> {
-  const clientId =
-    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
+  const clientId = GOOGLE_CLIENT_ID;
 
   if (clientId) {
     try {

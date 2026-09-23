@@ -106,8 +106,13 @@ export default function RegisterPage() {
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match. Please verify both password fields.");
+    if (password.trim() !== confirmPassword.trim()) {
+      setError("Passwords do not match. Please ensure both password fields match.");
+      return;
+    }
+
+    if (!captchaToken) {
+      setError("Please complete the reCAPTCHA 'I am not a robot' security check below.");
       return;
     }
 
@@ -282,26 +287,43 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            <Input
-              label={t("confirmPassword") || "Confirm Password"}
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder="Re-enter password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              rightElement={
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  className="p-1 text-slate-400 hover:text-slate-700 transition-colors focus:outline-none flex items-center justify-center cursor-pointer"
-                  title={showConfirmPassword ? "Hide password" : "Show password"}
-                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                  tabIndex={-1}
+            <div>
+              <Input
+                label={t("confirmPassword") || "Confirm Password"}
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Re-enter password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                rightElement={
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="p-1 text-slate-400 hover:text-slate-700 transition-colors focus:outline-none flex items-center justify-center cursor-pointer"
+                    title={showConfirmPassword ? "Hide password" : "Show password"}
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                }
+              />
+              {confirmPassword.length > 0 && (
+                <p
+                  className={`text-[11px] font-semibold mt-1 pl-1 flex items-center gap-1 ${
+                    password.trim() === confirmPassword.trim()
+                      ? "text-emerald-600"
+                      : "text-amber-600"
+                  }`}
                 >
-                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              }
-            />
+                  {password.trim() === confirmPassword.trim() ? (
+                    <span>✓ Passwords match</span>
+                  ) : (
+                    <span>Passwords do not match yet</span>
+                  )}
+                </p>
+              )}
+            </div>
 
             <label className="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer pt-1 leading-normal">
               <input
@@ -323,7 +345,13 @@ export default function RegisterPage() {
             </label>
 
             <div className="pt-1 flex justify-center">
-              <ReCaptcha onVerify={(token) => setCaptchaToken(token)} />
+              <ReCaptcha
+                onVerify={(token) => {
+                  setCaptchaToken(token);
+                  setError("");
+                }}
+                onExpire={() => setCaptchaToken("")}
+              />
             </div>
 
             <Button

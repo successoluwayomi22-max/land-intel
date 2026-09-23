@@ -55,11 +55,18 @@ export function validatePasswordStrength(password: string): PasswordStrengthResu
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 12);
+  return bcrypt.hash(password.trim(), 12);
 }
 
 export async function comparePassword(plain: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(plain, hash);
+  if (!plain || !hash) return false;
+  const match = await bcrypt.compare(plain, hash);
+  if (match) return true;
+  // Safe fallback if mobile autofill added a leading/trailing space
+  if (plain.trim() !== plain) {
+    return bcrypt.compare(plain.trim(), hash);
+  }
+  return false;
 }
 
 export async function createSessionToken(payload: SessionPayload): Promise<string> {

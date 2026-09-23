@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { hashPassword, createSessionToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 import { logAudit } from "@/lib/services/audit";
 import { sendWelcomeEmail } from "@/lib/email/send";
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "@/lib/security/credentials";
 import crypto from "crypto";
 
 export async function GET(request: NextRequest) {
@@ -19,14 +20,13 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const clientId =
-    process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const clientId = GOOGLE_CLIENT_ID;
+  const clientSecret = GOOGLE_CLIENT_SECRET;
 
   if (!clientId || !clientSecret) {
     console.error("[GOOGLE_CALLBACK] Missing Google OAuth credentials in environment");
     return NextResponse.redirect(
-      new URL("/login?error=Google+OAuth+requires+GOOGLE_CLIENT_ID+and+GOOGLE_CLIENT_SECRET+in+Vercel+settings.", origin)
+      new URL("/login?error=Google+OAuth+is+not+fully+configured.", origin)
     );
   }
 

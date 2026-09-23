@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
+import { GOOGLE_CLIENT_ID } from "@/lib/security/credentials";
 
 interface GoogleAuthButtonProps {
   mode?: "login" | "signup";
@@ -24,7 +25,7 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
   const [loading, setLoading] = useState(false);
   const [gsiLoaded, setGsiLoaded] = useState(false);
 
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const clientId = GOOGLE_CLIENT_ID;
 
   // Handle the Google One-Tap credential response if GSI is used
   const handleCredentialResponse = useCallback(
