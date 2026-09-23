@@ -169,28 +169,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Quick Demo Credentials Bar */}
-          <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 space-y-1.5">
-            <span className="font-bold text-slate-700 block text-[11px] uppercase tracking-wider">
-              Quick Test Accounts:
-            </span>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => fillCredentials("admin@diasporaland.ai", "AdminPass123!")}
-                className="px-2.5 py-1 rounded-md bg-white border border-slate-300 text-slate-700 hover:border-brand-blue hover:text-brand-blue font-medium transition-colors text-[11px] cursor-pointer shadow-2xs"
-              >
-                Use Admin
-              </button>
-              <button
-                type="button"
-                onClick={() => fillCredentials("investor@diasporaland.ai", "UserPass123!")}
-                className="px-2.5 py-1 rounded-md bg-white border border-slate-300 text-slate-700 hover:border-brand-blue hover:text-brand-blue font-medium transition-colors text-[11px] cursor-pointer shadow-2xs"
-              >
-                Use Investor
-              </button>
-            </div>
-          </div>
 
           {error && (
             <div className="space-y-2">

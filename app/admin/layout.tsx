@@ -105,28 +105,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [adminUser, setAdminUser] = useState<AdminUserInfo | null>(null);
   const [nonAdminUser, setNonAdminUser] = useState<AdminUserInfo | null>(null);
   const [loading, setLoading] = useState(true);
-  const [authError, setAuthError] = useState("");
-  const [emailInput, setEmailInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [signingIn, setSigningIn] = useState(false);
 
   const checkAuth = async (): Promise<void> => {
-    // 1. Instant hydration from localStorage
-    const savedUserStr = typeof window !== "undefined" ? localStorage.getItem("landintel_user") : null;
     const token = typeof window !== "undefined" ? localStorage.getItem("landintel_token") : null;
-
-    if (savedUserStr) {
-      try {
-        const parsed = JSON.parse(savedUserStr);
-        if (parsed.role === "ADMIN" || parsed.role === "SUPER_ADMIN") {
-          setAdminUser(parsed);
-          setLoading(false);
-        } else {
-          setNonAdminUser(parsed);
-          setLoading(false);
-        }
-      } catch {}
-    }
 
     try {
       const headers: Record<string, string> = {};
@@ -152,10 +133,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         }
       }
     } catch {
-      if (!savedUserStr) {
-        setAdminUser(null);
-        setNonAdminUser(null);
-      }
+      setAdminUser(null);
+      setNonAdminUser(null);
     } finally {
       setLoading(false);
     }
@@ -165,47 +144,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     checkAuth();
   }, []);
 
-  const handleAdminSignIn = async (emailToUse?: string, passToUse?: string): Promise<void> => {
-    setSigningIn(true);
-    setAuthError("");
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: emailToUse || emailInput,
-          password: passToUse || passwordInput,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.user) {
-        setAuthError(data.error || "Authentication failed. Verify credentials.");
-        setSigningIn(false);
-        return;
+  // Automatic redirect if unauthorized
+  useEffect(() => {
+    if (!loading) {
+      if (!adminUser && !nonAdminUser) {
+        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      } else if (nonAdminUser && !adminUser) {
+        router.replace("/dashboard");
       }
-      if (data.user.role !== "ADMIN" && data.user.role !== "SUPER_ADMIN") {
-        setAuthError(`Account "${data.user.email}" has role "${data.user.role}", not ADMIN.`);
-        setSigningIn(false);
-        return;
-      }
-      if (typeof window !== "undefined") {
-        if (data.token) {
-          localStorage.setItem("landintel_token", data.token);
-          try {
-            document.cookie = `landintel_session=${data.token}; path=/; max-age=2592000; SameSite=Lax`;
-            document.cookie = `diasporaland_session=${data.token}; path=/; max-age=2592000; SameSite=Lax`;
-          } catch {}
-        }
-        localStorage.setItem("landintel_user", JSON.stringify(data.user));
-      }
-      setAdminUser(data.user);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Network error while authenticating.";
-      setAuthError(msg);
-    } finally {
-      setSigningIn(false);
     }
-  };
+  }, [loading, adminUser, nonAdminUser, pathname, router]);
 
   const handleLogout = async (): Promise<void> => {
     try {
@@ -280,86 +228,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     );
   }
 
-  // 2. If not logged in as Admin, display the secure Administrative Login Gate
+  // 2. If not logged in as Admin, show clean loading and redirect to login
   if (!adminUser) {
     return (
-      <div className="min-h-screen bg-[#050811] text-slate-100 flex items-center justify-center p-4 relative overflow-hidden font-sans">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-md w-full bg-[#0B101E] border border-amber-500/30 rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 relative z-10">
-          <div className="text-center space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/20 text-slate-950 font-black text-xl">
-              L
-            </div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-mono tracking-wider font-bold uppercase">
-              RESTRICTED OPERATIONS ACCESS
-            </div>
-            <h1 className="text-xl font-extrabold font-heading text-white">LandIntel Admin Command Center</h1>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
-              LandIntel Global Executive Cockpit. Elevated root access required to inspect cadastral registries, audit accounts, and override verified parcels.
-            </p>
-          </div>
-
-          {authError && (
-            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{authError}</span>
-            </div>
-          )}
-
-          {/* Secure Admin Auth Form */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleAdminSignIn();
-            }}
-            className="space-y-4"
-          >
-            <div className="space-y-2">
-              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
-                Operator Email
-              </label>
-              <input
-                type="email"
-                value={emailInput}
-                onChange={(e) => setEmailInput(e.target.value)}
-                required
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
-                placeholder="operator@landintel.ng"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
-                Security Passcode
-              </label>
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                required
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
-                placeholder="••••••••••••"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={signingIn}
-              className="w-full py-2.5 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs rounded-lg shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-            >
-              <KeyRound className="w-3.5 h-3.5" />
-              <span>{signingIn ? "Authorizing Root Clearance..." : "Authenticate Admin Session"}</span>
-            </button>
-          </form>
-
-          <div className="text-center pt-2">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Return to Public Portal</span>
-            </Link>
-          </div>
+      <div className="min-h-screen bg-[#050811] text-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-full border-2 border-slate-700 border-t-amber-500 animate-spin" />
+          <p className="text-xs font-mono text-slate-400">
+            Verifying security credentials...
+          </p>
         </div>
       </div>
     );
