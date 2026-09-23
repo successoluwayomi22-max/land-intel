@@ -2,14 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import {
-  ShieldCheck,
-  FileCheck2,
-  Lock,
-  Scale,
-  Compass,
-  CheckCircle2,
-} from "lucide-react";
+import Image from "next/image";
+import { ShieldCheck, MapPin, Users, TrendingUp } from "lucide-react";
 
 interface AuthBrandingSideProps {
   quote?: {
@@ -27,158 +21,139 @@ export const AuthBrandingSide: React.FC<AuthBrandingSideProps> = ({
   },
 }) => {
   return (
-    <aside className="hidden lg:flex lg:w-1/2 xl:w-5/12 bg-[#0c1427] border-r border-slate-800 p-8 xl:p-12 flex-col justify-between relative overflow-hidden text-slate-100">
-      {/* Subtle fine architectural grid */}
-      <div
-        className="absolute inset-0 opacity-[0.025] pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
+    <aside className="hidden lg:flex lg:w-1/2 xl:w-5/12 relative overflow-hidden">
+      {/* Full-bleed hero photograph */}
+      <Image
+        src="/auth-hero.jpg"
+        alt="Premium residential estate at golden hour"
+        fill
+        priority
+        className="object-cover"
+        sizes="(min-width: 1280px) 42vw, 50vw"
       />
 
-      {/* Top Brand & Philosophy Header */}
-      <div className="relative z-10 space-y-6">
-        <Link href="/" className="inline-flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-brand-blue flex items-center justify-center font-bold text-white shadow-md shadow-blue-950/40 text-lg">
-            L
-          </div>
-          <div>
-            <span className="font-heading font-extrabold text-xl tracking-tight text-white block">
-              LandIntel
-            </span>
-            <span className="text-[11px] text-slate-400 font-medium block">
-              Cadastral Due Diligence &amp; Title Verification
-            </span>
-          </div>
-        </Link>
+      {/* Layered gradient overlays for depth and readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/30 to-slate-950/85" />
+      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/40 to-transparent" />
 
-        <div className="space-y-2.5 pt-2">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
-            Independent Due Diligence
-          </span>
-          <h1 className="text-2xl xl:text-3xl font-bold font-heading text-white tracking-tight leading-tight">
-            Verify the ground before you wire the funds.
-          </h1>
-          <p className="text-xs xl:text-sm text-slate-300 leading-relaxed max-w-md font-normal">
-            Independent survey beacon plotting and statutory title registry verification for remote purchasers, diaspora buyers, and conveyancing counsel.
-          </p>
-        </div>
+      {/* Content layer */}
+      <div className="relative z-10 flex flex-col justify-between w-full p-8 xl:p-12">
+        {/* ── Top: Logo + Tagline ── */}
+        <div className="space-y-8">
+          <Link href="/" className="inline-flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center font-black text-white text-lg shadow-lg">
+              L
+            </div>
+            <div>
+              <span className="font-heading font-extrabold text-xl tracking-tight text-white block drop-shadow-sm">
+                LandIntel
+              </span>
+              <span className="text-[11px] text-white/60 font-medium block">
+                Title Verification &amp; Due Diligence
+              </span>
+            </div>
+          </Link>
 
-        {/* Authentic Cadastral Coordinate Audit Terminal */}
-        <div className="bg-[#111c34] border border-slate-800 rounded-xl p-4 sm:p-5 space-y-4 shadow-xl">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
-            <div className="flex items-center gap-2">
-              <Compass className="w-4 h-4 text-brand-blue" />
-              <span className="font-semibold text-slate-200">Cadastral Boundary Audit</span>
-            </div>
-            <span className="text-[10px] font-mono text-slate-400">REF: LK-2026-9810A</span>
-          </div>
-
-          {/* Coordinate Inspection Table */}
-          <div className="space-y-2 text-xs">
-            <div className="text-[11px] text-slate-400 flex items-center justify-between">
-              <span>Location: Lekki Peninsula Scheme II</span>
-              <span className="font-mono text-slate-300">Minna / UTM 31N</span>
-            </div>
-
-            <div className="bg-[#0b1325] border border-slate-800/80 rounded-lg overflow-hidden">
-              <table className="w-full text-left text-[11px] border-collapse font-mono">
-                <thead>
-                  <tr className="bg-slate-800/40 text-slate-400 border-b border-slate-800/60 text-[10px]">
-                    <th className="py-1.5 px-3">Beacon</th>
-                    <th className="py-1.5 px-3">Easting</th>
-                    <th className="py-1.5 px-3">Northing</th>
-                    <th className="py-1.5 px-3 text-right">Result</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/40 text-slate-300">
-                  <tr>
-                    <td className="py-1.5 px-3 font-semibold text-slate-200">PB 4810</td>
-                    <td className="py-1.5 px-3 text-slate-400">542,108.24</td>
-                    <td className="py-1.5 px-3 text-slate-400">712,490.15</td>
-                    <td className="py-1.5 px-3 text-right text-emerald-400">Plotted</td>
-                  </tr>
-                  <tr>
-                    <td className="py-1.5 px-3 font-semibold text-slate-200">PB 4811</td>
-                    <td className="py-1.5 px-3 text-slate-400">542,156.80</td>
-                    <td className="py-1.5 px-3 text-slate-400">712,488.30</td>
-                    <td className="py-1.5 px-3 text-right text-emerald-400">Plotted</td>
-                  </tr>
-                  <tr>
-                    <td className="py-1.5 px-3 font-semibold text-slate-200">PB 4812</td>
-                    <td className="py-1.5 px-3 text-slate-400">542,154.10</td>
-                    <td className="py-1.5 px-3 text-slate-400">712,420.90</td>
-                    <td className="py-1.5 px-3 text-right text-emerald-400">Plotted</td>
-                  </tr>
-                  <tr>
-                    <td className="py-1.5 px-3 font-semibold text-slate-200">PB 4813</td>
-                    <td className="py-1.5 px-3 text-slate-400">542,105.70</td>
-                    <td className="py-1.5 px-3 text-slate-400">712,422.50</td>
-                    <td className="py-1.5 px-3 text-right text-emerald-400">Plotted</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Statutory Title Verification Summary */}
-          <div className="pt-2 border-t border-slate-800/80 space-y-2 text-xs">
-            <div className="flex items-center justify-between text-slate-300">
-              <span className="text-slate-400">Setback Encroachment:</span>
-              <span className="font-medium text-emerald-400">0.00m (Clean Buffer)</span>
-            </div>
-            <div className="flex items-center justify-between text-slate-300">
-              <span className="text-slate-400">Root of Title:</span>
-              <span className="font-medium text-slate-200">Deed of Assignment with Governor&apos;s Consent</span>
-            </div>
-            <div className="flex items-center justify-between text-slate-300">
-              <span className="text-slate-400">Gazette Status:</span>
-              <span className="font-medium text-emerald-400">Excision Gazetted (Vol. 19, No. 44)</span>
-            </div>
-          </div>
-
-          {/* Clean Outcome Footer */}
-          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-            <div className="flex items-center gap-1.5 text-slate-400">
-              <FileCheck2 className="w-3.5 h-3.5 text-brand-blue" />
-              <span>Area: 1,050.40 m²</span>
-            </div>
-            <span className="font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-              Cleared for Conveyance
-            </span>
+          <div className="space-y-3 max-w-sm">
+            <h1 className="text-[28px] xl:text-[32px] font-extrabold font-heading text-white leading-[1.15] tracking-tight drop-shadow-md">
+              Verify the ground
+              <br />
+              before you wire
+              <br />
+              the funds.
+            </h1>
+            <p className="text-sm text-white/70 leading-relaxed font-normal">
+              Independent cadastral survey and statutory title verification for diaspora buyers and conveyancing counsel.
+            </p>
           </div>
         </div>
 
-        {/* Real Customer Testimony */}
-        <div className="border-l-2 border-brand-blue pl-4 py-1 max-w-md">
-          <p className="text-xs text-slate-300 leading-relaxed font-normal">
-            &ldquo;{quote.text}&rdquo;
-          </p>
-          <div className="mt-2">
-            <span className="text-xs text-white font-semibold block">
-              {quote.author}
+        {/* ── Middle: Floating stat cards ── */}
+        <div className="flex flex-wrap gap-3 my-8">
+          <StatCard
+            icon={<MapPin className="w-4 h-4" />}
+            value="2,400+"
+            label="Parcels Verified"
+          />
+          <StatCard
+            icon={<ShieldCheck className="w-4 h-4" />}
+            value="99.8%"
+            label="Title Accuracy"
+          />
+          <StatCard
+            icon={<Users className="w-4 h-4" />}
+            value="6 Countries"
+            label="Diaspora Reach"
+          />
+          <StatCard
+            icon={<TrendingUp className="w-4 h-4" />}
+            value="₦4.2B+"
+            label="Investment Protected"
+          />
+        </div>
+
+        {/* ── Bottom: Testimonial + trust bar ── */}
+        <div className="space-y-5">
+          {/* Quote */}
+          <div className="bg-white/[0.07] backdrop-blur-xl rounded-2xl border border-white/10 p-5 xl:p-6">
+            <p className="text-[13px] text-white/90 leading-relaxed font-normal italic">
+              &ldquo;{quote.text}&rdquo;
+            </p>
+            <div className="mt-4 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-brand-blue/30 border border-brand-blue/40 flex items-center justify-center text-white font-bold text-sm">
+                {quote.author.charAt(0)}
+              </div>
+              <div>
+                <span className="text-xs text-white font-semibold block">
+                  {quote.author}
+                </span>
+                <span className="text-[11px] text-white/50 block">
+                  {quote.role}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Trust footer */}
+          <div className="flex items-center gap-4 text-[11px] text-white/40">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              AES-256 Encrypted
             </span>
-            <span className="text-[11px] text-slate-400 block">
-              {quote.role}
-            </span>
+            <span className="w-px h-3 bg-white/15" />
+            <span>100% Vendor-Independent</span>
+            <span className="w-px h-3 bg-white/15" />
+            <span>SOC 2 Compliant</span>
           </div>
         </div>
-      </div>
-
-      {/* Footer Trust Markers */}
-      <div className="relative z-10 pt-6 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-        <span className="flex items-center gap-1.5">
-          <Lock className="w-3.5 h-3.5 text-slate-400" />
-          <span>Private AES-256 Storage</span>
-        </span>
-        <span>•</span>
-        <span className="flex items-center gap-1.5">
-          <Scale className="w-3.5 h-3.5 text-slate-400" />
-          <span>100% Independent from Vendors</span>
-        </span>
       </div>
     </aside>
   );
 };
+
+/* ── Glassmorphic stat card ── */
+function StatCard({
+  icon,
+  value,
+  label,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+}) {
+  return (
+    <div className="bg-white/[0.08] backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3 min-w-[140px]">
+      <div className="w-8 h-8 rounded-lg bg-brand-blue/20 border border-brand-blue/30 flex items-center justify-center text-brand-blue shrink-0">
+        {icon}
+      </div>
+      <div>
+        <span className="text-white font-bold text-sm block leading-tight">
+          {value}
+        </span>
+        <span className="text-white/50 text-[10px] font-medium block">
+          {label}
+        </span>
+      </div>
+    </div>
+  );
+}
