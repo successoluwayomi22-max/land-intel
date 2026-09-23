@@ -2,12 +2,13 @@
 
 import React from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
+import { GOOGLE_MAPS_API_KEY } from "@/lib/security/public-credentials";
 
 interface MapProviderProps {
   children: React.ReactNode;
 }
 
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
+const apiKey = GOOGLE_MAPS_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
 export const MapProvider: React.FC<MapProviderProps> = ({ children }) => {
   if (!apiKey) {

@@ -55,6 +55,14 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
           gestureHandling="cooperative"
           style={{ width: "100%", height: "100%" }}
         >
+          {/* Single property location marker when no specific polygon beacons are available */}
+          {coordinates.length === 0 && center && (
+            <Marker
+              position={center}
+              title="Identified Property Coordinates"
+            />
+          )}
+
           {/* Beacon markers */}
           {coordinates.map((coord, i) => (
             <Marker
@@ -68,11 +76,41 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
           {coordinates.length >= 3 && (
             <BoundaryPolygon coordinates={coordinates} />
           )}
+
+          {/* Dynamic map re-centering controller */}
+          <MapController center={center} coordinates={coordinates} />
         </Map>
       </div>
     </MapProvider>
   );
 };
+
+/**
+ * Keeps map centered on active bounds or center point dynamically.
+ */
+function MapController({
+  center,
+  coordinates,
+}: {
+  center?: { lat: number; lng: number };
+  coordinates: Coordinate[];
+}) {
+  const map = useMap();
+
+  React.useEffect(() => {
+    if (!map) return;
+    if (coordinates.length >= 3) {
+      const bounds = new google.maps.LatLngBounds();
+      coordinates.forEach((c) => bounds.extend({ lat: c.lat, lng: c.lng }));
+      map.fitBounds(bounds, 60);
+    } else if (center) {
+      map.panTo(center);
+      map.setZoom(17);
+    }
+  }, [map, center, coordinates]);
+
+  return null;
+}
 
 /**
  * Renders a polygon boundary overlay on the map.

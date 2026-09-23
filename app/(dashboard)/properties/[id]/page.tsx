@@ -43,6 +43,12 @@ import { useLocale } from "@/components/providers/LocaleProvider";
 import { ReportCheckoutModal } from "@/components/payments/ReportCheckoutModal";
 import { getPurchaseRecommendation } from "@/lib/ai/types";
 import { ONE_OFF_PACKAGES, OneOffPackageKey } from "@/lib/services/plans";
+import dynamic from "next/dynamic";
+
+const PropertyMap = dynamic(
+  () => import("@/components/maps/PropertyMap").then((mod) => ({ default: mod.PropertyMap })),
+  { ssr: false, loading: () => <div className="h-[380px] bg-slate-100 rounded-xl animate-pulse flex items-center justify-center text-xs text-slate-400">Loading satellite view...</div> }
+);
 
 export default function PropertyCaseHubPage() {
   const { formatPrice } = useLocale();
@@ -460,6 +466,50 @@ export default function PropertyCaseHubPage() {
               </dl>
             </Card>
           </div>
+
+          {/* Satellite Property Reconnaissance Map */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-sm font-bold">
+                  <MapPin className="w-4 h-4 text-brand-blue" />
+                  Satellite & Boundary Ground Reconnaissance
+                </CardTitle>
+                <CardDescription className="text-xs text-slate-500">
+                  High-resolution aerial satellite imagery to inspect parcel occupancy, physical structures, vegetation, and surrounding infrastructure.
+                </CardDescription>
+              </div>
+              {propertyCase.latitude && propertyCase.longitude && (
+                <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+                  {Number(propertyCase.latitude).toFixed(4)}, {Number(propertyCase.longitude).toFixed(4)}
+                </span>
+              )}
+            </CardHeader>
+            <div className="p-4 sm:p-6 pt-0">
+              <PropertyMap
+                center={
+                  propertyCase.latitude && propertyCase.longitude
+                    ? { lat: Number(propertyCase.latitude), lng: Number(propertyCase.longitude) }
+                    : undefined
+                }
+                coordinates={[]}
+                height="380px"
+                showSatellite={true}
+              />
+              <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                  Toggle Satellite / Map in control bar to inspect ground occupancy and structures
+                </span>
+                <Link
+                  href={`/properties/${caseId}/analysis`}
+                  className="text-brand-blue font-semibold hover:underline flex items-center gap-1 self-start sm:self-auto"
+                >
+                  View Full Cadastral Report <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          </Card>
         </div>
       )}
 

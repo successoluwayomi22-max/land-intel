@@ -185,12 +185,22 @@ export default function PropertyAnalysisPage() {
               <MapPin className="w-4 h-4 text-brand-blue" />
               <h2 className="text-sm font-bold text-slate-800">Property Location & Boundaries</h2>
             </div>
-            {beacons.length > 0 && (
-              <span className="text-[11px] text-slate-400 font-mono">{beacons.length} beacons plotted</span>
-            )}
+            <div className="flex items-center gap-2">
+              {pc.latitude && pc.longitude && (
+                <span className="text-[11px] text-slate-500 font-mono bg-slate-100 px-2 py-0.5 rounded">
+                  {Number(pc.latitude).toFixed(4)}, {Number(pc.longitude).toFixed(4)}
+                </span>
+              )}
+              {beacons.length > 0 && (
+                <span className="text-[11px] text-brand-blue font-semibold font-mono bg-blue-50 px-2 py-0.5 rounded">
+                  {beacons.length} beacons plotted
+                </span>
+              )}
+            </div>
           </div>
           <div className="p-4 sm:p-6">
             <PropertyMap
+              center={pc.latitude && pc.longitude ? { lat: Number(pc.latitude), lng: Number(pc.longitude) } : undefined}
               coordinates={beacons}
               height="420px"
               showSatellite={true}

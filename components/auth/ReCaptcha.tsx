@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { RECAPTCHA_SITE_KEY } from "@/lib/security/credentials";
+import { RECAPTCHA_SITE_KEY } from "@/lib/security/public-credentials";
 
 interface ReCaptchaProps {
   onVerify: (token: string) => void;
