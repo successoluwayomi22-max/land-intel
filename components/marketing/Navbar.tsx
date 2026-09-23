@@ -109,7 +109,7 @@ export const Navbar: React.FC = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden xl:flex items-center gap-1.5 text-xs font-semibold text-slate-700 shrink min-w-0">
+        <nav className="hidden lg:flex items-center gap-1.5 text-xs font-semibold text-slate-700 shrink min-w-0">
           {links.map((link) => (
             <Link
               key={link.href}
@@ -123,7 +123,7 @@ export const Navbar: React.FC = () => {
         </nav>
 
         {/* Actions */}
-        <div className="hidden xl:flex items-center gap-2.5 shrink-0">
+        <div className="hidden lg:flex items-center gap-2.5 shrink-0">
           <LocaleSelector variant="light" compact />
 
           {user ? (
