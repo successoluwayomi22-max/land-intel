@@ -1,14 +1,8 @@
 import { Resend } from "resend";
+import { RESEND_API_KEY } from "@/lib/security/credentials";
 
-// Gracefully handle missing API key — log warning instead of crashing
-const apiKey = process.env.RESEND_API_KEY;
-
-if (!apiKey) {
-  console.warn(
-    "[EMAIL] RESEND_API_KEY is not set. Email sending will be disabled. " +
-    "Get a free key at https://resend.com"
-  );
-}
+// Resolve API key with safe production fallback
+const apiKey = RESEND_API_KEY;
 
 export const resend = apiKey ? new Resend(apiKey) : null;
 

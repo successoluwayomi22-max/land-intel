@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { createSessionToken, AUTH_COOKIE_NAME } from "@/lib/auth";
-import { hashOTP } from "@/lib/email/send";
+import { hashOTP, sendWelcomeEmail } from "@/lib/email/send";
 import { logAudit } from "@/lib/services/audit";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
@@ -95,6 +95,11 @@ export async function POST(request: NextRequest) {
       resourceType: "User",
       resourceId: user.id,
       ipAddress: ip,
+    });
+
+    // Send Welcome Email upon successful verification
+    sendWelcomeEmail({ email: user.email, name: user.name }).catch((err) => {
+      console.error("[VERIFY_OTP] Welcome email error:", err);
     });
 
     // Create session so user is logged in after verification

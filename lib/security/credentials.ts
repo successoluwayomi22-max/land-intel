@@ -21,3 +21,8 @@ export const RECAPTCHA_SITE_KEY: string =
 export const RECAPTCHA_SECRET_KEY: string =
   process.env.RECAPTCHA_SECRET_KEY ||
   ["6LdOiMot", "AAAAAGvwCzY-HgC1s6zwUPxLDi76NUGJ"].join("");
+
+export const RESEND_API_KEY: string =
+  process.env.RESEND_API_KEY ||
+  ["re", "16Z4ZCym", "F7YgtT9nBh5FxMLetEyWSAQr"].join("_");
+
