@@ -26,7 +26,7 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
 
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-  // Handle the Google credential response
+  // Handle the Google One-Tap credential response if GSI is used
   const handleCredentialResponse = useCallback(
     async (response: { credential: string }) => {
       setLoading(true);
@@ -72,12 +72,12 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
         setLoading(false);
       }
     },
-    [toast, router]
+    [toast]
   );
 
   // Load Google Identity Services script
   useEffect(() => {
-    if (!clientId) return; // Skip if no client ID configured
+    if (!clientId) return;
 
     const existingScript = document.getElementById("google-gsi-script");
     if (existingScript) {
@@ -96,72 +96,39 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
     document.head.appendChild(script);
   }, [clientId]);
 
-  // Initialize Google Sign-In when script loads
+  // Initialize Google One-Tap in background
   useEffect(() => {
     if (!gsiLoaded || !clientId || !window.google?.accounts?.id) return;
 
-    window.google.accounts.id.initialize({
-      client_id: clientId,
-      callback: handleCredentialResponse,
-      auto_select: false,
-      cancel_on_tap_outside: true,
-    });
+    try {
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: handleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+      window.google.accounts.id.prompt();
+    } catch (e) {
+      console.warn("[GSI] One-tap init note:", e);
+    }
   }, [gsiLoaded, clientId, handleCredentialResponse]);
 
+  // Explicit user click: Directly trigger Google OAuth 2.0 redirect
   const handleClick = () => {
-    if (clientId && gsiLoaded && window.google?.accounts?.id) {
-      // Use Google One Tap prompt
-      window.google.accounts.id.prompt((notification: any) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          // Fallback: redirect to Google OAuth consent screen
-          const redirectUri = `${window.location.origin}/api/auth/google/callback`;
-          const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=email%20profile&prompt=consent`;
-          window.location.href = authUrl;
-        }
-      });
-    } else {
-      // No Google Client ID configured — use server-side demo flow
-      handleDemoFlow();
-    }
-  };
-
-  const handleDemoFlow = async () => {
     setLoading(true);
-    try {
-      const res = await fetch("/api/auth/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
 
-      const data = await res.json();
+    if (clientId && typeof window !== "undefined") {
+      const redirectUri = `${window.location.origin}/api/auth/google/callback`;
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
+        clientId
+      )}&redirect_uri=${encodeURIComponent(
+        redirectUri
+      )}&response_type=code&scope=openid%20email%20profile&prompt=select_account`;
 
-      if (!res.ok) {
-        toast(data.error || "Unable to complete Google authentication.", "error");
-        setLoading(false);
-        return;
-      }
-
-      if (typeof window !== "undefined") {
-        if (data.token) localStorage.setItem("landintel_token", data.token);
-        if (data.user) localStorage.setItem("landintel_user", JSON.stringify(data.user));
-      }
-
-      toast(
-        mode === "signup"
-          ? "Google account registered successfully!"
-          : `Signed in as ${data.user?.email || "Google Investor"}.`,
-        "success"
-      );
-
-      const target =
-        data.user?.role === "ADMIN" || data.user?.role === "SUPER_ADMIN"
-          ? "/admin"
-          : "/dashboard";
-      window.location.href = target;
-    } catch (err: any) {
-      toast(err.message || "Failed to reach Google authentication gateway.", "error");
-      setLoading(false);
+      window.location.href = authUrl;
+    } else if (typeof window !== "undefined") {
+      // Server-side OAuth redirect endpoint has runtime access to GOOGLE_CLIENT_ID
+      window.location.href = "/api/auth/google";
     }
   };
 
@@ -196,7 +163,7 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
       )}
       <span>
         {loading
-          ? "Authenticating with Google..."
+          ? "Redirecting to Google..."
           : mode === "signup"
           ? "Sign up with Google"
           : "Continue with Google"}
@@ -204,3 +171,4 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
     </button>
   );
 };
+

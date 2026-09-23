@@ -36,13 +36,17 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Auto-populate email from query string if supplied (e.g. from register duplicate link)
+  // Auto-populate email or error from query string if supplied
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       const emailParam = urlParams.get("email");
       if (emailParam) {
         setEmail(emailParam);
+      }
+      const errorParam = urlParams.get("error");
+      if (errorParam) {
+        setError(errorParam);
       }
     }
   }, []);

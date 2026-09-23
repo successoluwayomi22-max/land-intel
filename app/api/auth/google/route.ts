@@ -14,6 +14,34 @@ const GoogleAuthSchema = z.object({
 });
 
 /**
+ * GET: Redirect directly to Google OAuth 2.0 authorization screen
+ */
+export async function GET(request: NextRequest) {
+  const origin = request.nextUrl.origin;
+  const redirectUri = `${origin}/api/auth/google/callback`;
+  const clientId =
+    process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+  if (!clientId) {
+    console.error("[GOOGLE_AUTH] Missing GOOGLE_CLIENT_ID in environment");
+    return NextResponse.redirect(
+      new URL(
+        "/login?error=Google+Sign-In+requires+GOOGLE_CLIENT_ID+in+Vercel+settings.",
+        origin
+      )
+    );
+  }
+
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
+    clientId
+  )}&redirect_uri=${encodeURIComponent(
+    redirectUri
+  )}&response_type=code&scope=openid%20email%20profile&prompt=select_account`;
+
+  return NextResponse.redirect(authUrl);
+}
+
+/**
  * Verify a Google ID token and extract the payload.
  * Uses google-auth-library when GOOGLE_CLIENT_ID is set.
  * Falls back to simple JWT decode for development.
@@ -21,7 +49,8 @@ const GoogleAuthSchema = z.object({
 async function verifyGoogleToken(
   credential: string
 ): Promise<{ email: string; name: string; sub: string; picture?: string } | null> {
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
+  const clientId =
+    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
 
   if (clientId) {
     try {
@@ -110,12 +139,13 @@ export async function POST(request: NextRequest) {
       name = parsed.data.name?.trim() || "Google Investor";
     }
 
-    // 3. No credential and no email = reject (no more hardcoded fallback)
+    // 3. No credential and no email
     if (!email) {
       return NextResponse.json(
         {
-          error: "Google authentication requires a valid Google account. Please ensure you have a Google Client ID configured.",
-          code: "GOOGLE_NOT_CONFIGURED",
+          error: "No Google account credentials received. Redirecting to Google Sign-In...",
+          code: "GOOGLE_CREDENTIAL_REQUIRED",
+          authUrl: "/api/auth/google",
         },
         { status: 400 }
       );

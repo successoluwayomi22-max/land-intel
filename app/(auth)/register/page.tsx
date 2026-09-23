@@ -41,13 +41,17 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Pre-fill email from query string if available
+  // Pre-fill email or error from query string if available
   React.useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       const emailParam = urlParams.get("email");
       if (emailParam) {
         setEmail(emailParam);
+      }
+      const errorParam = urlParams.get("error");
+      if (errorParam) {
+        setError(errorParam);
       }
     }
   }, []);

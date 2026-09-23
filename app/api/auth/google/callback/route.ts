@@ -19,13 +19,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const clientId = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const clientId =
+    process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
   if (!clientId || !clientSecret) {
     console.error("[GOOGLE_CALLBACK] Missing Google OAuth credentials in environment");
     return NextResponse.redirect(
-      new URL("/login?error=Google+OAuth+is+not+fully+configured+on+the+server", origin)
+      new URL("/login?error=Google+OAuth+requires+GOOGLE_CLIENT_ID+and+GOOGLE_CLIENT_SECRET+in+Vercel+settings.", origin)
     );
   }
 
