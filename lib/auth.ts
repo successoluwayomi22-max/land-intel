@@ -24,7 +24,10 @@ export interface PasswordStrengthResult {
   missingRules: string[];
 }
 
-export function validatePasswordStrength(password: string): PasswordStrengthResult {
+export function validatePasswordStrength(
+  password: string,
+  context?: { email?: string; name?: string }
+): PasswordStrengthResult {
   if (!password || password.length < 8) {
     return {
       isValid: false,
@@ -35,21 +38,76 @@ export function validatePasswordStrength(password: string): PasswordStrengthResu
   }
 
   const missing: string[] = [];
-  if (!/[a-zA-Z]/.test(password)) missing.push("at least one letter");
-  if (!/[0-9]/.test(password)) missing.push("at least one number");
+  if (!/[a-z]/.test(password)) missing.push("a lowercase letter (a-z)");
+  if (!/[A-Z]/.test(password)) missing.push("an uppercase letter (A-Z)");
+  if (!/[0-9]/.test(password)) missing.push("a number (0-9)");
+  if (!/[^A-Za-z0-9]/.test(password)) missing.push("a special character (!@#$%^&*...)");
+
+  const lower = password.toLowerCase();
+
+  // 1. Reject duplicate repeating characters (e.g. "aaaaaaaa", "11111111")
+  if (/^(.)\1+$/.test(password)) {
+    return {
+      isValid: false,
+      score: 1,
+      message: "Password contains duplicate repeating characters. Please choose a varied combination.",
+      missingRules: ["Avoid duplicate repeating characters"],
+    };
+  }
+
+  // 2. Reject trivial sequential patterns (e.g. "12345678", "abcdefgh")
+  if ("1234567890123456".includes(lower) || "abcdefghijklmnopqrstuvwxyz".includes(lower)) {
+    return {
+      isValid: false,
+      score: 1,
+      message: "Password cannot be a simple sequential sequence. Please choose a unique password.",
+      missingRules: ["Avoid sequential sequences"],
+    };
+  }
+
+  // 3. Reject password containing or duplicating user email prefix
+  if (context?.email) {
+    const emailPrefix = context.email.split("@")[0].toLowerCase();
+    if (emailPrefix.length >= 3 && lower.includes(emailPrefix)) {
+      return {
+        isValid: false,
+        score: 1,
+        message: "Password cannot contain parts of your email address for account security.",
+        missingRules: ["Do not include email in password"],
+      };
+    }
+  }
+
+  // 4. Reject password containing user name
+  if (context?.name) {
+    const nameParts = context.name.toLowerCase().split(/\s+/).filter((p) => p.length >= 3);
+    for (const part of nameParts) {
+      if (lower.includes(part)) {
+        return {
+          isValid: false,
+          score: 1,
+          message: "Password cannot contain parts of your name for account security.",
+          missingRules: ["Do not include your name in password"],
+        };
+      }
+    }
+  }
+
+  // Calculate score out of 5: length (1) + 4 character categories
+  const score = 1 + (4 - missing.length);
 
   if (missing.length > 0) {
     return {
       isValid: false,
-      score: 2,
-      message: `Password must include ${missing.join(" and ")}.`,
+      score,
+      message: `Password is too weak. Please include: ${missing.join(", ")}.`,
       missingRules: missing,
     };
   }
 
   return {
     isValid: true,
-    score: password.length >= 12 ? 5 : 4,
+    score: 5,
     missingRules: [],
   };
 }

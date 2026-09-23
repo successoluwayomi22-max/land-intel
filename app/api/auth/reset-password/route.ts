@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { hashPassword, validatePasswordStrength } from "@/lib/auth";
+import { hashPassword, validatePasswordStrength, comparePassword } from "@/lib/auth";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
@@ -48,6 +48,20 @@ export async function POST(request: Request) {
         { error: "This password reset token has expired. Please request a new link." },
         { status: 400 }
       );
+    }
+
+    // Reject duplicate password (reusing same password as current)
+    if (user.passwordHash) {
+      const isDuplicate = await comparePassword(password, user.passwordHash);
+      if (isDuplicate) {
+        return NextResponse.json(
+          {
+            error: "Your new password cannot be the same as your previous password. Please choose a new, unique password.",
+            code: "DUPLICATE_PASSWORD",
+          },
+          { status: 400 }
+        );
+      }
     }
 
     // Hash and store new password, invalidate reset token

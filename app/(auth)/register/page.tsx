@@ -25,6 +25,7 @@ import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { ReCaptcha } from "@/components/auth/ReCaptcha";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { AuthBrandingSide } from "@/components/auth/AuthBrandingSide";
+import { PasswordStrengthMeter, getPasswordStrength } from "@/components/ui/PasswordStrengthMeter";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -103,6 +104,24 @@ export default function RegisterPage() {
 
     if (password.length < 8) {
       setError("Password must be at least 8 characters long.");
+      return;
+    }
+
+    const strength = getPasswordStrength(password);
+    if (!strength.isAcceptable) {
+      setError("Please choose a stronger password matching the criteria below (uppercase, lowercase, number, special character).");
+      return;
+    }
+
+    const lower = password.toLowerCase();
+    if (/^(.)\1+$/.test(password)) {
+      setError("Password contains duplicate repeating characters. Please choose a varied combination.");
+      return;
+    }
+
+    const emailPrefix = email.split("@")[0].toLowerCase();
+    if (emailPrefix.length >= 3 && lower.includes(emailPrefix)) {
+      setError("Password cannot contain parts of your email address for account security.");
       return;
     }
 
@@ -282,9 +301,7 @@ export default function RegisterPage() {
                   </button>
                 }
               />
-              <p className="text-[11px] text-slate-500 mt-1 pl-1">
-                Must be at least 8 characters long.
-              </p>
+              <PasswordStrengthMeter password={password} showRules={true} />
             </div>
 
             <div>

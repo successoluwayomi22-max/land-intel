@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { hashPassword, createSessionToken, AUTH_COOKIE_NAME } from "@/lib/auth";
+import { hashPassword, createSessionToken, AUTH_COOKIE_NAME, validatePasswordStrength } from "@/lib/auth";
 import { logAudit } from "@/lib/services/audit";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 import { generateOTP, hashOTP, sendWelcomeEmail, sendOTPEmail } from "@/lib/email/send";
@@ -47,9 +47,11 @@ export async function POST(request: NextRequest) {
     const email = parsed.data.email.trim().toLowerCase();
     const password = parsed.data.password;
 
-    if (!password || password.length < 8) {
+    // Validate password strength and reject weak/duplicate patterns wisely
+    const strengthResult = validatePasswordStrength(password, { name, email });
+    if (!strengthResult.isValid) {
       return NextResponse.json(
-        { error: "Password must be at least 8 characters long." },
+        { error: strengthResult.message || "Password is too weak. Please ensure it includes uppercase, lowercase, numbers, and special characters." },
         { status: 400 }
       );
     }
