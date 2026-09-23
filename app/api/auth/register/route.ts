@@ -99,15 +99,19 @@ export async function POST(request: NextRequest) {
       details: { email: user.email },
     });
 
-    // Send emails (non-blocking — don't fail registration if email fails)
+    // Send OTP and Welcome emails directly to registered address
+    // Await delivery with allSettled so Vercel Serverless Lambda does not terminate early
     if (emailEnabled) {
-      // Fire and forget — don't await sequentially
-      Promise.all([
-        sendWelcomeEmail({ email: user.email, name: user.name }),
-        sendOTPEmail({ email: user.email, name: user.name, otpCode }),
-      ]).catch((err) => {
-        console.error("[REGISTER] Email send error (non-blocking):", err);
-      });
+      try {
+        console.log(`[REGISTER] Dispatching OTP and Welcome emails to registered recipient: ${user.email}`);
+        await Promise.allSettled([
+          sendOTPEmail({ email: user.email, name: user.name, otpCode }),
+          sendWelcomeEmail({ email: user.email, name: user.name }),
+        ]);
+        console.log(`[REGISTER] Email dispatch completed for ${user.email}`);
+      } catch (err) {
+        console.error("[REGISTER] Email dispatch error:", err);
+      }
     }
 
     // Create session token

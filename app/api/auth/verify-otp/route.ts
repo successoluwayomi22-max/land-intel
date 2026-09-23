@@ -98,9 +98,11 @@ export async function POST(request: NextRequest) {
     });
 
     // Send Welcome Email upon successful verification
-    sendWelcomeEmail({ email: user.email, name: user.name }).catch((err) => {
+    try {
+      await sendWelcomeEmail({ email: user.email, name: user.name });
+    } catch (err) {
       console.error("[VERIFY_OTP] Welcome email error:", err);
-    });
+    }
 
     // Create session so user is logged in after verification
     const token = await createSessionToken({
