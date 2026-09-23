@@ -44,6 +44,66 @@ export async function GET(
       return NextResponse.json({ error: "Property case not found" }, { status: 404 });
     }
 
+    let latitude = propertyCase.latitude;
+    let longitude = propertyCase.longitude;
+    let locationFound = Boolean(latitude && longitude);
+
+    if (!latitude || !longitude) {
+      try {
+        const { geocodePropertyLocation } = await import("@/lib/geo/geocoding");
+        const geo = await geocodePropertyLocation({
+          address: propertyCase.address,
+          lga: propertyCase.lga,
+          state: propertyCase.state,
+          country: propertyCase.country || "Nigeria",
+        });
+        if (geo.found && geo.lat && geo.lng) {
+          latitude = geo.lat;
+          longitude = geo.lng;
+          locationFound = true;
+          await db.propertyCase.update({
+            where: { id: caseId },
+            data: { latitude, longitude },
+          }).catch(() => {});
+        } else {
+          locationFound = false;
+        }
+      } catch (geoErr) {
+        console.warn("[GEOCODE_FETCH_ERR]", geoErr);
+      }
+    }
+
+    // Determine Ground Occupancy (Occupied structure vs Bare / Empty undeveloped land)
+    const descLower = ((propertyCase.description || "") + " " + (propertyCase.title || "") + " " + (propertyCase.propertyType || "")).toLowerCase();
+    let occupancyStatus: "OCCUPIED" | "BARE" | "EMPTY" | "PENDING_VERIFICATION" = "BARE";
+
+    if (
+      descLower.includes("building") ||
+      descLower.includes("house") ||
+      descLower.includes("structure") ||
+      descLower.includes("duplex") ||
+      descLower.includes("bungalow") ||
+      descLower.includes("tenan") ||
+      descLower.includes("occupied") ||
+      descLower.includes("commercial") ||
+      propertyCase.propertyType.startsWith("RESIDENTIAL_") ||
+      propertyCase.propertyType === "COMMERCIAL" ||
+      propertyCase.propertyType === "INDUSTRIAL"
+    ) {
+      occupancyStatus = "OCCUPIED";
+    } else if (
+      descLower.includes("bare") ||
+      descLower.includes("empty") ||
+      descLower.includes("unimproved") ||
+      descLower.includes("virgin") ||
+      propertyCase.propertyType === "LAND" ||
+      propertyCase.propertyType === "AGRICULTURAL"
+    ) {
+      occupancyStatus = "BARE";
+    } else {
+      occupancyStatus = "PENDING_VERIFICATION";
+    }
+
     const isUnlocked = await isReportUnlocked(caseId, user.id, user.role);
 
     // Check if user has unlocked Full Title Verification Package
@@ -117,10 +177,18 @@ export async function GET(
     return NextResponse.json({
       propertyCase: {
         ...propertyCase,
+        latitude,
+        longitude,
+        locationFound,
+        occupancyStatus,
         findings: sanitizedFindings,
       },
       case: {
         ...propertyCase,
+        latitude,
+        longitude,
+        locationFound,
+        occupancyStatus,
         findings: sanitizedFindings,
       },
       isReportUnlocked: isUnlocked,

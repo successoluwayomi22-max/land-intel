@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     const strengthResult = validatePasswordStrength(password, { name, email });
     if (!strengthResult.isValid) {
       return NextResponse.json(
-        { error: strengthResult.message || "Password is too weak. Please ensure it includes uppercase, lowercase, numbers, and special characters." },
+        { error: strengthResult.message || "Password is too weak. Please include at least 8 characters with letters and numbers." },
         { status: 400 }
       );
     }

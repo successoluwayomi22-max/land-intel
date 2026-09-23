@@ -528,3 +528,11 @@ model AuditLog {
   @@index([action])
   @@index([createdAt])
 }
+
+model StoredFile {
+  key       String   @id
+  data      String   // Base64 encoded file payload
+  mimeType  String?
+  sizeBytes Int?
+  createdAt DateTime @default(now())
+}

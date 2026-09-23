@@ -26,10 +26,40 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
   const [gsiLoaded, setGsiLoaded] = useState(false);
   const [buttonRendered, setButtonRendered] = useState(false);
   const googleBtnContainerRef = useRef<HTMLDivElement>(null);
+  const codeClientRef = useRef<any>(null);
 
   const clientId = GOOGLE_CLIENT_ID;
 
-  // Handle the Google Identity Services credential response
+  // Complete session login from server response
+  const completeAuth = useCallback(
+    (data: any) => {
+      if (typeof window !== "undefined") {
+        if (data.token) {
+          localStorage.setItem("landintel_token", data.token);
+        }
+        if (data.user) {
+          localStorage.setItem("landintel_user", JSON.stringify(data.user));
+        }
+      }
+
+      toast(
+        data.isNewUser
+          ? "Google account registered successfully!"
+          : `Signed in as ${data.user?.email || "Google user"}.`,
+        "success"
+      );
+
+      const target =
+        data.user?.role === "ADMIN" || data.user?.role === "SUPER_ADMIN"
+          ? "/admin"
+          : "/dashboard";
+
+      window.location.href = target;
+    },
+    [toast]
+  );
+
+  // Handle the Google Identity Services credential response (from One-Tap or GSI button)
   const handleCredentialResponse = useCallback(
     async (response: { credential: string }) => {
       setLoading(true);
@@ -48,42 +78,56 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
           return;
         }
 
-        if (typeof window !== "undefined") {
-          if (data.token) {
-            localStorage.setItem("landintel_token", data.token);
-          }
-          if (data.user) {
-            localStorage.setItem("landintel_user", JSON.stringify(data.user));
-          }
-        }
-
-        toast(
-          data.isNewUser
-            ? "Google account registered successfully!"
-            : `Signed in as ${data.user?.email || "Google user"}.`,
-          "success"
-        );
-
-        const target =
-          data.user?.role === "ADMIN" || data.user?.role === "SUPER_ADMIN"
-            ? "/admin"
-            : "/dashboard";
-
-        window.location.href = target;
+        completeAuth(data);
       } catch (err: any) {
         toast(err.message || "Failed to reach Google authentication.", "error");
         setLoading(false);
       }
     },
-    [toast]
+    [toast, completeAuth]
+  );
+
+  // Handle Google OAuth2 authorization code (from popup code client)
+  const handleAuthCode = useCallback(
+    async (code: string) => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/auth/google", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code, redirect_uri: "postmessage" }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          toast(data.error || "Google authentication failed.", "error");
+          setLoading(false);
+          return;
+        }
+
+        completeAuth(data);
+      } catch (err: any) {
+        toast(err.message || "Failed to complete Google authentication.", "error");
+        setLoading(false);
+      }
+    },
+    [toast, completeAuth]
   );
 
   // Load Google Identity Services script
   useEffect(() => {
     if (!clientId) return;
 
-    const existingScript = document.getElementById("google-gsi-script");
+    if (window.google?.accounts?.id || window.google?.accounts?.oauth2) {
+      setGsiLoaded(true);
+      return;
+    }
+
+    const existingScript = document.getElementById("google-gsi-script") as HTMLScriptElement | null;
     if (existingScript) {
+      existingScript.addEventListener("load", () => setGsiLoaded(true));
+      // In case it already loaded
       if (window.google?.accounts?.id) {
         setGsiLoaded(true);
       }
@@ -99,71 +143,96 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
     document.head.appendChild(script);
   }, [clientId]);
 
-  // Initialize GSI, render popup button, and trigger One-Tap
+  // Initialize GSI, popup code client, render button, and prompt One-Tap
   useEffect(() => {
-    if (!gsiLoaded || !clientId || !window.google?.accounts?.id) return;
+    if (!gsiLoaded || !clientId || !window.google?.accounts) return;
 
     try {
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: handleCredentialResponse,
-        auto_select: false,
-        cancel_on_tap_outside: true,
-      });
-
-      // Render official Google GSI popup button (uses client-side popup; avoids redirect_uri_mismatch)
-      if (googleBtnContainerRef.current) {
-        googleBtnContainerRef.current.innerHTML = "";
-        window.google.accounts.id.renderButton(googleBtnContainerRef.current, {
-          theme: "outline",
-          size: "large",
-          type: "standard",
-          text: mode === "signup" ? "signup_with" : "continue_with",
-          shape: "rectangular",
-          logo_alignment: "left",
-          width: 340,
+      // 1. Initialize Google Identity Services (ID token & One-Tap)
+      if (window.google.accounts.id) {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleCredentialResponse,
+          auto_select: false,
+          cancel_on_tap_outside: true,
         });
-        setButtonRendered(true);
+
+        // Render official Google button into visible container
+        if (googleBtnContainerRef.current) {
+          googleBtnContainerRef.current.innerHTML = "";
+          window.google.accounts.id.renderButton(googleBtnContainerRef.current, {
+            theme: "outline",
+            size: "large",
+            type: "standard",
+            text: mode === "signup" ? "signup_with" : "continue_with",
+            shape: "rectangular",
+            logo_alignment: "left",
+            width: 340,
+          });
+          setButtonRendered(true);
+        }
+
+        // Also prompt Google One-Tap
+        window.google.accounts.id.prompt();
       }
 
-      // Also display Google One-Tap prompt
-      window.google.accounts.id.prompt();
+      // 2. Initialize Google OAuth2 Popup Code Client (for explicit button clicks)
+      if (window.google.accounts.oauth2) {
+        codeClientRef.current = window.google.accounts.oauth2.initCodeClient({
+          client_id: clientId,
+          scope: "openid email profile",
+          ux_mode: "popup",
+          callback: (response: any) => {
+            if (response.code) {
+              handleAuthCode(response.code);
+            } else if (response.error) {
+              console.warn("[GOOGLE_AUTH] Popup response error:", response.error);
+              setLoading(false);
+            }
+          },
+          error_callback: (err: any) => {
+            console.warn("[GOOGLE_AUTH] Popup dismissed or error:", err);
+            setLoading(false);
+          },
+        });
+      }
     } catch (e) {
-      console.warn("[GSI] One-tap init note:", e);
+      console.warn("[GSI] Init warning:", e);
     }
-  }, [gsiLoaded, clientId, handleCredentialResponse, mode]);
+  }, [gsiLoaded, clientId, handleCredentialResponse, handleAuthCode, mode]);
 
-  // Explicit user click on fallback button
+  // Explicit user click on custom button
   const handleClick = () => {
-    if (window.google?.accounts?.id) {
-      window.google.accounts.id.prompt();
+    // 1. Prefer native popup code client (avoids redirect_uri_mismatch entirely)
+    if (codeClientRef.current) {
+      setLoading(true);
+      codeClientRef.current.requestCode();
       return;
     }
 
-    setLoading(true);
-    if (clientId && typeof window !== "undefined") {
-      const redirectUri = `${window.location.origin}/api/auth/google/callback`;
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
-        clientId
-      )}&redirect_uri=${encodeURIComponent(
-        redirectUri
-      )}&response_type=code&scope=openid%20email%20profile&prompt=select_account`;
+    // 2. Next, try triggering Google One-Tap prompt
+    if (window.google?.accounts?.id) {
+      window.google.accounts.id.prompt();
+    }
 
-      window.location.href = authUrl;
-    } else if (typeof window !== "undefined") {
+    // 3. Fallback to server-side Google OAuth endpoint
+    setLoading(true);
+    if (typeof window !== "undefined") {
       window.location.href = "/api/auth/google";
     }
   };
 
   return (
-    <div className={`w-full flex flex-col items-center justify-center min-h-[44px] ${className}`}>
-      {/* Container for Google's native popup button (prevents redirect_uri_mismatch) */}
+    <div className={`w-full flex flex-col items-center justify-center min-h-[44px] relative ${className}`}>
+      {/* Container for Google's native popup button (kept in DOM with geometry for proper iframe rendering) */}
       <div
         ref={googleBtnContainerRef}
-        className={`w-full flex justify-center ${buttonRendered ? "block" : "hidden"}`}
+        className={`w-full flex justify-center transition-opacity duration-200 ${
+          buttonRendered ? "opacity-100" : "opacity-0 absolute pointer-events-none"
+        }`}
       />
 
-      {/* Fallback button shown if GSI is still initializing or disabled */}
+      {/* Styled fallback button displayed when GSI is initializing */}
       {!buttonRendered && (
         <button
           type="button"

@@ -58,10 +58,13 @@ export async function PATCH(request: NextRequest) {
           { status: 400 }
         );
       }
-      const strengthResult = validatePasswordStrength(newPassword);
+      const strengthResult = validatePasswordStrength(newPassword, {
+        name: currentUser.name,
+        email: currentUser.email,
+      });
       if (!strengthResult.isValid) {
         return NextResponse.json(
-          { error: strengthResult.message || "New password is too weak. Please include uppercase, lowercase, numbers, and symbols." },
+          { error: strengthResult.message || "New password is too weak. Please include at least 8 characters with letters and numbers." },
           { status: 400 }
         );
       }
@@ -80,6 +83,18 @@ export async function PATCH(request: NextRequest) {
       if (!isMatch) {
         return NextResponse.json(
           { error: "Current password is incorrect" },
+          { status: 400 }
+        );
+      }
+
+      // Reject duplicate password (reusing same password as current)
+      const isDuplicate = await comparePassword(newPassword, userRecord.passwordHash);
+      if (isDuplicate) {
+        return NextResponse.json(
+          {
+            error: "Your new password cannot be the same as your current password. Please choose a new, unique password.",
+            code: "DUPLICATE_PASSWORD",
+          },
           { status: 400 }
         );
       }

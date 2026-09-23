@@ -495,6 +495,9 @@ export default function PropertyCaseHubPage() {
                 coordinates={[]}
                 height="380px"
                 showSatellite={true}
+                locationFound={propertyCase.locationFound !== false && Boolean(propertyCase.latitude && propertyCase.longitude)}
+                address={`${propertyCase.address}, ${propertyCase.lga}, ${propertyCase.state}`}
+                occupancyStatus={propertyCase.occupancyStatus || (propertyCase.propertyType === "LAND" ? "BARE" : "OCCUPIED")}
               />
               <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500">
                 <span className="flex items-center gap-1.5">

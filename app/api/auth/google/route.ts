@@ -4,11 +4,13 @@ import { db } from "@/lib/db";
 import { hashPassword, createSessionToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 import { logAudit } from "@/lib/services/audit";
 import { sendWelcomeEmail } from "@/lib/email/send";
-import { GOOGLE_CLIENT_ID } from "@/lib/security/credentials";
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "@/lib/security/credentials";
 import crypto from "crypto";
 
 const GoogleAuthSchema = z.object({
   credential: z.string().optional(),
+  code: z.string().optional(),
+  redirect_uri: z.string().optional(),
   email: z.string().email().optional(),
   name: z.string().optional(),
   imageUrl: z.string().optional(),
@@ -116,8 +118,38 @@ export async function POST(request: NextRequest) {
     let googleId: string | undefined;
     let picture: string | undefined;
 
-    // 1. Verify Google credential JWT if provided
-    if (parsed.data.credential) {
+    // 1. If authorization code is provided (from Google OAuth2 popup code client)
+    if (parsed.data.code) {
+      try {
+        const { OAuth2Client } = await import("google-auth-library");
+        const redirectUri = parsed.data.redirect_uri || "postmessage";
+        const oauth2Client = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, redirectUri);
+        const { tokens } = await oauth2Client.getToken(parsed.data.code);
+
+        if (tokens.id_token) {
+          const ticket = await oauth2Client.verifyIdToken({
+            idToken: tokens.id_token,
+            audience: GOOGLE_CLIENT_ID,
+          });
+          const payload = ticket.getPayload();
+          if (payload && payload.email) {
+            email = payload.email.trim().toLowerCase();
+            name = payload.name || "Google Investor";
+            googleId = payload.sub;
+            picture = payload.picture;
+          }
+        }
+      } catch (codeErr) {
+        console.error("[GOOGLE_AUTH] Code exchange failed:", codeErr);
+        return NextResponse.json(
+          { error: "Google authentication code exchange failed. Please try again." },
+          { status: 401 }
+        );
+      }
+    }
+
+    // 2. Verify Google credential JWT if provided (from One Tap or GSI credential)
+    if (!email && parsed.data.credential) {
       const verified = await verifyGoogleToken(parsed.data.credential);
       if (verified) {
         email = verified.email.trim().toLowerCase();
@@ -132,13 +164,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 2. Use explicitly provided email/name as fallback
+    // 3. Use explicitly provided email/name as fallback
     if (!email && parsed.data.email) {
       email = parsed.data.email.trim().toLowerCase();
       name = parsed.data.name?.trim() || "Google Investor";
     }
 
-    // 3. No credential and no email
+    // 4. No credential, code, or email
     if (!email) {
       return NextResponse.json(
         {

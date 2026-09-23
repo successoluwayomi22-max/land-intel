@@ -22,15 +22,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email address is required" }, { status: 400 });
     }
 
-    const strengthResult = validatePasswordStrength(password || "");
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const strengthResult = validatePasswordStrength(password || "", { email: normalizedEmail });
     if (!strengthResult.isValid) {
       return NextResponse.json(
-        { error: strengthResult.message || "Password is too weak. Please include uppercase, lowercase, numbers, and symbols." },
+        { error: strengthResult.message || "Password is too weak. Please include at least 8 characters with letters and numbers." },
         { status: 400 }
       );
     }
-
-    const normalizedEmail = email.toLowerCase().trim();
 
     const user = await db.user.findUnique({
       where: { email: normalizedEmail },

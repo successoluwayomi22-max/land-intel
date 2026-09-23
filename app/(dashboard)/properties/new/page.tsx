@@ -12,33 +12,32 @@ import { APP_CONFIG } from "@/lib/config";
 import { useLocale, CURRENCIES } from "@/components/providers/LocaleProvider";
 
 const COUNTRIES = [
-  { code: "GLOBAL", name: "Universal Cadastral Jurisdiction", regionLabel: "State / Province / Region", districtLabel: "District / Municipality", defaultRegion: "Metro Zone A", placeholderDistrict: "e.g. Central District, Zone 1" },
-  { code: "NG", name: "Statutory Cadastral Region (NG)", regionLabel: "State", districtLabel: "Local Government Area (LGA)", defaultRegion: "Metro Zone A", placeholderDistrict: "e.g. Metro District, East Zone" },
-  { code: "US", name: "United States", regionLabel: "State", districtLabel: "County / Municipality", defaultRegion: "Texas", placeholderDistrict: "e.g. Harris County, Travis County" },
-  { code: "GB", name: "United Kingdom", regionLabel: "Country / Region", districtLabel: "Borough / District", defaultRegion: "Greater London", placeholderDistrict: "e.g. Westminster, Camden, Manchester" },
-  { code: "CA", name: "Canada", regionLabel: "Province", districtLabel: "Municipality / District", defaultRegion: "Ontario", placeholderDistrict: "e.g. City of Toronto, Peel Region" },
-  { code: "GH", name: "Ghana", regionLabel: "Region", districtLabel: "District / Municipality", defaultRegion: "Greater Accra", placeholderDistrict: "e.g. Accra Metropolitan, Tema" },
-  { code: "KE", name: "Kenya", regionLabel: "County", districtLabel: "Sub-County / Ward", defaultRegion: "Nairobi", placeholderDistrict: "e.g. Westlands, Kilimani, Lang'ata" },
-  { code: "ZA", name: "South Africa", regionLabel: "Province", districtLabel: "Municipality / District", defaultRegion: "Gauteng", placeholderDistrict: "e.g. City of Johannesburg, Cape Town" },
-  { code: "AE", name: "United Arab Emirates", regionLabel: "Emirate", districtLabel: "Sector / Community", defaultRegion: "Dubai", placeholderDistrict: "e.g. Downtown Dubai, Business Bay" },
-  { code: "AU", name: "Australia", regionLabel: "State / Territory", districtLabel: "LGA / Council", defaultRegion: "New South Wales", placeholderDistrict: "e.g. City of Sydney, Parramatta" },
-  { code: "DE", name: "Germany", regionLabel: "Federal State (Bundesland)", districtLabel: "District (Landkreis / Stadt)", defaultRegion: "Berlin", placeholderDistrict: "e.g. Mitte, Charlottenburg" },
-  { code: "FR", name: "France", regionLabel: "Region / Department", districtLabel: "Commune / Arrondissement", defaultRegion: "Île-de-France", placeholderDistrict: "e.g. Paris 8e, Nice" },
-  { code: "ES", name: "Spain", regionLabel: "Autonomous Community", districtLabel: "Province / Municipality", defaultRegion: "Madrid", placeholderDistrict: "e.g. Madrid, Barcelona, Malaga" },
-  { code: "OTHER", name: "Other / International", regionLabel: "State / Province / Region", districtLabel: "County / District / City", defaultRegion: "", placeholderDistrict: "e.g. Central District" },
+  { code: "NG", name: "Nigeria 🇳🇬", regionLabel: "State", districtLabel: "Local Government Area (LGA)", defaultRegion: "Lagos", placeholderDistrict: "e.g. Eti-Osa, Lekki, Ikeja, Abuja Municipal" },
+  { code: "GB", name: "United Kingdom 🇬🇧", regionLabel: "Country / Region", districtLabel: "Borough / District", defaultRegion: "Greater London", placeholderDistrict: "e.g. Westminster, Camden, Manchester" },
+  { code: "US", name: "United States 🇺🇸", regionLabel: "State", districtLabel: "County / Municipality", defaultRegion: "Texas", placeholderDistrict: "e.g. Harris County, Travis County" },
+  { code: "CA", name: "Canada 🇨🇦", regionLabel: "Province", districtLabel: "Municipality / District", defaultRegion: "Ontario", placeholderDistrict: "e.g. City of Toronto, Peel Region" },
+  { code: "GH", name: "Ghana 🇬🇭", regionLabel: "Region", districtLabel: "District / Municipality", defaultRegion: "Greater Accra", placeholderDistrict: "e.g. Accra Metropolitan, Tema" },
+  { code: "KE", name: "Kenya 🇰🇪", regionLabel: "County", districtLabel: "Sub-County / Ward", defaultRegion: "Nairobi", placeholderDistrict: "e.g. Westlands, Kilimani, Lang'ata" },
+  { code: "ZA", name: "South Africa 🇿🇦", regionLabel: "Province", districtLabel: "Municipality / District", defaultRegion: "Gauteng", placeholderDistrict: "e.g. City of Johannesburg, Cape Town" },
+  { code: "AE", name: "United Arab Emirates 🇦🇪", regionLabel: "Emirate", districtLabel: "Sector / Community", defaultRegion: "Dubai", placeholderDistrict: "e.g. Downtown Dubai, Business Bay" },
+  { code: "AU", name: "Australia 🇦🇺", regionLabel: "State / Territory", districtLabel: "LGA / Council", defaultRegion: "New South Wales", placeholderDistrict: "e.g. City of Sydney, Parramatta" },
+  { code: "DE", name: "Germany 🇩🇪", regionLabel: "Federal State (Bundesland)", districtLabel: "District (Landkreis / Stadt)", defaultRegion: "Berlin", placeholderDistrict: "e.g. Mitte, Charlottenburg" },
+  { code: "FR", name: "France 🇫🇷", regionLabel: "Region / Department", districtLabel: "Commune / Arrondissement", defaultRegion: "Île-de-France", placeholderDistrict: "e.g. Paris 8e, Nice" },
+  { code: "ES", name: "Spain 🇪🇸", regionLabel: "Autonomous Community", districtLabel: "Province / Municipality", defaultRegion: "Madrid", placeholderDistrict: "e.g. Madrid, Barcelona, Malaga" },
+  { code: "OTHER", name: "Other / International 🌐", regionLabel: "State / Province / Region", districtLabel: "County / District / City", defaultRegion: "", placeholderDistrict: "e.g. Central District" },
 ];
 
 export default function NewPropertyCasePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
-  const [countryCode, setCountryCode] = useState("GLOBAL");
+  const [countryCode, setCountryCode] = useState("NG");
 
   const selectedCountry = COUNTRIES.find((c) => c.code === countryCode) || COUNTRIES[0];
 
   const [formData, setFormData] = useState({
     title: "",
-    state: "Metro Zone A",
+    state: "Lagos",
     lga: "",
     address: "",
     propertyType: "LAND",

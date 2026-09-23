@@ -115,8 +115,8 @@ export async function POST(
 
     const storageKey = `${caseId}_${Date.now()}_${crypto.randomBytes(6).toString("hex")}_${file.name.replace(/[^a-zA-Z0-9._-]/g, "")}`;
 
-    // Save to private clean storage
-    await savePrivateFile(storageKey, buffer);
+    // Save to private clean storage (persisted to DB + local cache)
+    await savePrivateFile(storageKey, buffer, file.type || "application/pdf");
 
     // Save to DB
     const document = await db.propertyDocument.create({

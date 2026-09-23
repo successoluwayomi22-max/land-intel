@@ -109,13 +109,13 @@ export default function RegisterPage() {
 
     const strength = getPasswordStrength(password);
     if (!strength.isAcceptable) {
-      setError("Please choose a stronger password matching the criteria below (uppercase, lowercase, number, special character).");
+      setError("Please choose a stronger password (must be at least 8 characters with letters and numbers).");
       return;
     }
 
     const lower = password.toLowerCase();
     if (/^(.)\1+$/.test(password)) {
-      setError("Password contains duplicate repeating characters. Please choose a varied combination.");
+      setError("Password contains duplicate repeating characters. Please choose a varied combination of letters and numbers.");
       return;
     }
 

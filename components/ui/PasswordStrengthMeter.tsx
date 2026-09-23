@@ -16,14 +16,9 @@ export const PASSWORD_RULES: PasswordRule[] = [
     test: (pw) => pw.length >= 8,
   },
   {
-    id: "lowercase",
-    label: "Contains lowercase letter (a-z)",
-    test: (pw) => /[a-z]/.test(pw),
-  },
-  {
-    id: "uppercase",
-    label: "Contains uppercase letter (A-Z)",
-    test: (pw) => /[A-Z]/.test(pw),
+    id: "letter",
+    label: "Contains a letter (a-z, A-Z)",
+    test: (pw) => /[a-zA-Z]/.test(pw),
   },
   {
     id: "number",
@@ -31,9 +26,14 @@ export const PASSWORD_RULES: PasswordRule[] = [
     test: (pw) => /[0-9]/.test(pw),
   },
   {
-    id: "special",
-    label: "Contains special character (!@#$%^&*...)",
-    test: (pw) => /[^A-Za-z0-9]/.test(pw),
+    id: "duplicate",
+    label: "No duplicate repeating characters",
+    test: (pw) => pw.length >= 2 && !/^(.)\1+$/.test(pw),
+  },
+  {
+    id: "bonus",
+    label: "Mixed case, symbols, or 12+ length (Strong)",
+    test: (pw) => /[^A-Za-z0-9]/.test(pw) || (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) || pw.length >= 12,
   },
 ];
 
@@ -55,20 +55,31 @@ export function getPasswordStrength(password: string): {
   }
 
   const passedCount = PASSWORD_RULES.filter((r) => r.test(password)).length;
+  const hasLength = password.length >= 8;
+  const hasLetter = /[a-zA-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const notDuplicate = !/^(.)\1+$/.test(password);
+
+  const isAcceptable = hasLength && hasLetter && hasNumber && notDuplicate;
+
   let status: "very-weak" | "weak" | "medium" | "strong" | "very-strong" = "very-weak";
 
-  if (passedCount <= 1) status = "very-weak";
-  else if (passedCount === 2) status = "weak";
-  else if (passedCount === 3) status = "medium";
-  else if (passedCount === 4) status = "strong";
-  else status = "very-strong";
+  if (!isAcceptable) {
+    status = passedCount <= 1 ? "very-weak" : "weak";
+  } else if (passedCount === 4) {
+    status = "strong";
+  } else if (passedCount >= 5) {
+    status = "very-strong";
+  } else {
+    status = "medium";
+  }
 
   return {
     score: passedCount,
     status,
     passedCount,
     totalCount: PASSWORD_RULES.length,
-    isAcceptable: password.length >= 8 && passedCount >= 2,
+    isAcceptable,
   };
 }
 

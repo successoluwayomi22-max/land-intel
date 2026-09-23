@@ -38,19 +38,26 @@ export function validatePasswordStrength(
   }
 
   const missing: string[] = [];
-  if (!/[a-z]/.test(password)) missing.push("a lowercase letter (a-z)");
-  if (!/[A-Z]/.test(password)) missing.push("an uppercase letter (A-Z)");
-  if (!/[0-9]/.test(password)) missing.push("a number (0-9)");
-  if (!/[^A-Za-z0-9]/.test(password)) missing.push("a special character (!@#$%^&*...)");
+  if (!/[a-zA-Z]/.test(password)) missing.push("at least one letter (a-z, A-Z)");
+  if (!/[0-9]/.test(password)) missing.push("at least one number (0-9)");
+
+  if (missing.length > 0) {
+    return {
+      isValid: false,
+      score: 1,
+      message: `Password must include ${missing.join(" and ")}.`,
+      missingRules: missing,
+    };
+  }
 
   const lower = password.toLowerCase();
 
-  // 1. Reject duplicate repeating characters (e.g. "aaaaaaaa", "11111111")
+  // 1. Reject duplicate repeating single characters (e.g. "aaaaaaaa", "11111111")
   if (/^(.)\1+$/.test(password)) {
     return {
       isValid: false,
       score: 1,
-      message: "Password contains duplicate repeating characters. Please choose a varied combination.",
+      message: "Password contains duplicate repeating characters. Please choose a varied combination of letters and numbers.",
       missingRules: ["Avoid duplicate repeating characters"],
     };
   }
@@ -93,21 +100,19 @@ export function validatePasswordStrength(
     }
   }
 
-  // Calculate score out of 5: length (1) + 4 character categories
-  const score = 1 + (4 - missing.length);
-
-  if (missing.length > 0) {
-    return {
-      isValid: false,
-      score,
-      message: `Password is too weak. Please include: ${missing.join(", ")}.`,
-      missingRules: missing,
-    };
-  }
+  // Calculate score (1 to 5):
+  // Base valid password with 8+ chars, letter, and number = score 3 (Moderate/Strong)
+  // +1 for mixed case (both lowercase and uppercase)
+  // +1 for special symbols (!@#$%^&*...)
+  // +1 for length >= 12
+  let score = 3;
+  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+  if (password.length >= 12 && score < 5) score++;
 
   return {
     isValid: true,
-    score: 5,
+    score: Math.min(5, score),
     missingRules: [],
   };
 }

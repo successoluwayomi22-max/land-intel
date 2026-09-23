@@ -67,6 +67,24 @@ export async function POST(request: NextRequest) {
 
     const data = parsed.data;
 
+    let latitude = data.latitude || null;
+    let longitude = data.longitude || null;
+
+    // Automatically resolve real coordinates from address/LGA/state if not provided
+    if (!latitude || !longitude) {
+      const { geocodePropertyLocation } = await import("@/lib/geo/geocoding");
+      const geo = await geocodePropertyLocation({
+        address: data.address,
+        lga: data.lga,
+        state: data.state,
+        country: data.country || "Nigeria",
+      });
+      if (geo.found && geo.lat && geo.lng) {
+        latitude = geo.lat;
+        longitude = geo.lng;
+      }
+    }
+
     const propertyCase = await db.propertyCase.create({
       data: {
         userId: user.id,
@@ -81,8 +99,8 @@ export async function POST(request: NextRequest) {
         currency: data.currency || "NGN",
         sellerName: data.sellerName || null,
         agentName: data.agentName || null,
-        latitude: data.latitude || null,
-        longitude: data.longitude || null,
+        latitude,
+        longitude,
         description: data.description || null,
         status: "DRAFT",
       },

@@ -211,11 +211,15 @@ export default function SettingsPage() {
     }
     const strength = getPasswordStrength(newPassword);
     if (!strength.isAcceptable) {
-      toast("New password is too weak. Must include uppercase, lowercase, numbers, and symbols.", "error");
+      toast("New password is too weak. Must be at least 8 characters with letters and numbers.", "error");
+      return;
+    }
+    if (currentPassword === newPassword) {
+      toast("Your new password cannot be the same as your current password. Please choose a different password.", "error");
       return;
     }
     if (newPassword !== confirmPassword) {
-      toast("New passwords do not match", "error");
+      toast("Passwords do not match. Please verify your password confirmation.", "error");
       return;
     }
 
