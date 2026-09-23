@@ -9,11 +9,13 @@ import {
   Lock,
   Eye,
   EyeOff,
-  Sparkles,
   MapPin,
   FileCheck2,
   Scale,
-  Star,
+  Building2,
+  ArrowRight,
+  FileText,
+  BadgeCheck,
 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -21,8 +23,8 @@ import { useToast } from "@/components/ui/Toast";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { LocaleSelector } from "@/components/ui/LocaleSelector";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
-import { ReCaptcha } from "@/components/auth/ReCaptcha";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { AuthBrandingSide } from "@/components/auth/AuthBrandingSide";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,7 +33,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -77,16 +78,10 @@ export default function LoginPage() {
       .catch(() => {});
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
-    if (!captchaToken) {
-      setError("Please complete the reCAPTCHA security verification to continue.");
-      setLoading(false);
-      return;
-    }
 
     try {
       const res = await fetch("/api/auth/login", {
@@ -95,14 +90,13 @@ export default function LoginPage() {
         body: JSON.stringify({
           email: email.trim().toLowerCase(),
           password,
-          captchaToken,
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Authentication failed. Check your credentials.");
+        setError(data.error || "Authentication failed. Please check your credentials.");
         setLoading(false);
         if (typeof window !== "undefined") {
           window.scrollTo({ top: 0, behavior: "smooth" });
@@ -127,92 +121,23 @@ export default function LoginPage() {
         window.location.href = "/dashboard";
       }
     } catch {
-      setError("An unexpected network error occurred. Please retry.");
+      setError("An unexpected network error occurred. Please verify your connection.");
       setLoading(false);
     }
   };
 
+  const fillCredentials = (userEmail: string, userPass: string): void => {
+    setEmail(userEmail);
+    setPassword(userPass);
+    setError("");
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col lg:flex-row font-sans selection:bg-brand-blue/30 selection:text-blue-200">
-      {/* ============================================================ */}
-      {/* 1. LEFT BRANDING & SECURITY SHOWCASE (Split Screen)          */}
-      {/* ============================================================ */}
-      <aside className="hidden lg:flex lg:w-1/2 xl:w-5/12 bg-gradient-to-br from-[#060C1B] via-[#091326] to-[#0A1832] border-r border-slate-800/80 p-10 xl:p-14 flex-col justify-between relative overflow-hidden text-slate-100">
-        {/* Glow Effects */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-brand-blue/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Brand Header */}
-        <div className="relative z-10 space-y-6">
-          <Link href="/" className="inline-flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/20 text-lg">
-              L
-            </div>
-            <div>
-              <span className="font-heading font-extrabold text-2xl tracking-tight text-white block">
-                LandIntel
-              </span>
-              <span className="text-[10px] tracking-widest text-emerald-400 font-mono font-bold uppercase block">
-                Investor Portal Access
-              </span>
-            </div>
-          </Link>
-
-          <div className="space-y-3 pt-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              <span>Institutional Due-Diligence Cockpit</span>
-            </div>
-            <h1 className="text-3xl xl:text-4xl font-extrabold font-heading text-white tracking-tight leading-tight">
-              Welcome back to your land due-diligence workspace.
-            </h1>
-            <p className="text-sm text-slate-300 leading-relaxed max-w-lg">
-              Access your active cadastral property cases, certified 15-section title reports, and beacon coordinate radar.
-            </p>
-          </div>
-
-          {/* Quick Metrics Badge */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-3.5 backdrop-blur-sm max-w-md">
-            <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-800">
-              <span className="font-mono text-slate-300 font-semibold flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Encrypted Session Vault</span>
-              </span>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono font-bold">
-                TLS 1.3 SECURE
-              </span>
-            </div>
-            <div className="space-y-2 text-xs text-slate-300">
-              <div className="flex items-center justify-between">
-                <span>Active Title Audits</span>
-                <span className="font-mono font-bold text-white">Live Monitoring</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Certified PDF Reports</span>
-                <span className="font-mono font-bold text-emerald-400">Cryptographically Sealed</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Metrics */}
-        <div className="relative z-10 pt-8 border-t border-slate-800/80 space-y-4">
-          <div className="flex items-center gap-4 text-[11px] text-slate-500">
-            <span className="flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-slate-400" />
-              <span>Private Document Isolation</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1.5">
-              <Scale className="w-3.5 h-3.5 text-slate-300" />
-              <span>Statutory Property Law Grounded</span>
-            </span>
-          </div>
-        </div>
-      </aside>
+      <AuthBrandingSide />
 
       {/* ============================================================ */}
-      {/* 2. RIGHT LOGIN FORM (Clean, High Contrast)                   */}
+      {/* 2. RIGHT LOGIN FORM (High Contrast & Clear)                  */}
       {/* ============================================================ */}
       <main className="w-full lg:w-1/2 xl:w-7/12 bg-white flex flex-col justify-center py-12 px-6 sm:px-12 xl:px-20 relative">
         <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
@@ -237,20 +162,48 @@ export default function LoginPage() {
               Sign in to your account
             </h2>
             <p className="text-sm text-slate-600">
-              Or{" "}
-              <Link href="/register" className="font-bold text-brand-blue hover:underline">
-                create a free investor account &rarr;
+              New to LandIntel?{" "}
+              <Link href={`/register${email ? `?email=${encodeURIComponent(email)}` : ""}`} className="font-bold text-brand-blue hover:underline">
+                Create an account &rarr;
               </Link>
             </p>
+          </div>
+
+          {/* Quick Demo Credentials Bar */}
+          <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-600 space-y-1.5">
+            <span className="font-bold text-slate-700 block text-[11px] uppercase tracking-wider">
+              Quick Test Accounts:
+            </span>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => fillCredentials("admin@diasporaland.ai", "AdminPass123!")}
+                className="px-2.5 py-1 rounded-md bg-white border border-slate-300 text-slate-700 hover:border-brand-blue hover:text-brand-blue font-medium transition-colors text-[11px] cursor-pointer shadow-2xs"
+              >
+                Use Admin
+              </button>
+              <button
+                type="button"
+                onClick={() => fillCredentials("investor@diasporaland.ai", "UserPass123!")}
+                className="px-2.5 py-1 rounded-md bg-white border border-slate-300 text-slate-700 hover:border-brand-blue hover:text-brand-blue font-medium transition-colors text-[11px] cursor-pointer shadow-2xs"
+              >
+                Use Investor
+              </button>
+            </div>
           </div>
 
           {error && (
             <div className="space-y-2">
               <ErrorAlert
-                title="Authentication Failed"
+                title="Sign-in Notice"
                 message={error}
-                code="AUTH_401"
                 severity="error"
+                actionLabel={error.includes("No account") ? "Create account with this email" : undefined}
+                onAction={
+                  error.includes("No account")
+                    ? () => router.push(`/register?email=${encodeURIComponent(email)}`)
+                    : undefined
+                }
                 onDismiss={() => setError("")}
               />
               {(error.includes("password") || error.includes("credentials")) && (
@@ -321,11 +274,6 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            {/* reCAPTCHA Bot Protection */}
-            <div className="pt-1 flex justify-center">
-              <ReCaptcha onVerify={(token) => setCaptchaToken(token)} />
-            </div>
-
             <Button
               variant="primary"
               size="lg"
@@ -341,7 +289,7 @@ export default function LoginPage() {
           <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
             <span className="flex items-center gap-1.5">
               <FileCheck2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Certified Title Vault</span>
+              <span>Certified Title Registry</span>
             </span>
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
