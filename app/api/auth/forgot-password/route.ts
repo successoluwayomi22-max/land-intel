@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { db } from "@/lib/db";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
+import { sendPasswordResetEmail } from "@/lib/email/send";
 
 export async function POST(request: Request) {
   try {
@@ -44,11 +45,21 @@ export async function POST(request: Request) {
       },
     });
 
-    // In production, this would be sent via SendGrid / Resend / Postmark
-    const origin = request.headers.get("origin") || "http://localhost:3000";
+    // Send password reset email via Resend
+    const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const resetUrl = `${origin}/reset-password?token=${rawToken}&email=${encodeURIComponent(normalizedEmail)}`;
 
     console.log(`[AUTH] Password reset requested for ${normalizedEmail}. Reset URL: ${resetUrl}`);
+
+    // Non-blocking email dispatch
+    sendPasswordResetEmail({
+      email: user.email,
+      name: user.name,
+      resetUrl,
+      expiresInMinutes: 60,
+    }).catch((err) => {
+      console.error("[AUTH] Password reset email dispatch failed:", err);
+    });
 
     return NextResponse.json({
       success: true,

@@ -14,6 +14,7 @@ interface PlatformContactContextValue {
 
 const defaultContactValue: PlatformContactSettings = {
   email: APP_CONFIG.platformContact.email,
+  displayEmail: APP_CONFIG.platformContact.displayEmail,
   whatsappNumbers: [...APP_CONFIG.platformContact.whatsappNumbers],
   primaryWhatsapp: APP_CONFIG.platformContact.primaryWhatsapp,
   secondaryWhatsapp: APP_CONFIG.platformContact.secondaryWhatsapp,

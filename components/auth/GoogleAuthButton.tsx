@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
 
 interface GoogleAuthButtonProps {
   mode?: "login" | "signup";
   className?: string;
+}
+
+declare global {
+  interface Window {
+    google?: any;
+  }
 }
 
 export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
@@ -16,12 +22,112 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [gsiLoaded, setGsiLoaded] = useState(false);
 
-  const handleGoogleAuth = async () => {
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+  // Handle the Google credential response
+  const handleCredentialResponse = useCallback(
+    async (response: { credential: string }) => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/auth/google", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ credential: response.credential }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          toast(data.error || "Google authentication failed.", "error");
+          setLoading(false);
+          return;
+        }
+
+        if (typeof window !== "undefined") {
+          if (data.token) {
+            localStorage.setItem("landintel_token", data.token);
+          }
+          if (data.user) {
+            localStorage.setItem("landintel_user", JSON.stringify(data.user));
+          }
+        }
+
+        toast(
+          data.isNewUser
+            ? "Google account registered successfully!"
+            : `Signed in as ${data.user?.email || "Google user"}.`,
+          "success"
+        );
+
+        const target =
+          data.user?.role === "ADMIN" || data.user?.role === "SUPER_ADMIN"
+            ? "/admin"
+            : "/dashboard";
+
+        window.location.href = target;
+      } catch (err: any) {
+        toast(err.message || "Failed to reach Google authentication.", "error");
+        setLoading(false);
+      }
+    },
+    [toast, router]
+  );
+
+  // Load Google Identity Services script
+  useEffect(() => {
+    if (!clientId) return; // Skip if no client ID configured
+
+    const existingScript = document.getElementById("google-gsi-script");
+    if (existingScript) {
+      if (window.google?.accounts?.id) {
+        setGsiLoaded(true);
+      }
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = "google-gsi-script";
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = () => setGsiLoaded(true);
+    document.head.appendChild(script);
+  }, [clientId]);
+
+  // Initialize Google Sign-In when script loads
+  useEffect(() => {
+    if (!gsiLoaded || !clientId || !window.google?.accounts?.id) return;
+
+    window.google.accounts.id.initialize({
+      client_id: clientId,
+      callback: handleCredentialResponse,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+  }, [gsiLoaded, clientId, handleCredentialResponse]);
+
+  const handleClick = () => {
+    if (clientId && gsiLoaded && window.google?.accounts?.id) {
+      // Use Google One Tap prompt
+      window.google.accounts.id.prompt((notification: any) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          // Fallback: redirect to Google OAuth consent screen
+          const redirectUri = `${window.location.origin}/api/auth/google/callback`;
+          const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=email%20profile&prompt=consent`;
+          window.location.href = authUrl;
+        }
+      });
+    } else {
+      // No Google Client ID configured — use server-side demo flow
+      handleDemoFlow();
+    }
+  };
+
+  const handleDemoFlow = async () => {
     setLoading(true);
     try {
-      // In production with NEXT_PUBLIC_GOOGLE_CLIENT_ID, Google One-Tap or OAuth redirect can trigger.
-      // Here we authenticate with the robust server endpoint.
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -37,12 +143,8 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
       }
 
       if (typeof window !== "undefined") {
-        if (data.token) {
-          localStorage.setItem("landintel_token", data.token);
-        }
-        if (data.user) {
-          localStorage.setItem("landintel_user", JSON.stringify(data.user));
-        }
+        if (data.token) localStorage.setItem("landintel_token", data.token);
+        if (data.user) localStorage.setItem("landintel_user", JSON.stringify(data.user));
       }
 
       toast(
@@ -56,7 +158,7 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
         data.user?.role === "ADMIN" || data.user?.role === "SUPER_ADMIN"
           ? "/admin"
           : "/dashboard";
-      router.push(target);
+      window.location.href = target;
     } catch (err: any) {
       toast(err.message || "Failed to reach Google authentication gateway.", "error");
       setLoading(false);
@@ -66,9 +168,9 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
   return (
     <button
       type="button"
-      onClick={handleGoogleAuth}
+      onClick={handleClick}
       disabled={loading}
-      className={`w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 shadow-xs hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
+      className={`w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 shadow-xs hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-blue/20 transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer ${className}`}
     >
       {loading ? (
         <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-700 rounded-full animate-spin" />

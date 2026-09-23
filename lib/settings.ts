@@ -3,6 +3,7 @@ import { db } from "./db";
 
 export interface PlatformContactSettings {
   email: string;
+  displayEmail?: string;
   whatsappNumbers: string[];
   primaryWhatsapp: string;
   secondaryWhatsapp: string;
@@ -26,6 +27,7 @@ export async function getPlatformContact(): Promise<PlatformContactSettings> {
 
   const defaultContact: PlatformContactSettings = {
     email: APP_CONFIG.platformContact.email,
+    displayEmail: APP_CONFIG.platformContact.displayEmail,
     whatsappNumbers: [...APP_CONFIG.platformContact.whatsappNumbers],
     primaryWhatsapp: APP_CONFIG.platformContact.primaryWhatsapp,
     secondaryWhatsapp: APP_CONFIG.platformContact.secondaryWhatsapp,

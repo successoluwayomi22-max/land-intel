@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { hashPassword, createSessionToken, AUTH_COOKIE_NAME, validatePasswordStrength } from "@/lib/auth";
+import { hashPassword, createSessionToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 import { logAudit } from "@/lib/services/audit";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
+import { generateOTP, hashOTP, sendWelcomeEmail, sendOTPEmail } from "@/lib/email/send";
+import { isEmailEnabled } from "@/lib/email/client";
+import { verifyRecaptcha } from "@/lib/security/recaptcha";
 
 const RegisterSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters"),
@@ -27,6 +30,15 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json(
         { error: parsed.error.errors[0].message },
+        { status: 400 }
+      );
+    }
+
+    // Verify Google reCAPTCHA
+    const recaptchaResult = await verifyRecaptcha(parsed.data.captchaToken, ip);
+    if (!recaptchaResult.success) {
+      return NextResponse.json(
+        { error: recaptchaResult.error || "Security verification failed." },
         { status: 400 }
       );
     }
@@ -59,13 +71,23 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await hashPassword(password);
 
+    // Generate OTP for email verification
+    const otpCode = generateOTP();
+    const otpHashValue = hashOTP(otpCode);
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // If email service is available, require verification; otherwise auto-verify for dev
+    const emailEnabled = isEmailEnabled();
+
     const user = await db.user.create({
       data: {
         name,
         email: email.toLowerCase(),
         passwordHash,
         role: "FREE",
-        isVerified: true, // For MVP smooth onboarding
+        isVerified: !emailEnabled, // Auto-verify only when email is disabled (dev mode)
+        otpHash: emailEnabled ? otpHashValue : null,
+        otpExpiresAt: emailEnabled ? otpExpiresAt : null,
       },
     });
 
@@ -76,6 +98,17 @@ export async function POST(request: NextRequest) {
       resourceId: user.id,
       details: { email: user.email },
     });
+
+    // Send emails (non-blocking — don't fail registration if email fails)
+    if (emailEnabled) {
+      // Fire and forget — don't await sequentially
+      Promise.all([
+        sendWelcomeEmail({ email: user.email, name: user.name }),
+        sendOTPEmail({ email: user.email, name: user.name, otpCode }),
+      ]).catch((err) => {
+        console.error("[REGISTER] Email send error (non-blocking):", err);
+      });
+    }
 
     // Create session token
     const token = await createSessionToken({
@@ -92,8 +125,10 @@ export async function POST(request: NextRequest) {
           name: user.name,
           email: user.email,
           role: user.role,
+          isVerified: user.isVerified,
         },
         token,
+        requiresVerification: emailEnabled,
       },
       { status: 201 }
     );

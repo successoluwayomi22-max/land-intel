@@ -22,6 +22,7 @@ import { useToast } from "@/components/ui/Toast";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { LocaleSelector } from "@/components/ui/LocaleSelector";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
+import { ReCaptcha } from "@/components/auth/ReCaptcha";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { AuthBrandingSide } from "@/components/auth/AuthBrandingSide";
 
@@ -36,6 +37,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -120,6 +122,7 @@ export default function RegisterPage() {
           name: name.trim(),
           email: email.trim().toLowerCase(),
           password,
+          captchaToken,
         }),
       });
 
@@ -144,7 +147,12 @@ export default function RegisterPage() {
         }
       }
 
-      router.push("/dashboard");
+      // If email verification is required, redirect to OTP page
+      if (data.requiresVerification) {
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      } else {
+        router.push("/dashboard");
+      }
     } catch {
       setError("Network error. Please check your internet connection and try again.");
       setLoading(false);
@@ -309,6 +317,10 @@ export default function RegisterPage() {
                 </Link>.
               </span>
             </label>
+
+            <div className="pt-1 flex justify-center">
+              <ReCaptcha onVerify={(token) => setCaptchaToken(token)} />
+            </div>
 
             <Button
               variant="primary"

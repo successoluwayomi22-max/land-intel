@@ -90,6 +90,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if email has been verified (when email service is enabled)
+    if (!user.isVerified) {
+      return NextResponse.json(
+        {
+          error: "Please verify your email address to continue.",
+          requiresVerification: true,
+          email: user.email,
+        },
+        { status: 403 }
+      );
+    }
+
     // Record successful login in IP tracking
     await securityStore.recordIPActivity({
       ip,

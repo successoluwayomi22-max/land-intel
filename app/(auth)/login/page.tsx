@@ -96,6 +96,11 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.requiresVerification) {
+          toast("Please verify your email address to continue.", "info");
+          router.push(`/verify-email?email=${encodeURIComponent(data.email || email.trim().toLowerCase())}`);
+          return;
+        }
         setError(data.error || "Authentication failed. Please check your credentials.");
         setLoading(false);
         if (typeof window !== "undefined") {

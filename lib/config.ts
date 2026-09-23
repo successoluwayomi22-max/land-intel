@@ -3,12 +3,14 @@ export const APP_CONFIG = {
   tagline: "Global Property Intelligence — Institutional Cadastral Verification & Title Protection",
   description: "LandIntel provides verified land due-diligence, cadastral boundary intelligence, and title search certification for global real estate and diaspora property investors.",
   url: process.env.NEXT_PUBLIC_APP_URL || "https://land-intel-omega.vercel.app",
-  supportEmail: "successoluwayomi22@gmail.com",
-  legalEmail: "successoluwayomi22@gmail.com",
+  supportEmail: "support@landintel.ai",
+  supportEmailDestination: "successoluwayomi22@gmail.com",
+  legalEmail: "support@landintel.ai",
   
   // Centralized Administrative & Support Contact Channels
   platformContact: {
     email: "successoluwayomi22@gmail.com",
+    displayEmail: "support@landintel.ai",
     whatsappNumbers: [
       "+2349033084408",
       "+2348077426824"

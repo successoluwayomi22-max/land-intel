@@ -23,7 +23,7 @@ export function ErrorState({
   onRetry,
   isRetrying = false,
   showHomeLink = true,
-  supportLink = "mailto:support@diasporaland.ai",
+  supportLink = "mailto:successoluwayomi22@gmail.com?subject=LandIntel%20System%20Assistance",
   className = "",
 }: ErrorStateProps) {
   return (

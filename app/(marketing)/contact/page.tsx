@@ -98,10 +98,10 @@ export default function ContactPage() {
               <h4 className="text-xs font-bold text-brand-textPrimary uppercase tracking-wider">
                 {t("supportEmailLabel") || "Official Email"}
               </h4>
-              <p className="text-xs text-brand-textSecondary font-mono break-all">{contact.email}</p>
+              <p className="text-xs text-brand-textSecondary font-mono break-all">{contact.displayEmail || "support@landintel.ai"}</p>
             </div>
             <a
-              href={`mailto:${contact.email}?subject=LandIntel%20Property%20Due-Diligence%20Inquiry`}
+              href={`mailto:${contact.email || "successoluwayomi22@gmail.com"}?subject=LandIntel%20Property%20Due-Diligence%20Inquiry`}
               className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-blue-700 hover:text-blue-800 pt-2 border-t border-slate-100"
             >
               Compose Email <ExternalLink className="w-3 h-3" />

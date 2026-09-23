@@ -102,10 +102,11 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href={`mailto:${contact.email}`}
+                  href={`mailto:${contact.email || "successoluwayomi22@gmail.com"}`}
                   className="hover:text-white transition-colors break-all"
+                  title="Contact Support"
                 >
-                  {contact.email}
+                  {contact.displayEmail || "support@landintel.ai"}
                 </a>
               </li>
               <li>

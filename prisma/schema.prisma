@@ -17,6 +17,10 @@ model User {
   role          String         @default("FREE") // FREE, PAID, ADMIN, SUPER_ADMIN
   isVerified    Boolean        @default(false)
   verificationToken String?
+  otpHash       String?
+  otpExpiresAt  DateTime?
+  googleId      String?       @unique
+  avatarUrl     String?
   resetToken    String?
   resetExpires  DateTime?
   preferredLanguage String     @default("en")
