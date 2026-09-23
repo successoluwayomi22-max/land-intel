@@ -15,7 +15,6 @@ import {
   HelpCircle,
   Layers,
   FileText,
-  Sparkles,
   Zap,
   Printer,
   X,
@@ -579,7 +578,7 @@ export default function BillingPage() {
                       <div className="mt-1">
                         {includeVat ? (
                           <span className="inline-flex items-center text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
-                            ✓ Incl. 7.5% Statutory VAT
+                            Includes 7.5% Statutory VAT
                           </span>
                         ) : (
                           <span className="inline-flex items-center text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">

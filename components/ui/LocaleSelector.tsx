@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { ChevronDown, Check, Globe, DollarSign, Search, X, Sparkles, MapPin } from "lucide-react";
+import { ChevronDown, Check, Globe, DollarSign, Search, X, MapPin } from "lucide-react";
 import {
   useLocale,
   CURRENCIES,
@@ -398,9 +398,9 @@ export const LocaleSelector: React.FC<{
                 {t("detectedRegion") || "Region"}: <strong>{detectedCountry}</strong>
               </span>
             </div>
-            <div className="flex items-center gap-1 font-medium">
-              <Sparkles className="w-3 h-3 text-amber-500" />
-              <span>Instant Translation</span>
+            <div className="flex items-center gap-1 font-medium text-slate-500">
+              <Globe className="w-3 h-3 text-blue-500" />
+              <span>Multi-Language Ready</span>
             </div>
           </div>
         </div>

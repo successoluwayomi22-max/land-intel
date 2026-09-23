@@ -5,9 +5,11 @@ import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { APP_CONFIG } from "@/lib/config";
 import { useLocale } from "@/components/providers/LocaleProvider";
+import { usePlatformContact } from "@/components/providers/PlatformContactProvider";
 
 export const Footer: React.FC = () => {
   const { t } = useLocale();
+  const { contact } = usePlatformContact();
   const [currentYear, setCurrentYear] = React.useState<number>(() => new Date().getFullYear());
 
   React.useEffect(() => {
@@ -80,30 +82,30 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href={`https://wa.me/${APP_CONFIG.platformContact.primaryWhatsapp.replace(/[^0-9]/g, "")}`}
+                  href={`https://wa.me/${(contact.primaryWhatsapp || "").replace(/[^0-9]/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors flex items-center gap-1"
                 >
-                  WhatsApp: {APP_CONFIG.platformContact.primaryWhatsapp}
+                  WhatsApp: {contact.primaryWhatsapp}
                 </a>
               </li>
               <li>
                 <a
-                  href={APP_CONFIG.platformContact.facebookUrl}
+                  href={contact.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors flex items-center gap-1 text-blue-400 hover:text-blue-300"
                 >
-                  Facebook: {APP_CONFIG.platformContact.facebook}
+                  Facebook: {contact.facebook}
                 </a>
               </li>
               <li>
                 <a
-                  href={`mailto:${APP_CONFIG.platformContact.email}`}
+                  href={`mailto:${contact.email}`}
                   className="hover:text-white transition-colors break-all"
                 >
-                  {APP_CONFIG.platformContact.email}
+                  {contact.email}
                 </a>
               </li>
               <li>

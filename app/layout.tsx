@@ -4,6 +4,7 @@ import "./globals.css";
 import { ToastProvider } from "@/components/ui/Toast";
 import { LocaleProvider } from "@/components/providers/LocaleProvider";
 import { GoogleTranslateIntegration } from "@/components/providers/GoogleTranslateIntegration";
+import { PlatformContactProvider } from "@/components/providers/PlatformContactProvider";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 import { ConnectionStatus } from "@/components/ui/ConnectionStatus";
 
@@ -66,12 +67,14 @@ export default function RootLayout({
       </head>
       <body className={`${urbanist.variable} font-urbanist min-h-screen bg-brand-background text-brand-textPrimary antialiased selection:bg-blue-100 selection:text-blue-900`}>
         <LocaleProvider>
-          <GoogleTranslateIntegration />
-          <ConnectionStatus />
-          <ToastProvider>
-            {children}
-            <CookieConsent />
-          </ToastProvider>
+          <PlatformContactProvider>
+            <GoogleTranslateIntegration />
+            <ConnectionStatus />
+            <ToastProvider>
+              {children}
+              <CookieConsent />
+            </ToastProvider>
+          </PlatformContactProvider>
         </LocaleProvider>
       </body>
     </html>

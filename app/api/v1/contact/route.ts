@@ -1,34 +1,48 @@
 import { NextResponse } from "next/server";
-import { APP_CONFIG } from "@/lib/config";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getPlatformContact, updatePlatformContact } from "@/lib/settings";
+
+export const dynamic = "force-dynamic";
 
 // GET /api/v1/contact
 export async function GET() {
-  return NextResponse.json({
-    data: {
-      email: APP_CONFIG.platformContact.email,
-      whatsappNumbers: APP_CONFIG.platformContact.whatsappNumbers,
-      primaryWhatsapp: APP_CONFIG.platformContact.primaryWhatsapp,
-      secondaryWhatsapp: APP_CONFIG.platformContact.secondaryWhatsapp,
-      facebook: APP_CONFIG.platformContact.facebook,
-      facebookUrl: APP_CONFIG.platformContact.facebookUrl,
-      instagram: APP_CONFIG.platformContact.instagram,
-      instagramUrl: APP_CONFIG.platformContact.instagramUrl,
-      supportAvailability: APP_CONFIG.platformContact.supportAvailability,
-      supportMessage: APP_CONFIG.platformContact.supportMessage,
-      enabledChannels: {
-        email: true,
-        whatsapp: true,
-        facebook: true,
-        instagram: true,
+  try {
+    const contact = await getPlatformContact();
+    return NextResponse.json(
+      {
+        data: {
+          ...contact,
+          enabledChannels: {
+            email: Boolean(contact.email),
+            whatsapp: Boolean(contact.primaryWhatsapp),
+            facebook: Boolean(contact.facebook),
+            instagram: Boolean(contact.instagram),
+          },
+        },
+        meta: {
+          requestId: crypto.randomUUID(),
+          timestamp: new Date().toISOString(),
+        },
       },
-    },
-    meta: {
-      requestId: crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
-    },
-  });
+      {
+        headers: {
+          "Cache-Control": "no-store, max-age=0",
+        },
+      }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        error: {
+          code: "FETCH_FAILED",
+          message: error.message || "Failed to retrieve contact configuration",
+          requestId: crypto.randomUUID(),
+        },
+      },
+      { status: 500 }
+    );
+  }
 }
 
 // PATCH /api/v1/contact - Admin update contact configuration
@@ -50,27 +64,30 @@ export async function PATCH(req: Request) {
 
     const body = await req.json();
 
+    const updated = await updatePlatformContact(body);
+
     // Log admin audit event for contact update
-    await db.auditLog.create({
-      data: {
-        userId: user.id,
-        action: "ADMIN_UPDATE_CONTACT",
-        resourceType: "PlatformContact",
-        details: JSON.stringify({
-          updatedBy: user.email,
-          changes: body,
-          timestamp: new Date().toISOString(),
-        }),
-      },
-    });
+    try {
+      await db.auditLog.create({
+        data: {
+          userId: user.id,
+          action: "ADMIN_UPDATE_CONTACT",
+          resourceType: "PlatformContact",
+          details: JSON.stringify({
+            updatedBy: user.email,
+            changes: body,
+            timestamp: new Date().toISOString(),
+          }),
+        },
+      });
+    } catch (auditErr) {
+      console.warn("[PATCH /api/v1/contact] Audit log warning:", auditErr);
+    }
 
     return NextResponse.json({
       data: {
         updated: true,
-        contact: {
-          ...APP_CONFIG.platformContact,
-          ...body,
-        },
+        contact: updated,
       },
       meta: {
         requestId: crypto.randomUUID(),

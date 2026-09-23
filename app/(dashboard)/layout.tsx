@@ -20,7 +20,7 @@ import {
   ChevronRight,
   Shield,
   FileCheck2,
-  Sparkles,
+  Tag,
 } from "lucide-react";
 import { LocaleSelector } from "@/components/ui/LocaleSelector";
 import { useLocale } from "@/components/providers/LocaleProvider";
@@ -131,7 +131,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const accountNav = [
     { label: t("settingsProfile"), href: "/settings", icon: Settings },
     { label: "Billing & Plans", href: "/billing", icon: CreditCard },
-    { label: t("pricingPlans"), href: "/pricing", icon: Sparkles },
+    { label: t("pricingPlans"), href: "/pricing", icon: Tag },
     { label: t("dueDiligenceFaq"), href: "/faq", icon: HelpCircle },
   ];
 

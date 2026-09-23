@@ -20,7 +20,7 @@ import {
   ShieldAlert,
   Send,
   HelpCircle,
-  Sparkles,
+  CreditCard,
   CheckCircle2,
   ArrowRight,
   ShieldCheck,
@@ -310,7 +310,7 @@ export default function PropertyCaseHubPage() {
                 href="/billing"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <CreditCard className="w-3.5 h-3.5 text-slate-500" />
                 <span>Subscription Plans</span>
               </Link>
             </div>
@@ -740,7 +740,7 @@ export default function PropertyCaseHubPage() {
                         href="/billing"
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                        <CreditCard className="w-3.5 h-3.5 text-slate-500" />
                         <span>Subscription Plans</span>
                       </Link>
                     </div>
@@ -898,7 +898,7 @@ export default function PropertyCaseHubPage() {
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
-                              <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+                              <ShieldCheck className="w-3.5 h-3.5 text-sky-400" />
                               <span>Professional Investor Plan</span>
                             </span>
                             <span className="text-[10px] font-bold text-sky-300 bg-sky-950/90 border border-sky-500/40 px-2 py-0.5 rounded">

@@ -13,7 +13,6 @@ import {
   Activity,
   LogOut,
   AlertTriangle,
-  Sparkles,
   Users,
   Building2,
   CreditCard,
@@ -64,7 +63,7 @@ const ADMIN_NAV_GROUPS = [
     items: [
       { href: "/admin/telemetry", label: "Heap & Telemetry", icon: Cpu },
       { href: "/admin/usage", label: "Resource Usage", icon: Database },
-      { href: "/admin/ai", label: "AI & Inquiry Ledger", icon: Sparkles },
+      { href: "/admin/ai", label: "AI & Inquiry Ledger", icon: Terminal },
       { href: "/admin/jobs", label: "Background Jobs", icon: Server },
       { href: "/admin/errors", label: "Error Diagnostics", icon: ShieldAlert },
     ],

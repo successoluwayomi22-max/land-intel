@@ -12,7 +12,6 @@ import {
   PieChart,
   CreditCard,
   Layers,
-  Sparkles,
   Server,
   Activity,
   Shield,
@@ -278,7 +277,7 @@ export default function AdminSectionPage() {
     usage: { title: "Storage Vault & AI Resource Quotas", subtitle: "Document vault storage allocation, AI token quotas, and inquiry ledger", icon: HardDrive },
     subscriptions: { title: "Customer Subscriptions", subtitle: "Active plan cycles, billing intervals, and quota allocations", icon: Layers },
     plans: { title: "Pricing Plans & Entitlements", subtitle: "Configuration matrix for Free, Starter, Professional, Business, and Enterprise", icon: Sliders },
-    ai: { title: "AI Intelligence & Credits Ledger", subtitle: "Token consumption, model routing (Gemini / OpenAI / Heuristic), and credit audits", icon: Sparkles },
+    ai: { title: "AI Intelligence & Credits Ledger", subtitle: "Token consumption, model routing (Gemini / OpenAI / Heuristic), and credit audits", icon: Cpu },
     jobs: { title: "Background Processing Jobs", subtitle: "Queue execution for OCR, coordinate parsing, reconciliation, and PDF compilation", icon: Server },
     errors: { title: "Error Logs & Incident Telemetry", subtitle: "Centralized server diagnostics, failed worker jobs, and exception tracking", icon: ShieldAlert },
     security: { title: "Security Operations & Access Control", subtitle: "Multi-Factor Authentication (MFA), rate limiting, and session verification", icon: Shield },
@@ -1671,7 +1670,7 @@ export default function AdminSectionPage() {
             <div className="bg-gradient-to-br from-slate-900 to-[#0F172A] border border-slate-800 rounded-xl p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-blue-400" />
+                  <Cpu className="w-4 h-4 text-blue-400" />
                   <span>AI Inquiries & Token Ledger</span>
                 </span>
                 <span className="text-xs font-mono text-emerald-400 font-bold">GEMINI 1.5 PRO VISION</span>

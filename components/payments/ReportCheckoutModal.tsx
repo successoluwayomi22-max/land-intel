@@ -7,7 +7,6 @@ import {
   Building,
   ShieldCheck,
   CheckCircle2,
-  Sparkles,
   Lock,
   Globe,
   ArrowRight,
@@ -307,8 +306,8 @@ export const ReportCheckoutModal: React.FC<ReportCheckoutModalProps> = ({
                     : "border-slate-200 hover:bg-slate-50 text-slate-600"
                 }`}
               >
-                <Sparkles className="w-4 h-4 mx-auto mb-1 text-amber-600" />
-                <span className="text-xs block font-bold">Test Sandbox</span>
+                <ShieldCheck className="w-4 h-4 mx-auto mb-1 text-amber-600" />
+                <span className="text-xs block font-bold">Instant Sandbox</span>
                 <span className="text-[10px] text-amber-700 font-semibold block">Instant Demo</span>
               </button>
             </div>
@@ -468,7 +467,7 @@ export const ReportCheckoutModal: React.FC<ReportCheckoutModalProps> = ({
           {activeTab === "instant_test" && (
             <div className="space-y-3 bg-amber-50/60 p-4 rounded-xl border border-amber-200 text-xs">
               <div className="flex items-center gap-2 text-amber-800 font-bold">
-                <Sparkles className="w-4 h-4 text-amber-600" />
+                <ShieldCheck className="w-4 h-4 text-amber-600" />
                 <span>Instant Developer &amp; Reviewer Sandbox</span>
               </div>
               <p className="text-amber-900/80 leading-relaxed text-[11px]">

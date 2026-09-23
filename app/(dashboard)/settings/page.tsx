@@ -13,7 +13,6 @@ import {
   Download,
   AlertTriangle,
   ExternalLink,
-  Sparkles,
   Lock,
   ArrowRight,
   FileDown,

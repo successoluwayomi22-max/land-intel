@@ -90,8 +90,8 @@ export function getPurchaseRecommendation(
     return {
       verdict: "DO_NOT_BUY",
       headline: isSynthetic
-        ? "🛑 DO NOT BUY — UNVERIFIED / SYNTHETIC DOCUMENTATION DETECTED"
-        : "🛑 DO NOT BUY — CRITICAL RISK DETECTED",
+        ? "DO NOT BUY — UNVERIFIED OR SYNTHETIC DOCUMENTATION DETECTED"
+        : "DO NOT BUY — CRITICAL RISK DETECTED",
       shortVerdict: "DO NOT BUY",
       colorClass: "text-rose-700",
       bgClass: "bg-rose-50 border-rose-200",
@@ -109,7 +109,7 @@ export function getPurchaseRecommendation(
   if (score >= 41 || normLevel === "ELEVATED") {
     return {
       verdict: "DO_NOT_BUY_DEFECTIVE",
-      headline: "⛔ DO NOT BUY YET — RESOLVE TITLE & CADASTRAL DEFECTS FIRST",
+      headline: "DO NOT BUY YET — RESOLVE TITLE & CADASTRAL DEFECTS FIRST",
       shortVerdict: "DO NOT BUY",
       colorClass: "text-amber-800",
       bgClass: "bg-amber-50 border-amber-200",
@@ -126,7 +126,7 @@ export function getPurchaseRecommendation(
   if (score >= 21 || normLevel === "MODERATE") {
     return {
       verdict: "CONDITIONAL",
-      headline: "⚠️ CONDITIONAL — PROCEED ONLY WITH STRICT CONTINGENCY CLAUSES",
+      headline: "CONDITIONAL — PROCEED ONLY WITH STRICT CONTINGENCY CLAUSES",
       shortVerdict: "CONDITIONAL",
       colorClass: "text-blue-800",
       bgClass: "bg-blue-50 border-blue-200",
@@ -142,7 +142,7 @@ export function getPurchaseRecommendation(
 
   return {
     verdict: "PROCEED",
-    headline: "✅ SUITABLE TO PROCEED — LOW DOCUMENTED RISK PROFILE",
+    headline: "SUITABLE TO PROCEED — LOW DOCUMENTED RISK PROFILE",
     shortVerdict: "PROCEED",
     colorClass: "text-emerald-800",
     bgClass: "bg-emerald-50 border-emerald-200",

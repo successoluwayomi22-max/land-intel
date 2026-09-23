@@ -35,25 +35,21 @@ export function validatePasswordStrength(password: string): PasswordStrengthResu
   }
 
   const missing: string[] = [];
-  if (!/[a-z]/.test(password)) missing.push("a lowercase letter (a-z)");
-  if (!/[A-Z]/.test(password)) missing.push("an uppercase letter (A-Z)");
-  if (!/[0-9]/.test(password)) missing.push("a number (0-9)");
-  if (!/[^A-Za-z0-9]/.test(password)) missing.push("a special character (!@#$%^&*...)");
-
-  const score = 1 + (4 - missing.length);
+  if (!/[a-zA-Z]/.test(password)) missing.push("at least one letter");
+  if (!/[0-9]/.test(password)) missing.push("at least one number");
 
   if (missing.length > 0) {
     return {
       isValid: false,
-      score,
-      message: `Password is too weak. Please include: ${missing.join(", ")}.`,
+      score: 2,
+      message: `Password must include ${missing.join(" and ")}.`,
       missingRules: missing,
     };
   }
 
   return {
     isValid: true,
-    score: 5,
+    score: password.length >= 12 ? 5 : 4,
     missingRules: [],
   };
 }

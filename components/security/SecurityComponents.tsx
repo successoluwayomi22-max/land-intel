@@ -12,6 +12,7 @@ import {
   Activity,
   CheckCircle2,
   XCircle,
+  X,
   ExternalLink,
   Search,
   Lock,
@@ -251,7 +252,9 @@ export function IPActionModal({
             <Lock className="w-5 h-5 text-amber-500" />
             <span>IP Security Enforcement: {ip}</span>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white text-sm">✕</button>
+          <button onClick={onClose} className="text-slate-400 hover:text-white p-1 rounded-md transition-colors" aria-label="Close">
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">

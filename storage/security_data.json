@@ -1,6 +1,42 @@
 {
   "events": [
     {
+      "id": "EVT_1790132931563_zr70o",
+      "timestamp": "2026-09-23T03:08:51.563Z",
+      "eventType": "BRUTE_FORCE",
+      "severity": "HIGH",
+      "ip": "::1",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "actorEmail": "flowtest1790132930461@gmail.com",
+      "detectionRule": "RULE_BRUTE_FORCE_LOGIN",
+      "actionTaken": "LOGGED",
+      "metadata": {
+        "reason": "Non-existent account login attempt",
+        "counterCount": 1,
+        "threshold": 5,
+        "windowSeconds": 300
+      }
+    },
+    {
+      "id": "EVT_1790132784882_3uvj7",
+      "timestamp": "2026-09-23T03:06:24.882Z",
+      "eventType": "BRUTE_FORCE",
+      "severity": "HIGH",
+      "ip": "::1",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "actorEmail": "ezetimothy2030@gmail.com",
+      "detectionRule": "RULE_BRUTE_FORCE_LOGIN",
+      "actionTaken": "LOGGED",
+      "metadata": {
+        "reason": "Non-existent account login attempt",
+        "counterCount": 1,
+        "threshold": 5,
+        "windowSeconds": 300
+      }
+    },
+    {
       "id": "EVT_1789853528596_q2nt5",
       "timestamp": "2026-09-19T21:32:08.596Z",
       "eventType": "WEBHOOK_INVALID_SIGNATURE",
@@ -255,17 +291,24 @@
       "ip": "::1",
       "status": "MONITOR",
       "firstSeen": "2026-09-19T21:30:15.177Z",
-      "lastSeen": "2026-09-20T12:09:10.165Z",
-      "requestCount": 6,
-      "failedRequestCount": 2,
-      "failedAuthCount": 0,
-      "successfulAuthCount": 4,
+      "lastSeen": "2026-09-23T06:05:44.343Z",
+      "requestCount": 25,
+      "failedRequestCount": 4,
+      "failedAuthCount": 2,
+      "successfulAuthCount": 21,
       "affectedAccounts": [
-        "admin@diasporaland.ai"
+        "admin@diasporaland.ai",
+        "testuser_verify@landintel.app",
+        "newuser1790131375816@example.com",
+        "ezetimothy2030@gmail.com",
+        "test.investor.2030@gmail.com",
+        "flowtest1790132930461@gmail.com",
+        "testbuyer99@gmail.com",
+        "investor@diasporaland.ai"
       ],
       "affectedOrganizations": [],
-      "threatScore": 10,
-      "updatedAt": "2026-09-20T12:09:10.165Z"
+      "threatScore": 40,
+      "updatedAt": "2026-09-23T06:05:44.343Z"
     },
     "192.0.2.77": {
       "ip": "192.0.2.77",

@@ -35,11 +35,9 @@ export async function POST(request: NextRequest) {
     const email = parsed.data.email.trim().toLowerCase();
     const password = parsed.data.password;
 
-    // Strict bank-grade password policy enforcement
-    const strengthResult = validatePasswordStrength(password);
-    if (!strengthResult.isValid) {
+    if (!password || password.length < 8) {
       return NextResponse.json(
-        { error: strengthResult.message || "Password is too weak. Please use uppercase, lowercase, numbers, and symbols." },
+        { error: "Password must be at least 8 characters long." },
         { status: 400 }
       );
     }

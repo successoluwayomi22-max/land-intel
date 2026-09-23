@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { CheckCircle2, Lock, ArrowRight, ShieldCheck, Sparkles, HelpCircle } from "lucide-react";
+import { CheckCircle2, Lock, ArrowRight, ShieldCheck, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { CountryFlag } from "@/components/ui/CountryFlags";
 import { useLocale, CURRENCIES, SupportedCurrency } from "@/components/providers/LocaleProvider";
@@ -178,7 +178,7 @@ export const PricingCards: React.FC = () => {
             <div>
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-brand-blue uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-brand-blue" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-brand-blue" />
                   <span>{t("professionalPlan") || "Professional Investor"}</span>
                 </span>
                 <span className="text-[10px] font-bold text-blue-300 bg-blue-950/90 border border-blue-500/40 px-2 py-0.5 rounded-md shadow-2xs">

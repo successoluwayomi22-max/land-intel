@@ -37,13 +37,16 @@ import {
   HardDrive,
   Globe,
   Coins,
-  Sparkles,
   Server,
   Copy,
+  Edit3,
+  X,
+  Save,
 } from "lucide-react";
 import { RiskBadge } from "@/components/ui/RiskBadge";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { APP_CONFIG } from "@/lib/config";
+import { usePlatformContact } from "@/components/providers/PlatformContactProvider";
 
 type AdminTab = "overview" | "users" | "cases" | "payments" | "audit" | "system" | "support";
 
@@ -63,6 +66,56 @@ export default function AdminProDashboardPage() {
   // Manual payment verify state
   const [manualRef, setManualRef] = useState("");
   const [manualRefResult, setManualRefResult] = useState<any | null>(null);
+
+  // Dynamic Platform Contact Management State
+  const { contact: dynamicContact, updateContact, isSaving: contactSaving } = usePlatformContact();
+  const [isEditContactModalOpen, setIsEditContactModalOpen] = useState(false);
+  const [contactFormData, setContactFormData] = useState({
+    email: "",
+    primaryWhatsapp: "",
+    secondaryWhatsapp: "",
+    facebook: "",
+    facebookUrl: "",
+    instagram: "",
+    instagramUrl: "",
+    supportAvailability: "",
+    supportMessage: "",
+  });
+  const [contactModalError, setContactModalError] = useState<string | null>(null);
+  const [contactModalSuccess, setContactModalSuccess] = useState<string | null>(null);
+
+  const handleOpenContactModal = () => {
+    setContactFormData({
+      email: dynamicContact.email || "",
+      primaryWhatsapp: dynamicContact.primaryWhatsapp || "",
+      secondaryWhatsapp: dynamicContact.secondaryWhatsapp || "",
+      facebook: dynamicContact.facebook || "",
+      facebookUrl: dynamicContact.facebookUrl || "",
+      instagram: dynamicContact.instagram || "",
+      instagramUrl: dynamicContact.instagramUrl || "",
+      supportAvailability: dynamicContact.supportAvailability || "",
+      supportMessage: dynamicContact.supportMessage || "",
+    });
+    setContactModalError(null);
+    setContactModalSuccess(null);
+    setIsEditContactModalOpen(true);
+  };
+
+  const handleSaveContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactModalError(null);
+    setContactModalSuccess(null);
+    const res = await updateContact(contactFormData);
+    if (res.success) {
+      setContactModalSuccess("Contact channels successfully updated across the entire platform!");
+      setTimeout(() => {
+        setIsEditContactModalOpen(false);
+        setContactModalSuccess(null);
+      }, 1200);
+    } else {
+      setContactModalError(res.error || "Failed to update contact settings");
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -1456,16 +1509,24 @@ export default function AdminProDashboardPage() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleOpenContactModal}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Edit Channels</span>
+                </button>
                 <a
-                  href={`mailto:${APP_CONFIG.platformContact.email}`}
+                  href={`mailto:${dynamicContact.email}`}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold"
                 >
                   <Mail className="w-3.5 h-3.5" />
                   <span>Send Test Email</span>
                 </a>
                 <a
-                  href={`https://wa.me/${APP_CONFIG.platformContact.primaryWhatsapp.replace(/[^0-9]/g, "")}`}
+                  href={`https://wa.me/${(dynamicContact.primaryWhatsapp || "").replace(/[^0-9]/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold"
@@ -1478,50 +1539,78 @@ export default function AdminProDashboardPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
               {/* Email */}
-              <div className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5">
+              <div 
+                onClick={handleOpenContactModal}
+                className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5 hover:border-indigo-500/50 cursor-pointer transition-colors group"
+                title="Click to edit email channel"
+              >
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Primary Support Email</span>
-                  <Mail className="w-4 h-4 text-blue-400" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-indigo-400 transition-colors">Primary Support Email</span>
+                  <div className="flex items-center gap-1">
+                    <Edit3 className="w-3 h-3 text-slate-600 group-hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Mail className="w-4 h-4 text-blue-400" />
+                  </div>
                 </div>
                 <p className="text-xs font-mono text-white font-semibold break-all">
-                  {APP_CONFIG.platformContact.email}
+                  {dynamicContact.email}
                 </p>
                 <span className="text-[10px] text-emerald-400 font-medium block">Default Inbound Route</span>
               </div>
 
               {/* Primary WhatsApp */}
-              <div className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5">
+              <div 
+                onClick={handleOpenContactModal}
+                className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5 hover:border-emerald-500/50 cursor-pointer transition-colors group"
+                title="Click to edit primary WhatsApp"
+              >
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">WhatsApp Primary</span>
-                  <PhoneCall className="w-4 h-4 text-emerald-400" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-emerald-400 transition-colors">WhatsApp Primary</span>
+                  <div className="flex items-center gap-1">
+                    <Edit3 className="w-3 h-3 text-slate-600 group-hover:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <PhoneCall className="w-4 h-4 text-emerald-400" />
+                  </div>
                 </div>
                 <p className="text-xs font-mono text-white font-semibold">
-                  {APP_CONFIG.platformContact.primaryWhatsapp}
+                  {dynamicContact.primaryWhatsapp}
                 </p>
                 <span className="text-[10px] text-emerald-400 font-medium block">24/7 Fast Escalation</span>
               </div>
 
               {/* Secondary WhatsApp */}
-              <div className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5">
+              <div 
+                onClick={handleOpenContactModal}
+                className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5 hover:border-emerald-500/50 cursor-pointer transition-colors group"
+                title="Click to edit secondary WhatsApp"
+              >
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">WhatsApp Secondary</span>
-                  <MessageSquare className="w-4 h-4 text-emerald-400" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-emerald-400 transition-colors">WhatsApp Secondary</span>
+                  <div className="flex items-center gap-1">
+                    <Edit3 className="w-3 h-3 text-slate-600 group-hover:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <MessageSquare className="w-4 h-4 text-emerald-400" />
+                  </div>
                 </div>
                 <p className="text-xs font-mono text-white font-semibold">
-                  {APP_CONFIG.platformContact.secondaryWhatsapp}
+                  {dynamicContact.secondaryWhatsapp}
                 </p>
                 <span className="text-[10px] text-slate-400 font-medium block">Direct Verification Line</span>
               </div>
 
               {/* Social Channels */}
-              <div className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5">
+              <div 
+                onClick={handleOpenContactModal}
+                className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5 hover:border-indigo-500/50 cursor-pointer transition-colors group"
+                title="Click to edit social profiles"
+              >
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Social Accounts</span>
-                  <ExternalLink className="w-4 h-4 text-indigo-400" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-indigo-400 transition-colors">Social Accounts</span>
+                  <div className="flex items-center gap-1">
+                    <Edit3 className="w-3 h-3 text-slate-600 group-hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <ExternalLink className="w-4 h-4 text-indigo-400" />
+                  </div>
                 </div>
                 <div className="text-xs text-white space-y-0.5">
-                  <p className="font-semibold">FB: {APP_CONFIG.platformContact.facebook}</p>
-                  <p className="font-semibold">IG: @{APP_CONFIG.platformContact.instagram}</p>
+                  <p className="font-semibold">FB: {dynamicContact.facebook}</p>
+                  <p className="font-semibold">IG: @{dynamicContact.instagram}</p>
                 </div>
                 <span className="text-[10px] text-slate-400 font-medium block">Brand Presence Verified</span>
               </div>
@@ -1594,7 +1683,7 @@ export default function AdminProDashboardPage() {
                             Reply
                           </a>
                           <a
-                            href={`https://wa.me/${APP_CONFIG.platformContact.primaryWhatsapp.replace(/[^0-9]/g, "")}?text=Customer%20Support%20Followup%20for%20${encodeURIComponent(ticket.name || "")}%20(${encodeURIComponent(ticket.email || "")}):%20${encodeURIComponent(ticket.subject || "")}`}
+                            href={`https://wa.me/${(dynamicContact.primaryWhatsapp || "").replace(/[^0-9]/g, "")}?text=Customer%20Support%20Followup%20for%20${encodeURIComponent(ticket.name || "")}%20(${encodeURIComponent(ticket.email || "")}):%20${encodeURIComponent(ticket.subject || "")}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-[11px] inline-block"
@@ -1744,6 +1833,213 @@ export default function AdminProDashboardPage() {
                 Done
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Contact Channels Edit Modal */}
+      {isEditContactModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 sm:p-7 space-y-5 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-start justify-between border-b border-slate-800 pb-3.5">
+              <div>
+                <span className="text-[10px] font-mono text-indigo-400 uppercase tracking-wider font-bold">
+                  PLATFORM CONFIGURATION
+                </span>
+                <h3 className="text-base font-bold text-white">
+                  Edit Official Contact Channels
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Changes saved here update immediately across the entire website, marketing footer, and contact desk.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditContactModalOpen(false)}
+                className="text-slate-400 hover:text-white text-xl p-1 rounded-lg hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {contactModalError && (
+              <div className="p-3 rounded-lg bg-red-950/80 border border-red-800 text-red-200 text-xs font-medium flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+                <span>{contactModalError}</span>
+              </div>
+            )}
+
+            {contactModalSuccess && (
+              <div className="p-3 rounded-lg bg-emerald-950/80 border border-emerald-800 text-emerald-200 text-xs font-medium flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span>{contactModalSuccess}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSaveContact} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Primary Support Email */}
+                <div className="space-y-1.5 sm:col-span-2">
+                  <label className="text-xs font-semibold text-slate-300 block">
+                    Primary Support Email
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                    <input
+                      type="email"
+                      required
+                      value={contactFormData.email}
+                      onChange={(e) =>
+                        setContactFormData((prev) => ({ ...prev, email: e.target.value }))
+                      }
+                      placeholder="e.g. support@landintel.ng"
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-mono"
+                    />
+                  </div>
+                  <span className="text-[11px] text-slate-400">
+                    The default email displayed on the contact page, footer, and admin alerts.
+                  </span>
+                </div>
+
+                {/* Primary WhatsApp */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300 block">
+                    WhatsApp Primary (with country code)
+                  </label>
+                  <div className="relative">
+                    <PhoneCall className="w-4 h-4 text-emerald-500 absolute left-3 top-3" />
+                    <input
+                      type="text"
+                      required
+                      value={contactFormData.primaryWhatsapp}
+                      onChange={(e) =>
+                        setContactFormData((prev) => ({ ...prev, primaryWhatsapp: e.target.value }))
+                      }
+                      placeholder="+2349033084408"
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Secondary WhatsApp */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300 block">
+                    WhatsApp Secondary / Direct Line
+                  </label>
+                  <div className="relative">
+                    <MessageSquare className="w-4 h-4 text-emerald-500 absolute left-3 top-3" />
+                    <input
+                      type="text"
+                      value={contactFormData.secondaryWhatsapp}
+                      onChange={(e) =>
+                        setContactFormData((prev) => ({ ...prev, secondaryWhatsapp: e.target.value }))
+                      }
+                      placeholder="+2348077426824"
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Facebook Name */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300 block">
+                    Facebook Display Name
+                  </label>
+                  <input
+                    type="text"
+                    value={contactFormData.facebook}
+                    onChange={(e) =>
+                      setContactFormData((prev) => ({ ...prev, facebook: e.target.value }))
+                    }
+                    placeholder="e.g. Oluwayomi Succe"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                </div>
+
+                {/* Facebook URL */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300 block">
+                    Facebook Profile URL
+                  </label>
+                  <input
+                    type="url"
+                    value={contactFormData.facebookUrl}
+                    onChange={(e) =>
+                      setContactFormData((prev) => ({ ...prev, facebookUrl: e.target.value }))
+                    }
+                    placeholder="https://facebook.com/..."
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                </div>
+
+                {/* Instagram Handle */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300 block">
+                    Instagram Handle (without @)
+                  </label>
+                  <input
+                    type="text"
+                    value={contactFormData.instagram}
+                    onChange={(e) =>
+                      setContactFormData((prev) => ({ ...prev, instagram: e.target.value }))
+                    }
+                    placeholder="e.g. oluwayomi_success"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                </div>
+
+                {/* Instagram URL */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300 block">
+                    Instagram Profile URL
+                  </label>
+                  <input
+                    type="url"
+                    value={contactFormData.instagramUrl}
+                    onChange={(e) =>
+                      setContactFormData((prev) => ({ ...prev, instagramUrl: e.target.value }))
+                    }
+                    placeholder="https://instagram.com/..."
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                </div>
+
+                {/* Support Availability */}
+                <div className="space-y-1.5 sm:col-span-2">
+                  <label className="text-xs font-semibold text-slate-300 block">
+                    Support Availability Notice
+                  </label>
+                  <input
+                    type="text"
+                    value={contactFormData.supportAvailability}
+                    onChange={(e) =>
+                      setContactFormData((prev) => ({ ...prev, supportAvailability: e.target.value }))
+                    }
+                    placeholder="24/7 Dedicated Investor Due-Diligence & Emergency Verification"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsEditContactModalOpen(false)}
+                  disabled={contactSaving}
+                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={contactSaving}
+                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md hover:shadow-indigo-500/20 transition-all disabled:opacity-50"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>{contactSaving ? "Saving to Database..." : "Save Across Website"}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

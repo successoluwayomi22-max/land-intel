@@ -68,7 +68,7 @@ export function getPasswordStrength(password: string): {
     status,
     passedCount,
     totalCount: PASSWORD_RULES.length,
-    isAcceptable: passedCount >= 4 && password.length >= 8,
+    isAcceptable: password.length >= 8 && passedCount >= 2,
   };
 }
 

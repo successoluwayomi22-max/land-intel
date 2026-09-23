@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { APP_CONFIG } from "@/lib/config";
+import { getPlatformContact } from "@/lib/settings";
 
 // POST /api/v1/support/requests
 export async function POST(req: Request) {
@@ -34,6 +35,7 @@ export async function POST(req: Request) {
     }
 
     const ticketNumber = `DL-SUP-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const platformContact = await getPlatformContact();
 
     const supportPayload = {
       ticketNumber,
@@ -46,7 +48,7 @@ export async function POST(req: Request) {
       priority,
       contactPreference,
       status: "OPEN",
-      notifiedAdminEmail: APP_CONFIG.platformContact.email,
+      notifiedAdminEmail: platformContact.email,
       createdAt: new Date().toISOString(),
     };
 
@@ -71,8 +73,8 @@ export async function POST(req: Request) {
           subject,
           adminNotified: true,
           adminContact: {
-            email: APP_CONFIG.platformContact.email,
-            whatsapp: APP_CONFIG.platformContact.primaryWhatsapp,
+            email: platformContact.email,
+            whatsapp: platformContact.primaryWhatsapp,
           },
           createdAt: supportPayload.createdAt,
         },

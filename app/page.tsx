@@ -16,7 +16,6 @@ import {
   Users,
   Compass,
   FileSearch,
-  AlertOctagon,
   ShieldAlert,
   ShieldCheck,
   Check,
@@ -24,7 +23,6 @@ import {
   Landmark,
   Fingerprint,
   Clock,
-  Sparkles,
   MapPin,
   Quote,
   Layers,
@@ -280,19 +278,18 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 3. PERSUASIVE STORYTELLING: THE ANATOMY OF A PROPERTY TRAP */}
+        {/* 3. PERSUASIVE STORYTELLING: REAL-WORLD AUDIT SCENARIOS */}
         <section className="py-20 lg:py-24 bg-slate-50/70 border-b border-brand-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="max-w-3xl mx-auto text-center space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
-                <AlertOctagon className="w-3.5 h-3.5 text-rose-600" />
-                <span>The Remote Property Dilemma</span>
-              </div>
+            <div className="max-w-3xl mx-auto text-center space-y-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Forensic Due Diligence Audits
+              </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
-                The Anatomy of a $50,000+ Land Due-Diligence Trap
+                How Undetected Land Defects Cost Investors Millions
               </h2>
               <p className="text-sm sm:text-base text-brand-textSecondary leading-relaxed font-normal">
-                Every year, thousands of diaspora and remote investors lose hard-earned capital to smooth-talking intermediaries, falsified surveys, and unconsented ancestral claims. Here is how three real investors almost lost everything — and how LandIntel caught it.
+                Every year, remote and diaspora investors transfer capital for parcels encumbered by arterial setbacks, competing deeds, or revoked government excisions. Here is how independent cadastral verification protects buyers before contracts are executed.
               </p>
             </div>
 
@@ -327,7 +324,7 @@ export default function LandingPage() {
                       </span>
                       <div className="flex items-center gap-2 text-xs font-mono text-emerald-700 font-bold">
                         <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                        <span>Capital Saved: {cs.lossPrevented}</span>
+                        <span>Capital Protected: {cs.lossPrevented}</span>
                       </div>
                     </div>
 
@@ -337,7 +334,7 @@ export default function LandingPage() {
                       </h3>
                       <p className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
                         <Users className="w-3.5 h-3.5 text-brand-blue" />
-                        <span>Victim Profile: {cs.investor}</span>
+                        <span>Investor Profile: {cs.investor}</span>
                         <span className="text-slate-300">|</span>
                         <span className="text-amber-700 font-semibold">{cs.riskType}</span>
                       </p>
@@ -348,7 +345,7 @@ export default function LandingPage() {
                       <div className="bg-slate-50 border border-brand-border rounded-xl p-4 space-y-2">
                         <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                           <FileText className="w-3.5 h-3.5 text-brand-blue" />
-                          <span>1. The Pitch</span>
+                          <span>1. Transaction Context</span>
                         </span>
                         <p className="text-xs text-brand-textSecondary leading-relaxed">{cs.summary}</p>
                       </div>
@@ -356,15 +353,15 @@ export default function LandingPage() {
                       <div className="bg-rose-50/50 border border-rose-200 rounded-xl p-4 space-y-2">
                         <span className="text-[11px] font-bold text-rose-700 uppercase tracking-wider flex items-center gap-1.5">
                           <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
-                          <span>2. The Hidden Trap</span>
+                          <span>2. Hidden Risk Detected</span>
                         </span>
                         <p className="text-xs text-slate-700 leading-relaxed">{cs.deception}</p>
                       </div>
 
                       <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4 space-y-2">
                         <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>3. LandIntel Detection</span>
+                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>3. Cadastral Resolution</span>
                         </span>
                         <p className="text-xs text-slate-700 leading-relaxed">{cs.detection}</p>
                       </div>
@@ -373,12 +370,12 @@ export default function LandingPage() {
                     {/* Verdict Banner */}
                     <div className="bg-slate-50 border border-brand-border rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
-                          <AlertOctagon className="w-5 h-5" />
+                        <div className="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                          <ShieldCheck className="w-5 h-5" />
                         </div>
                         <div>
-                          <span className="text-xs font-bold text-brand-darkNavy block">Audit Engine Outcome</span>
-                          <span className="text-xs text-rose-600 font-mono font-bold">{cs.verdict}</span>
+                          <span className="text-xs font-bold text-brand-darkNavy block">Audit Verdict</span>
+                          <span className="text-xs text-slate-700 font-mono font-medium">{cs.verdict}</span>
                         </div>
                       </div>
                       <Link href="/register" prefetch={true} className="w-full sm:w-auto">
@@ -556,11 +553,10 @@ export default function LandingPage() {
         {/* 7. VERIFIED DIASPORA TESTIMONIALS */}
         <section className="py-20 bg-slate-50/70 border-b border-brand-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="max-w-3xl mx-auto text-center space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Verified Due-Diligence Case Reports</span>
-              </div>
+            <div className="max-w-3xl mx-auto text-center space-y-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">
+                Verified Investor Perspectives
+              </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
                 Trusted by Cross-Border & Remote Investors Worldwide
               </h2>
@@ -682,24 +678,18 @@ export default function LandingPage() {
         </section>
 
         {/* 10. FINAL CALL TO ACTION */}
-        <section className="py-20 bg-brand-darkNavy text-white relative overflow-hidden border-t border-slate-800">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+        <section className="py-20 bg-slate-50 text-brand-darkNavy relative overflow-hidden border-t border-brand-border">
+          <div className="max-w-4xl mx-auto px-4 text-center space-y-4 relative z-10">
+            <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">
+              Independent Due Diligence
+            </span>
 
-          <div className="max-w-4xl mx-auto px-4 text-center space-y-6 relative z-10">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              <span>Zero Risk Initial Scan</span>
-            </div>
-
-            <h2 className="text-3xl sm:text-5xl font-black font-heading tracking-tight">
-              Before You Wire $20,000+,{" "}
-              <span className="bg-gradient-to-r from-blue-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
-                Invest 5 Minutes to Verify.
-              </span>
+            <h2 className="text-3xl sm:text-5xl font-black font-heading tracking-tight text-brand-darkNavy">
+              Before You Wire Purchase Funds, Confirm Your Title.
             </h2>
 
-            <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-normal">
-              Create your account in seconds, upload your survey plan and deed, and let LandIntel mathematically cross-check coordinates against state acquisition boundaries before you sign.
+            <p className="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-normal">
+              Upload your survey plan or deed. We verify boundary coordinates against state acquisition zones, review statutory documents, and deliver an actionable due diligence report before you sign.
             </p>
 
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -707,9 +697,9 @@ export default function LandingPage() {
                 <Button
                   variant="primary"
                   size="lg"
-                  className="w-full sm:w-auto shadow-xl shadow-blue-500/25 py-4 px-8 font-bold text-sm"
+                  className="w-full sm:w-auto shadow-md py-4 px-8 font-bold text-sm"
                 >
-                  <span>Start Free Property Due-Diligence</span>
+                  <span>Start Property Due Diligence</span>
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
@@ -717,25 +707,25 @@ export default function LandingPage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto bg-slate-900/80 border-slate-700 text-slate-300 hover:text-white py-4 px-6 font-bold text-sm"
+                  className="w-full sm:w-auto bg-white border-slate-300 text-slate-700 hover:text-brand-darkNavy hover:bg-slate-100 py-4 px-6 font-bold text-sm shadow-xs"
                 >
                   <span>View Sample Audit Report</span>
                 </Button>
               </Link>
             </div>
 
-            <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400">
+            <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>No Credit Card Required</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Free Initial Coordinate Scan</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-emerald-400" />
-                <span>Encrypted & Private</span>
+                <Lock className="w-4 h-4 text-emerald-600" />
+                <span>256-bit Encrypted & Confidential</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Legal Discrepancy Heuristics</span>
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span>Direct Registry & Gazette Cross-Check</span>
               </span>
             </div>
           </div>

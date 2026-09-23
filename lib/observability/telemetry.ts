@@ -47,13 +47,13 @@ class TelemetryService {
     const now = new Date().toISOString();
     const providers: ProviderHealth[] = [];
 
-    // 1. Primary SQLite Database
+    // 1. Primary PostgreSQL Database
     const t0 = Date.now();
     try {
       await db.$queryRaw`SELECT 1`;
       const latency = Date.now() - t0;
       providers.push({
-        name: "SQLite Database Engine",
+        name: "PostgreSQL Database (Neon)",
         category: "DATABASE",
         status: latency > 1000 ? "DEGRADED" : "HEALTHY",
         latencyMs: latency,
@@ -62,7 +62,7 @@ class TelemetryService {
       });
     } catch (err: any) {
       providers.push({
-        name: "SQLite Database Engine",
+        name: "PostgreSQL Database (Neon)",
         category: "DATABASE",
         status: "UNAVAILABLE",
         latencyMs: Date.now() - t0,

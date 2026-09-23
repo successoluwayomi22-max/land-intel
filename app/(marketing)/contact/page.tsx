@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { APP_CONFIG } from "@/lib/config";
 import { useLocale } from "@/components/providers/LocaleProvider";
+import { usePlatformContact } from "@/components/providers/PlatformContactProvider";
 
 export default function ContactPage() {
   const { toast } = useToast();
@@ -64,7 +65,7 @@ export default function ContactPage() {
     }
   };
 
-  const contact = APP_CONFIG.platformContact;
+  const { contact } = usePlatformContact();
 
   return (
     <div className="min-h-screen bg-brand-background flex flex-col">

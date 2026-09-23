@@ -20,6 +20,7 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
+  X,
   ExternalLink,
   Sliders,
   Database,
@@ -963,7 +964,9 @@ export default function SecurityOperationsCenterPage() {
                 <span>Event Investigation: {selectedEvent.id}</span>
                 <SeverityBadge severity={selectedEvent.severity} />
               </div>
-              <button onClick={() => setSelectedEvent(null)} className="text-slate-400 hover:text-white text-sm">✕</button>
+              <button onClick={() => setSelectedEvent(null)} className="text-slate-400 hover:text-white p-1 rounded-md transition-colors" aria-label="Close">
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
             <div className="space-y-3 text-xs font-mono">

@@ -41,7 +41,7 @@ export const HeroSection: React.FC = () => {
 
           {/* Subtitle */}
           <p className="text-base sm:text-lg text-brand-textSecondary leading-relaxed max-w-3xl mx-auto font-normal">
-            {t("heroSubtitle") || "Institutional property due-diligence, cadastral boundary verification, and title intelligence — engineered for diaspora buyers, remote investors, and global institutions."}
+            {t("heroSubtitle") || "Independent property due diligence, survey boundary verification, and title authentication for diaspora buyers, remote investors, and property developers."}
           </p>
 
           {/* Action CTAs */}
@@ -51,13 +51,13 @@ export const HeroSection: React.FC = () => {
                 <Link href="/properties/new" prefetch={true}>
                   <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-md py-3.5 px-6 font-bold text-sm">
                     <PlusCircle className="w-4 h-4 mr-2" />
-                    <span>{t("newCase") || "New Property Investigation"}</span>
+                    <span>{t("newCase") || "Start Property Verification"}</span>
                   </Button>
                 </Link>
                 <Link href="/dashboard" prefetch={true}>
                   <Button variant="outline" size="lg" className="w-full sm:w-auto bg-white border-slate-300 text-brand-darkNavy hover:bg-slate-50 py-3.5 px-6 font-bold text-sm shadow-xs">
                     <LayoutDashboard className="w-4 h-4 mr-2 text-brand-blue" />
-                    <span>{t("dashboard") || "Access Command Deck"}</span>
+                    <span>{t("dashboard") || "Go to Dashboard"}</span>
                   </Button>
                 </Link>
               </>
@@ -65,13 +65,13 @@ export const HeroSection: React.FC = () => {
               <>
                 <Link href="/register" prefetch={true}>
                   <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-md py-3.5 px-7 font-bold text-sm flex items-center justify-center gap-2">
-                    <span>{t("analyzeProperty") || "Start Free Due-Diligence Scan"}</span>
+                    <span>{t("analyzeProperty") || "Start Property Verification"}</span>
                     <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </Link>
                 <Link href="/how-it-works" prefetch={true}>
                   <Button variant="outline" size="lg" className="w-full sm:w-auto bg-white border-slate-300 text-slate-700 hover:text-brand-darkNavy hover:bg-slate-50 py-3.5 px-6 font-bold text-sm shadow-xs">
-                    <span>{t("howItWorks") || "Explore Cadastral Engine"}</span>
+                    <span>{t("howItWorks") || "See How It Works"}</span>
                   </Button>
                 </Link>
               </>
