@@ -21,9 +21,10 @@ export default function VerifyEmailPage() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const [expiryCountdown, setExpiryCountdown] = useState(INITIAL_OTP_EXPIRY_SECONDS);
   const [email, setEmail] = useState("");
+  const [devCode, setDevCode] = useState<string | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Get email from query params or localStorage
+  // Get email and optional devCode from query params or localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
@@ -38,6 +39,11 @@ export default function VerifyEmailPage() {
             if (user.email) setEmail(user.email);
           }
         } catch {}
+      }
+
+      const devCodeParam = urlParams.get("devCode") || urlParams.get("code");
+      if (devCodeParam && devCodeParam.trim().length === 6) {
+        setDevCode(devCodeParam.trim());
       }
     }
   }, []);
@@ -183,6 +189,9 @@ export default function VerifyEmailPage() {
         setError(data.error || "Could not send verification code.");
       } else {
         toast("New 6-digit code sent to your email!", "success");
+        if (data.devOtpCode) {
+          setDevCode(data.devOtpCode);
+        }
         setResendCooldown(60); // 60 second cooldown
         setExpiryCountdown(INITIAL_OTP_EXPIRY_SECONDS); // Reset 10m countdown
         setIsExpired(false);
@@ -261,6 +270,34 @@ export default function VerifyEmailPage() {
                     )}
                   </div>
                 </div>
+
+                {/* Sandbox Assistance for unverified Resend domain */}
+                {devCode && (
+                  <div className="mb-5 p-3 rounded-xl bg-blue-50 border border-blue-200 text-left space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-[10px] text-blue-900 uppercase tracking-wider">
+                        Direct Testing Sandbox Assistance
+                      </span>
+                      <span className="font-mono font-bold text-xs text-blue-700 bg-white px-2 py-0.5 rounded border border-blue-200">
+                        {devCode}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-blue-800 leading-normal">
+                      Resend free-tier sandbox relays to brand admin. Click below to verify immediately without checking external email:
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const digits = devCode.split("");
+                        setCode(digits);
+                        handleVerify(devCode);
+                      }}
+                      className="w-full text-xs font-bold text-white bg-brand-blue hover:bg-blue-700 py-1.5 px-3 rounded-lg transition-colors cursor-pointer text-center"
+                    >
+                      Auto-Fill Code ({devCode}) & Verify Now &rarr;
+                    </button>
+                  </div>
+                )}
 
                 {/* OTP Input */}
                 <div className="flex justify-center gap-2 sm:gap-3 mb-6">

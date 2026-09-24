@@ -56,7 +56,9 @@ export default function SettingsPage() {
   const [mfaSetupData, setMfaSetupData] = useState<any | null>(null);
   const [totpInput, setTotpInput] = useState("");
   const [verifyingMfa, setVerifyingMfa] = useState(false);
+  const [disablingMfa, setDisablingMfa] = useState(false);
   const [mfaActive, setMfaActive] = useState(false);
+  const [savedBackupCodes, setSavedBackupCodes] = useState<string[]>([]);
 
   // NDPR / GDPR Account Deletion Request state
   const [deletionStatus, setDeletionStatus] = useState<any | null>(null);
@@ -139,21 +141,56 @@ export default function SettingsPage() {
       const res = await fetch("/api/auth/mfa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "VERIFY_CODE", code: totpInput.trim() }),
+        body: JSON.stringify({
+          action: "VERIFY_AND_ENABLE",
+          code: totpInput.trim(),
+          secret: mfaSetupData?.secret,
+          backupCodes: mfaSetupData?.recoveryCodes,
+        }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        toast("MFA Verified and Enabled successfully!", "success");
+        toast("MFA Verified and Enabled successfully! Please save your recovery backup codes.", "success");
         setMfaActive(true);
+        if (mfaSetupData?.recoveryCodes) {
+          setSavedBackupCodes(mfaSetupData.recoveryCodes);
+        }
         setMfaSetupData(null);
         setTotpInput("");
       } else {
-        toast(data.error || "Verification failed", "error");
+        toast(data.error || "Verification failed. Check your authenticator app time and code.", "error");
       }
     } catch {
       toast("Network error verifying code", "error");
     } finally {
       setVerifyingMfa(false);
+    }
+  };
+
+  const handleDisableMfa = async () => {
+    if (!confirm("Are you sure you want to disable Two-Factor Authentication? Your account will only be protected by your password.")) {
+      return;
+    }
+    setDisablingMfa(true);
+    try {
+      const res = await fetch("/api/auth/mfa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "DISABLE" }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast("Two-Factor Authentication has been disabled.", "info");
+        setMfaActive(false);
+        setMfaSetupData(null);
+        setSavedBackupCodes([]);
+      } else {
+        toast(data.error || "Failed to disable MFA", "error");
+      }
+    } catch {
+      toast("Network error disabling MFA", "error");
+    } finally {
+      setDisablingMfa(false);
     }
   };
 
@@ -537,21 +574,49 @@ export default function SettingsPage() {
               </p>
 
               {mfaActive ? (
-                <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-emerald-800 font-medium">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Your account is protected with Two-Factor Authentication.</span>
+                <div className="space-y-3">
+                  <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-emerald-800 font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>Your account is protected with Two-Factor Authentication (TOTP).</span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      isLoading={disablingMfa}
+                      onClick={handleDisableMfa}
+                      className="text-rose-700 hover:text-rose-800 hover:bg-rose-50 border-rose-200"
+                    >
+                      Disable 2FA
+                    </Button>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setMfaActive(false);
-                      toast("MFA reset to disabled for this session", "info");
-                    }}
-                  >
-                    Reconfigure
-                  </Button>
+
+                  {savedBackupCodes.length > 0 && (
+                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-800 text-xs">
+                          Active Backup Recovery Codes
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(savedBackupCodes.join("\n"));
+                            toast("Backup codes copied to clipboard", "success");
+                          }}
+                          className="text-[11px] text-brand-blue font-bold hover:underline cursor-pointer"
+                        >
+                          Copy All
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 font-mono text-[11px]">
+                        {savedBackupCodes.map((code, idx) => (
+                          <div key={idx} className="bg-white p-1.5 rounded border border-slate-200 text-center select-all font-bold text-slate-800">
+                            {code}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : !mfaSetupData ? (
                 <div className="pt-1">
@@ -562,12 +627,57 @@ export default function SettingsPage() {
                 </div>
               ) : (
                 <div className="p-4 bg-slate-50 border border-brand-border rounded-lg space-y-4">
-                  <h4 className="font-bold text-brand-textPrimary text-xs">
-                    Step 1: Scan QR or Enter Setup Key
-                  </h4>
-                  <div className="bg-white p-3 rounded border border-slate-200 font-mono text-[11px] text-slate-800 select-all">
-                    Secret Key: <strong className="text-amber-700">{mfaSetupData.secret}</strong>
+                  <div>
+                    <h4 className="font-bold text-brand-textPrimary text-xs">
+                      Step 1: Add to Your Authenticator App
+                    </h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Open Google Authenticator, Microsoft Authenticator, or 1Password and scan/enter:
+                    </p>
                   </div>
+
+                  <div className="bg-white p-3 rounded border border-slate-200 font-mono text-[11px] text-slate-800 flex items-center justify-between select-all">
+                    <div>
+                      Secret Key: <strong className="text-amber-700 tracking-wider text-xs ml-1">{mfaSetupData.secret}</strong>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(mfaSetupData.secret);
+                        toast("Secret key copied to clipboard", "success");
+                      }}
+                      className="text-xs text-brand-blue font-bold hover:underline cursor-pointer ml-2"
+                    >
+                      Copy
+                    </button>
+                  </div>
+
+                  {mfaSetupData.recoveryCodes && (
+                    <div className="bg-amber-50 p-3 rounded-lg border border-amber-200 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-amber-900 text-xs">
+                          Emergency Backup Recovery Codes
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(mfaSetupData.recoveryCodes.join("\n"));
+                            toast("Recovery codes copied to clipboard", "success");
+                          }}
+                          className="text-[11px] text-amber-800 font-bold hover:underline cursor-pointer"
+                        >
+                          Copy Codes
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 font-mono text-[11px]">
+                        {mfaSetupData.recoveryCodes.map((c: string, idx: number) => (
+                          <div key={idx} className="bg-white p-1 rounded border border-amber-200 text-center select-all font-semibold text-slate-800">
+                            {c}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <h4 className="font-bold text-brand-textPrimary text-xs pt-1">
                     Step 2: Enter 6-Digit Authenticator Code
@@ -749,11 +859,14 @@ export default function SettingsPage() {
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="text-xs font-bold text-rose-900">
-                      Account Deletion Request Active (NDPR Grace Period)
+                    <h4 className="text-xs font-bold text-rose-900 flex items-center gap-2">
+                      <span>Account Deletion Request Active (NDPR Grace Period)</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono font-bold">
+                        SENT TO ADMIN
+                      </span>
                     </h4>
                     <p className="text-xs text-rose-700 mt-1 leading-relaxed">
-                      Your account deletion request has been registered. In compliance with NDPR data protection protocols, a 14-day statutory grace period is active until{" "}
+                      Your account deletion request has been submitted and transmitted to platform compliance administrators via alert email and in-app ticket. A 14-day statutory grace period is active until{" "}
                       <strong className="font-semibold">
                         {deletionStatus.request?.parsedDetails?.scheduledPurgeDate
                           ? new Date(deletionStatus.request.parsedDetails.scheduledPurgeDate).toLocaleDateString()

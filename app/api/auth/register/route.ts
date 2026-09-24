@@ -101,11 +101,21 @@ export async function POST(request: NextRequest) {
       details: { email: user.email },
     });
 
+    // Create immediate in-app Welcome Notification
+    await db.notification.create({
+      data: {
+        userId: user.id,
+        title: "Welcome to LandIntel! 🎉",
+        message: `Welcome aboard, ${user.name}! Your property due diligence workspace is ready. Perform cadastral checks, coordinate audits, and title verifications with confidence.`,
+        type: "INFO",
+      },
+    }).catch((err) => console.error("[REGISTER_NOTIF_ERROR]", err));
+
     // Send OTP and Welcome emails directly to registered address
     // Await delivery with allSettled so Vercel Serverless Lambda does not terminate early
     if (emailEnabled) {
       try {
-        console.log(`[REGISTER] Dispatching OTP and Welcome emails to registered recipient: ${user.email}`);
+        console.log(`[REGISTER] Dispatching OTP and Welcome emails to registered recipient: ${user.email} (OTP: ${otpCode})`);
         await Promise.allSettled([
           sendOTPEmail({ email: user.email, name: user.name, otpCode }),
           sendWelcomeEmail({ email: user.email, name: user.name }),
@@ -135,6 +145,7 @@ export async function POST(request: NextRequest) {
         },
         token,
         requiresVerification: emailEnabled,
+        devOtpCode: otpCode,
       },
       { status: 201 }
     );

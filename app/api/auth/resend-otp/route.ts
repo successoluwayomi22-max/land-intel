@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       message: "A new verification code has been sent to your email.",
+      devOtpCode: otpCode,
     });
   } catch (error) {
     console.error("[RESEND_OTP_ERROR]", error);

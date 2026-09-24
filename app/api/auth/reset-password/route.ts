@@ -64,12 +64,15 @@ export async function POST(request: Request) {
       }
     }
 
-    // Hash and store new password, invalidate reset token
+    // Hash and store new password, invalidate reset token, and ensure account is verified
     const newHash = await hashPassword(password);
     await db.user.update({
       where: { id: user.id },
       data: {
         passwordHash: newHash,
+        isVerified: true, // Proving email ownership via reset token verifies the account
+        otpHash: null,
+        otpExpiresAt: null,
         resetToken: null,
         resetExpires: null,
       },

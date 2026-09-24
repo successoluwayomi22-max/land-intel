@@ -6,10 +6,12 @@ import { logAudit } from "@/lib/services/audit";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 import { threatEngine } from "@/lib/security/engine";
 import { securityStore } from "@/lib/security/store";
+import { verifyTotpCode, verifyAndConsumeBackupCode } from "@/lib/security/totp";
 
 const LoginSchema = z.object({
   email: z.string().trim().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
+  mfaCode: z.string().optional(),
   captchaToken: z.string().optional(),
 });
 
@@ -100,6 +102,57 @@ export async function POST(request: NextRequest) {
         },
         { status: 403 }
       );
+    }
+
+    // Check if Multi-Factor Authentication (MFA) is enabled for this user
+    if (user.mfaEnabled && user.mfaSecret) {
+      const mfaCode = parsed.data.mfaCode?.trim();
+      if (!mfaCode) {
+        return NextResponse.json({
+          requiresMfa: true,
+          email: user.email,
+          message: "Two-Factor Authentication is enabled on this account. Please enter your 6-digit authenticator code or recovery backup code.",
+        }, { status: 200 });
+      }
+
+      // Verify TOTP or Backup Code
+      let mfaValid = verifyTotpCode(mfaCode, user.mfaSecret, 1);
+      let usedBackupCode = false;
+
+      if (!mfaValid && user.mfaBackupCodes) {
+        const backupCheck = verifyAndConsumeBackupCode(mfaCode, user.mfaBackupCodes);
+        if (backupCheck.valid) {
+          mfaValid = true;
+          usedBackupCode = true;
+          await db.user.update({
+            where: { id: user.id },
+            data: { mfaBackupCodes: JSON.stringify(backupCheck.remainingCodes) },
+          });
+        }
+      }
+
+      if (!mfaValid) {
+        await threatEngine.reportThreat("BRUTE_FORCE", {
+          ip,
+          endpoint: "/api/auth/login",
+          method: "POST",
+          actorEmail: email,
+          actorId: user.id,
+        }, { reason: "MFA code mismatch" });
+
+        return NextResponse.json({
+          error: "Invalid two-factor authentication code. Please check your authenticator app or backup codes.",
+          requiresMfa: true,
+        }, { status: 401 });
+      }
+
+      await logAudit({
+        userId: user.id,
+        action: usedBackupCode ? "MFA_BACKUP_CODE_USED" : "MFA_LOGIN_VERIFIED",
+        resourceType: "User",
+        resourceId: user.id,
+        ipAddress: ip,
+      });
     }
 
     // Record successful login in IP tracking
