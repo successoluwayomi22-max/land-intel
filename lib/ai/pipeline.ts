@@ -128,81 +128,125 @@ export async function runCaseIntelligencePipeline(caseId: string): Promise<void>
     }))
   );
 
-  await db.$transaction(async (tx) => {
-    // 1. Update or create RiskScore
-    await tx.riskScore.upsert({
-      where: { caseId },
-      create: {
+  // 1. Update or create RiskScore
+  await db.riskScore.upsert({
+    where: { caseId },
+    create: {
+      caseId,
+      score: analysis.overallScore,
+      level: analysis.level,
+      explanation: analysis.explanation,
+      documentationScore: analysis.breakdown.documentationScore,
+      ownershipScore: analysis.breakdown.ownershipScore,
+      geographicScore: analysis.breakdown.geographicScore,
+      consistencyScore: analysis.breakdown.consistencyScore,
+    },
+    update: {
+      score: analysis.overallScore,
+      level: analysis.level,
+      explanation: analysis.explanation,
+      documentationScore: analysis.breakdown.documentationScore,
+      ownershipScore: analysis.breakdown.ownershipScore,
+      geographicScore: analysis.breakdown.geographicScore,
+      consistencyScore: analysis.breakdown.consistencyScore,
+    },
+  });
+
+  // 2. Refresh findings in batch
+  await db.propertyFinding.deleteMany({ where: { caseId } });
+
+  if (analysis.findings.length > 0) {
+    await db.propertyFinding.createMany({
+      data: analysis.findings.map((f) => ({
         caseId,
-        score: analysis.overallScore,
-        level: analysis.level,
-        explanation: analysis.explanation,
-        documentationScore: analysis.breakdown.documentationScore,
-        ownershipScore: analysis.breakdown.ownershipScore,
-        geographicScore: analysis.breakdown.geographicScore,
-        consistencyScore: analysis.breakdown.consistencyScore,
-      },
-      update: {
-        score: analysis.overallScore,
-        level: analysis.level,
-        explanation: analysis.explanation,
-        documentationScore: analysis.breakdown.documentationScore,
-        ownershipScore: analysis.breakdown.ownershipScore,
-        geographicScore: analysis.breakdown.geographicScore,
-        consistencyScore: analysis.breakdown.consistencyScore,
-      },
+        title: f.title,
+        severity: f.severity,
+        category: f.category,
+        description: f.description,
+        evidenceSummary: f.evidenceSummary,
+        sourceDocIds: JSON.stringify(f.sourceDocIds),
+        pageReferences: f.pageReferences,
+        whyItMatters: f.whyItMatters,
+        recommendedAction: f.recommendedAction,
+        isPremiumLocked: f.isPremiumLocked,
+      })),
     });
+  }
 
-    // 2. Refresh findings
-    await tx.propertyFinding.deleteMany({ where: { caseId } });
+  // 3. Initialize or update Verification Items in batch based on real analysis findings
+  const adapter = getJurisdictionAdapter(propertyCase.countryCode || propertyCase.country);
+  const checklistItems = adapter.verificationChecklist.length > 0
+    ? adapter.verificationChecklist
+    : APP_CONFIG.verificationChecklistItems;
 
-    for (const f of analysis.findings) {
-      await tx.propertyFinding.create({
-        data: {
-          caseId,
-          title: f.title,
-          severity: f.severity,
-          category: f.category,
-          description: f.description,
-          evidenceSummary: f.evidenceSummary,
-          sourceDocIds: JSON.stringify(f.sourceDocIds),
-          pageReferences: f.pageReferences,
-          whyItMatters: f.whyItMatters,
-          recommendedAction: f.recommendedAction,
-          isPremiumLocked: f.isPremiumLocked,
-        },
-      });
-    }
+  const hasLocationDefect = analysis.findings.some((f) => f.category === "GEOGRAPHIC" && f.severity === "CRITICAL");
+  const hasTitleDefect = analysis.findings.some((f) => f.category === "DOCUMENTATION" && (f.severity === "CRITICAL" || f.title.includes("Absence of Authentic Land Title")));
+  const hasSurveyDefect = analysis.findings.some((f) => f.title.includes("Survey Plan") || f.title.includes("Cadastral Defect"));
+  const isCritical = analysis.overallScore >= 80;
 
-    // 3. Initialize Verification Items if not present (using jurisdiction-specific checklist)
-    const adapter = getJurisdictionAdapter(propertyCase.countryCode || propertyCase.country);
-    const existingItems = await tx.verificationItem.findMany({ where: { caseId } });
-    if (existingItems.length === 0) {
-      const checklistItems = adapter.verificationChecklist.length > 0
-        ? adapter.verificationChecklist
-        : APP_CONFIG.verificationChecklistItems;
+  const itemsToCreate = checklistItems.map((item) => {
+    let status = "PENDING";
+    let notes: string | null = null;
 
-      for (const item of checklistItems) {
-        await tx.verificationItem.create({
-          data: {
-            caseId,
-            itemKey: item.key,
-            title: item.title,
-            description: item.description,
-            status: "PENDING",
-            requiresProfessional: item.requiresProfessional,
-          },
-        });
+    if (item.key === "location_reviewed") {
+      if (hasLocationDefect || (!propertyCase.latitude && !propertyCase.longitude && isCritical)) {
+        status = "FAILED";
+        notes = "Location failed: Address or LGA is unverifiable, synthetic, or non-existent in state registry.";
+      } else if (propertyCase.latitude && propertyCase.longitude) {
+        status = "COMPLETE";
+        notes = "Geographic coordinates confirmed on map.";
+      } else {
+        status = "NEEDS_REVIEW";
+        notes = "Physical address verification required.";
+      }
+    } else if (item.key === "survey_reviewed" || item.key === "coordinates_reviewed" || item.key === "plot_number_consistent") {
+      if (hasSurveyDefect || isCritical) {
+        status = "FAILED";
+        notes = "No authentic cadastral survey plan or beacon coordinates detected.";
+      } else {
+        status = "NEEDS_REVIEW";
+        notes = "Survey beacons require on-ground physical recovery.";
+      }
+    } else if (item.key === "title_documentation_reviewed" || item.key === "seller_owner_reviewed") {
+      if (hasTitleDefect || isCritical) {
+        status = "FAILED";
+        notes = "No authentic statutory root of title or registered deed detected.";
+      } else {
+        status = "NEEDS_REVIEW";
+        notes = "Official registry title search recommended.";
+      }
+    } else if (item.key === "legal_review" || item.key === "official_government_verification") {
+      if (isCritical) {
+        status = "FAILED";
+        notes = "Critical defects detected. Halt transactions immediately (DO NOT BUY).";
+      } else {
+        status = "NEEDS_REVIEW";
+        notes = "Professional legal review recommended before closing.";
       }
     }
 
-    // 4. Update case status to ANALYSIS_COMPLETE
-    await tx.propertyCase.update({
-      where: { id: caseId },
-      data: {
-        status: "ANALYSIS_COMPLETE",
-      },
-    });
+    return {
+      caseId,
+      itemKey: item.key,
+      title: item.title,
+      description: item.description,
+      status,
+      notes,
+      requiresProfessional: item.requiresProfessional,
+    };
+  });
+
+  await db.verificationItem.deleteMany({ where: { caseId } });
+  if (itemsToCreate.length > 0) {
+    await db.verificationItem.createMany({ data: itemsToCreate });
+  }
+
+  // 4. Update case status to ANALYSIS_COMPLETE
+  await db.propertyCase.update({
+    where: { id: caseId },
+    data: {
+      status: "ANALYSIS_COMPLETE",
+    },
   });
 }
 

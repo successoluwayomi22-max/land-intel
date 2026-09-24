@@ -184,6 +184,26 @@ export const NigeriaAdapter: JurisdictionAdapter = {
   classifyDocument(text: string, filename: string): DocumentClassificationResult {
     const lower = (text + " " + filename).toLowerCase();
 
+    // Check for irrelevant images, screenshots, or explicit non-cadastral verdicts
+    if (
+      lower.includes("[non_cadastral") ||
+      lower.includes("katana") ||
+      lower.includes("facebook") ||
+      lower.includes("screenshot") ||
+      lower.includes("instagram") ||
+      lower.includes("tiktok") ||
+      lower.includes("whatsapp") ||
+      lower.includes("[unverified_image")
+    ) {
+      return {
+        category: "OTHER",
+        categoryLabel: "Non-Cadastral / Unverified File",
+        confidence: 0.99,
+        summary: "Non-cadastral or irrelevant image file. Lacks certified surveyor seals, coordinates, or statutory land title records.",
+        isRecognizedInJurisdiction: false,
+      };
+    }
+
     if (lower.includes("survey plan") || lower.includes("beacon") || lower.includes("cadastral") || lower.includes("surveyor general") || lower.includes("boundary pillars")) {
       return {
         category: "SURVEY_PLAN",

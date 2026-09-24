@@ -253,7 +253,9 @@ export default function PropertyCaseHubPage() {
     ? getPurchaseRecommendation(propertyCase.riskScore.score, propertyCase.riskScore.level, {
         isSynthetic:
           (propertyCase.riskScore.explanation || "").toLowerCase().includes("synthetic") ||
-          (propertyCase.riskScore.explanation || "").toLowerCase().includes("placeholder"),
+          (propertyCase.riskScore.explanation || "").toLowerCase().includes("placeholder") ||
+          (propertyCase.riskScore.explanation || "").toLowerCase().includes("non-cadastral") ||
+          (propertyCase.riskScore.explanation || "").toLowerCase().includes("unverified"),
         criticalFindingsCount: propertyCase.findings.filter((f: any) => f.severity === "CRITICAL").length,
       })
     : null;
@@ -720,11 +722,14 @@ export default function PropertyCaseHubPage() {
               {(propertyCase.verificationItems || []).map((item: any) => {
                 const isComplete = item.status === "COMPLETE";
                 const isReview = item.status === "NEEDS_REVIEW";
+                const isFailed = item.status === "FAILED";
                 return (
                   <div
                     key={item.id}
                     className={`p-4 rounded-lg border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                      isComplete
+                      isFailed
+                        ? "bg-rose-50/60 border-rose-300"
+                        : isComplete
                         ? "bg-emerald-50/40 border-emerald-200"
                         : isReview
                         ? "bg-amber-50/40 border-amber-200"
@@ -739,15 +744,27 @@ export default function PropertyCaseHubPage() {
                             Professional Required
                           </span>
                         )}
+                        {isFailed && (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-rose-100 text-rose-800 border border-rose-200">
+                            DEFECT DETECTED
+                          </span>
+                        )}
                       </div>
                       <p className="text-xs text-brand-textSecondary">{item.description}</p>
+                      {item.notes && (
+                        <p className={`text-[11px] font-medium ${isFailed ? "text-rose-700 font-semibold" : "text-brand-textMuted"}`}>
+                          {item.notes}
+                        </p>
+                      )}
                     </div>
 
                     <div className="shrink-0 flex items-center gap-3">
                       <button
                         onClick={() => handleChecklistToggle(item.id, item.status)}
                         className={`px-3 py-1.5 rounded-button text-xs font-bold border transition-colors cursor-pointer ${
-                          isComplete
+                          isFailed
+                            ? "bg-rose-600 text-white border-rose-700 hover:bg-rose-700"
+                            : isComplete
                             ? "bg-emerald-600 text-white border-emerald-600"
                             : isReview
                             ? "bg-amber-500 text-white border-amber-500"

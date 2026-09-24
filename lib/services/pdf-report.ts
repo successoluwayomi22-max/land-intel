@@ -155,7 +155,9 @@ export async function generatePropertyDueDiligencePdf(caseId: string): Promise<U
   const level = propertyCase.riskScore?.level || "PENDING";
   const isSynthetic =
     (propertyCase.riskScore?.explanation || "").toLowerCase().includes("synthetic") ||
-    (propertyCase.riskScore?.explanation || "").toLowerCase().includes("placeholder");
+    (propertyCase.riskScore?.explanation || "").toLowerCase().includes("placeholder") ||
+    (propertyCase.riskScore?.explanation || "").toLowerCase().includes("non-cadastral") ||
+    (propertyCase.riskScore?.explanation || "").toLowerCase().includes("unverified");
   const recommendation = getPurchaseRecommendation(score, level, {
     isSynthetic,
     criticalFindingsCount: propertyCase.findings.filter((f) => f.severity === "CRITICAL").length,

@@ -7,12 +7,31 @@ import {
   getPurchaseRecommendation,
 } from "./types";
 import { getJurisdictionAdapter } from "@/lib/jurisdictions/registry";
+import { validateNigerianLocation, isGibberishOrTestString } from "@/lib/geo/nigeria-data";
 
 /**
  * Classifies Nigerian property documents based on textual markers and document metadata
  */
 export function classifyNigerianDocument(text: string, filename: string): { category: DocumentClassification; confidence: number; summary: string } {
   const lower = (text + " " + filename).toLowerCase();
+
+  // 0. Explicit check for non-cadastral images, screenshots, and social media files
+  if (
+    lower.includes("[non_cadastral") ||
+    lower.includes("katana") ||
+    lower.includes("facebook") ||
+    lower.includes("screenshot") ||
+    lower.includes("instagram") ||
+    lower.includes("tiktok") ||
+    lower.includes("whatsapp") ||
+    lower.includes("[unverified_image")
+  ) {
+    return {
+      category: "OTHER",
+      confidence: 0.99,
+      summary: "Non-cadastral or irrelevant image file. Lacks certified surveyor seals, coordinates, or statutory land title records.",
+    };
+  }
 
   if (lower.includes("survey plan") || lower.includes("beacon") || lower.includes("cadastral") || lower.includes("surveyor general") || lower.includes("boundary pillars")) {
     return {
@@ -286,63 +305,75 @@ export function extractCadastralEntities(text: string, category: DocumentClassif
  * Detects synthetic, placeholder, test, or fabricated property details and instruments
  */
 export function detectSyntheticOrPlaceholder(
-  caseData: { title: string; state?: string; lga?: string; address?: string; country?: string; description?: string | null },
+  caseData: { title: string; state?: string; lga?: string; address?: string; country?: string; countryCode?: string; description?: string | null },
   documents: Array<{ id: string; originalName: string; category: string; extractions: Array<{ fieldName: string; fieldValue: string }> }>
 ): { isSynthetic: boolean; reasons: string[] } {
   const reasons: string[] = [];
 
-  const placeholderPattern = /\b(fake|dummy|test|sample|placeholder|lorem\s*ipsum|mock|asdf|qwerty|foo|bar|invalid|bogus|temp_doc|no_doc|unverified)\b/i;
+  const placeholderPattern = /(fake|dummy|test|sample|placeholder|lorem\s*ipsum|mock|asdf|qwerty|foo|bar|invalid|bogus|temp_doc|no_doc|unverified)/i;
+  const screenshotPattern = /(screenshot|katana|facebook|whatsapp|instagram|tiktok|snapchat|twitter|meme|selfie|\bdcim\b|\bimg_\d+|\bphoto_\d+)/i;
 
-  // 1. Check case inputs
-  if (placeholderPattern.test(caseData.title)) {
+  // 1. Check case inputs with generalized test string detector
+  if (placeholderPattern.test(caseData.title) || isGibberishOrTestString(caseData.title)) {
     reasons.push(`Property title contains placeholder/test marker: "${caseData.title}"`);
   }
-  if (caseData.address && placeholderPattern.test(caseData.address)) {
-    reasons.push(`Address contains placeholder marker: "${caseData.address}"`);
+  if (caseData.address && (placeholderPattern.test(caseData.address) || isGibberishOrTestString(caseData.address))) {
+    reasons.push(`Address contains placeholder marker or synthetic keyboard input: "${caseData.address}"`);
   }
-  if (caseData.lga && placeholderPattern.test(caseData.lga)) {
-    reasons.push(`District/LGA contains placeholder marker: "${caseData.lga}"`);
+  if (caseData.lga && (placeholderPattern.test(caseData.lga) || isGibberishOrTestString(caseData.lga))) {
+    reasons.push(`District/LGA contains placeholder marker or synthetic keyboard input: "${caseData.lga}"`);
   }
 
-  // 2. Check uploaded document filenames
+  // 2. Validate Nigerian location authenticity
+  const isNigeria = !caseData.countryCode || caseData.countryCode === "NG" || (caseData.country || "").toLowerCase().includes("nigeria");
+  if (isNigeria) {
+    const locValidation = validateNigerianLocation({
+      state: caseData.state,
+      lga: caseData.lga,
+      address: caseData.address,
+      title: caseData.title,
+    });
+    if (!locValidation.isValid) {
+      for (const r of locValidation.reasons) {
+        if (!reasons.includes(r)) {
+          reasons.push(r);
+        }
+      }
+    }
+  }
+
+  // 3. Check uploaded document filenames
   for (const doc of documents) {
     if (placeholderPattern.test(doc.originalName)) {
       reasons.push(`Document filename "${doc.originalName}" is marked as synthetic/dummy`);
     }
+    if (screenshotPattern.test(doc.originalName)) {
+      reasons.push(`Uploaded file "${doc.originalName}" is a social media screenshot or photo rather than a certified land instrument`);
+    }
   }
 
-  // 3. Check extractions for placeholder values
+  // 4. Check extractions for placeholder values
   for (const doc of documents) {
     for (const ext of doc.extractions) {
-      if (placeholderPattern.test(ext.fieldValue)) {
+      if (placeholderPattern.test(ext.fieldValue) || isGibberishOrTestString(ext.fieldValue)) {
         reasons.push(`Extracted field "${ext.fieldName}" contains test value: "${ext.fieldValue}"`);
       }
     }
   }
 
-  // 4. Check if documents were provided but yielded 0 valid cadastral records and have generic names
+  // 5. Check if documents were provided but yielded 0 valid cadastral records
   if (documents.length > 0) {
-    const totalExtractions = documents.reduce((acc, d) => acc + d.extractions.length, 0);
     const hasAnyRealCadastral = documents.some((d) =>
+      d.category !== "OTHER" &&
       d.extractions.some((e) =>
-        ["plot_number", "survey_number", "seller_name", "buyer_name", "land_area", "coo_number", "title_number"].includes(e.fieldName)
+        ["plot_number", "survey_number", "seller_name", "buyer_name", "land_area", "coo_number", "title_number", "beacon_numbers", "surcon_number"].includes(e.fieldName)
       )
     );
 
-    if (totalExtractions === 0 || !hasAnyRealCadastral) {
-      const suspiciousNames = documents.filter((d) => {
-        const lower = d.originalName.toLowerCase();
-        return (
-          lower.includes("doc") ||
-          lower.includes("file") ||
-          lower.includes("upload") ||
-          lower.includes("image") ||
-          lower.length < 8
-        );
-      });
-      if (suspiciousNames.length > 0) {
-        reasons.push(`Submitted instrument(s) [${documents.map((d) => d.originalName).join(", ")}] lack authentic cadastral boundaries, licensed surveyor seals, or verifiable legal ownership records`);
-      }
+    if (!hasAnyRealCadastral) {
+      reasons.push(
+        `Submitted instrument(s) [${documents.map((d) => d.originalName).join(", ")}] lack authentic cadastral boundaries, licensed surveyor seals, or verifiable legal ownership records`
+      );
     }
   }
 
@@ -383,26 +414,85 @@ export function analyzeCrossDocumentRisks(
   // Check for fake, dummy, or synthetic inputs/documents
   const syntheticCheck = detectSyntheticOrPlaceholder(caseData, documents);
 
-  if (syntheticCheck.isSynthetic) {
-    documentationScore = 95;
-    ownershipScore = 90;
-    geographicScore = 85;
-    consistencyScore = 85;
+  // Group valid recognized cadastral documents
+  const validCadastralDocs = documents.filter((d) => {
+    const isRecognizedCat = [
+      "SURVEY_PLAN",
+      "DEED_OF_ASSIGNMENT",
+      "CERTIFICATE_OF_OCCUPANCY",
+      "GOVERNORS_CONSENT",
+      "GAZETTE",
+      "ALLOCATION_LETTER",
+      "CONTRACT_OF_SALE",
+      "PURCHASE_RECEIPT",
+    ].includes(d.category);
+    const hasCadastralData = d.extractions.length > 0;
+    const isScreenshotOrMeme = /(screenshot|katana|facebook|whatsapp|instagram|tiktok|snapchat)/i.test(d.originalName);
+    return isRecognizedCat && hasCadastralData && !isScreenshotOrMeme;
+  });
 
-    findings.push({
-      title: "CRITICAL FRAUD ALERT: Synthetic, Placeholder, or Unverifiable Land Documentation",
-      severity: "CRITICAL",
-      category: "DOCUMENTATION",
-      description: `The submitted property record or uploaded instrument(s) contain placeholder, test, or synthetic markers (${syntheticCheck.reasons.slice(0, 3).join("; ")}). No authentic cadastral identifiers, licensed surveyor credentials, or legal root of title could be validated.`,
-      evidenceSummary: `Detected markers: ${syntheticCheck.reasons.join(". ")}`,
-      sourceDocIds: documents.map((d) => d.id),
-      pageReferences: "All submitted files & case metadata",
-      whyItMatters:
-        "Transacting on synthetic, placeholder, or fabricated land documents is the leading cause of total investment loss in real estate worldwide. Without an authentic, legally registered deed or certified boundary survey, there is no verifiable property right or legal parcel to acquire.",
-      recommendedAction:
-        "HALT ALL TRANSACTIONS IMMEDIATELY. DO NOT BUY. Do not transfer earnest deposits, sign binding purchase agreements, or release escrow funds. Demand original, certified true copies verified directly at the official statutory land registry.",
-      isPremiumLocked: false,
-    });
+  const hasNoCadastralDocs = validCadastralDocs.length === 0;
+
+  if (syntheticCheck.isSynthetic || hasNoCadastralDocs) {
+    documentationScore = 95;
+    ownershipScore = 95;
+    geographicScore = 95;
+    consistencyScore = 90;
+
+    if (syntheticCheck.isSynthetic) {
+      findings.push({
+        title: "CRITICAL FRAUD ALERT: Synthetic, Placeholder, or Unverifiable Land Details",
+        severity: "CRITICAL",
+        category: "DOCUMENTATION",
+        description: `The submitted property record or uploaded instrument(s) contain placeholder, test, or synthetic markers (${syntheticCheck.reasons.slice(0, 3).join("; ")}). No authentic cadastral identifiers, licensed surveyor credentials, or legal root of title could be validated.`,
+        evidenceSummary: `Detected markers: ${syntheticCheck.reasons.join(". ")}`,
+        sourceDocIds: documents.map((d) => d.id),
+        pageReferences: "All submitted files & case metadata",
+        whyItMatters:
+          "Transacting on synthetic, placeholder, or fabricated land documents is the leading cause of total investment loss in real estate worldwide. Without an authentic, legally registered deed or certified boundary survey, there is no verifiable property right or legal parcel to acquire.",
+        recommendedAction:
+          "HALT ALL TRANSACTIONS IMMEDIATELY. DO NOT BUY. Do not transfer earnest deposits, sign binding purchase agreements, or release escrow funds. Demand original, certified true copies verified directly at the official statutory land registry.",
+        isPremiumLocked: false,
+      });
+
+      // Location specific finding if address or LGA is fake / unresolvable
+      const locationReasons = syntheticCheck.reasons.filter(
+        (r) => r.toLowerCase().includes("address") || r.toLowerCase().includes("lga") || r.toLowerCase().includes("state")
+      );
+      if (locationReasons.length > 0) {
+        findings.push({
+          title: "CRITICAL LOCATION DEFECT: Unverifiable or Fabricated Property Address / District",
+          severity: "CRITICAL",
+          category: "GEOGRAPHIC",
+          description: `The property address "${caseData.address}" or Local Government Area "${caseData.lga}" in ${caseData.state} could not be validated. ${locationReasons.join("; ")}.`,
+          evidenceSummary: `Geographic validation failure: ${locationReasons.join(". ")}`,
+          sourceDocIds: [],
+          pageReferences: "Property Case Registration Data",
+          whyItMatters:
+            "Purchasing real estate at an unverified or fabricated address carries immediate risk of non-existent parcel fraud or fraudulent misrepresentation. Legitimate real estate must exist within a recognized statutory local government area with verifiable street or layout boundaries.",
+          recommendedAction:
+            "HALT TRANSACTIONS IMMEDIATELY. DO NOT BUY. Demand an exact approved layout plan, registered coordinates, and verifiable physical street address before proceeding.",
+          isPremiumLocked: false,
+        });
+      }
+    }
+
+    if (hasNoCadastralDocs && !syntheticCheck.isSynthetic) {
+      findings.push({
+        title: "CRITICAL CADASTRAL DEFECT: Absence of Authentic Land Title or Survey Instruments",
+        severity: "CRITICAL",
+        category: "DOCUMENTATION",
+        description: `None of the submitted instruments qualify as authentic legal land titles or cadastral survey plans. Transacting on unverified, non-cadastral documents carries extreme risk of total financial loss.`,
+        evidenceSummary: `Evaluated documents: [${documents.map((d) => d.originalName).join(", ") || "None"}]. Zero survey beacon coordinates, surveyor accreditations, or registered deed memorials detected.`,
+        sourceDocIds: documents.map((d) => d.id),
+        pageReferences: "All submitted instruments",
+        whyItMatters:
+          "Real estate conveyancing requires certified proof of legal estate and defined cadastral boundary pillars. Attempting to purchase property without certified surveyor beacons and registered root of title guarantees immediate total loss of capital or dispute with rival claimants.",
+        recommendedAction:
+          "HALT ALL ENGAGEMENTS IMMEDIATELY. DO NOT BUY. Do not transfer funds or make deposits. Demand the registered survey plan bearing SURCON seal and the statutory root of title from the vendor.",
+        isPremiumLocked: false,
+      });
+    }
   }
 
   // Group extractions by field
@@ -763,7 +853,8 @@ export function analyzeCrossDocumentRisks(
     geographicScore * 0.2 +
     consistencyScore * 0.2
   );
-  const overallScore = Math.min(100, Math.max(syntheticCheck.isSynthetic ? 88 : 12, rawScore));
+  const isCriticalFailure = syntheticCheck.isSynthetic || hasNoCadastralDocs;
+  const overallScore = Math.min(100, Math.max(isCriticalFailure ? 95 : 12, rawScore));
 
   let level: "LOW" | "MODERATE" | "ELEVATED" | "HIGH" | "CRITICAL" = "LOW";
   if (overallScore > 80) level = "CRITICAL";
@@ -773,7 +864,7 @@ export function analyzeCrossDocumentRisks(
 
   // Derive unambiguous acquisition recommendation
   const recommendation = getPurchaseRecommendation(overallScore, level, {
-    isSynthetic: syntheticCheck.isSynthetic,
+    isSynthetic: isCriticalFailure,
     criticalFindingsCount: findings.filter((f) => f.severity === "CRITICAL").length,
   });
 
@@ -781,13 +872,22 @@ export function analyzeCrossDocumentRisks(
     documents.map((d) => `${d.originalName} (${d.category.replace(/_/g, " ")})`).join(", ") || "No uploaded documents";
 
   const primaryDrivers: string[] = [];
-  if (syntheticCheck.isSynthetic) {
-    primaryDrivers.push("synthetic or placeholder documentation detected with unverified cadastral lineage");
+  if (isCriticalFailure) {
+    if (syntheticCheck.isSynthetic) {
+      primaryDrivers.push("synthetic, placeholder, or unverified documentation detected with zero cadastral lineage");
+    }
+    if (hasNoCadastralDocs) {
+      primaryDrivers.push("total absence of authentic cadastral survey plan or statutory root of title");
+    }
+    if (syntheticCheck.reasons.some((r) => r.toLowerCase().includes("address") || r.toLowerCase().includes("lga") || r.toLowerCase().includes("state"))) {
+      primaryDrivers.push("unverifiable or non-existent geographic address and district alignment");
+    }
   }
-  if (consistencyScore > 25) primaryDrivers.push("cadastral and plot identifier divergence across instruments");
-  if (documentationScore > 25) primaryDrivers.push(`unperfected statutory root of title / absence of registered deed at ${primaryRegistry}`);
-  if (geographicScore > 25) primaryDrivers.push("unverified cadastral survey boundary markers and potential setback/acquisition exposure");
-  if (ownershipScore > 25) primaryDrivers.push("unverified grantor conveyancing authority / customary lineage review required");
+  if (consistencyScore > 25 && !isCriticalFailure) primaryDrivers.push("cadastral and plot identifier divergence across instruments");
+  if (documentationScore > 25 && !isCriticalFailure) primaryDrivers.push(`unperfected statutory root of title / absence of registered deed at ${primaryRegistry}`);
+  if (geographicScore > 25 && !isCriticalFailure) primaryDrivers.push("unverified cadastral survey boundary markers and potential setback/acquisition exposure");
+  if (ownershipScore > 25 && !isCriticalFailure) primaryDrivers.push("unverified grantor conveyancing authority / customary lineage review required");
+  if (primaryDrivers.length === 0) primaryDrivers.push("routine physical boundary recovery and official registry charting prerequisites");
   if (primaryDrivers.length === 0) primaryDrivers.push("routine physical boundary recovery and official registry charting prerequisites");
 
   const explanation = `${recommendation.headline}

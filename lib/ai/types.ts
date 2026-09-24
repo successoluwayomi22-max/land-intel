@@ -90,7 +90,7 @@ export function getPurchaseRecommendation(
     return {
       verdict: "DO_NOT_BUY",
       headline: isSynthetic
-        ? "DO NOT BUY — UNVERIFIED OR SYNTHETIC DOCUMENTATION DETECTED"
+        ? "DO NOT BUY — UNVERIFIED, FAKE, OR NON-CADASTRAL DATA"
         : "DO NOT BUY — CRITICAL RISK DETECTED",
       shortVerdict: "DO NOT BUY",
       colorClass: "text-rose-700",
@@ -101,7 +101,7 @@ export function getPurchaseRecommendation(
       actionGuidance:
         "DO NOT release deposits, transfer funds, or sign binding contracts. Severe title, boundary, or document verification failures were detected.",
       summaryReason: isSynthetic
-        ? "The documentation provided contains placeholder or unverifiable details with no authentic cadastral lineage. Purchasing this property represents an extreme financial fraud risk."
+        ? "The documentation or location details provided are unverified, synthetic, or non-cadastral. Purchasing this property represents an extreme risk of fraud or total loss."
         : "Critical title defects, boundary discrepancies, or unverified encumbrances make this property hazardous to acquire without full legal resolution.",
     };
   }
