@@ -67,6 +67,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico, sitemap.xml, robots.txt
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|BingSiteAuth\\.xml|google.*\\.html|og-image\\.(png|svg)).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|BingSiteAuth\\.xml|google.*\\.html|og-image.*).*)",
   ],
 };
