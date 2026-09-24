@@ -33,7 +33,7 @@ export const APP_CONFIG = {
     reportPriceNgn: 45000, // ₦45,000 NGN single certified report
     investorBundleNgn: 95000, // ₦95,000 NGN for 3 properties
     fullTitleVerificationNgn: 175000, // ₦175,000 NGN matching DLS full legal search
-    reportPriceUsd: 30,
+    reportPriceUsd: 37,
     currency: "NGN",
     supportedCurrencies: ["NGN", "USD", "GBP", "EUR", "GHS", "KES", "CAD"],
   },

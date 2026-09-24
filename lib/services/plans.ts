@@ -44,12 +44,12 @@ export const ONE_OFF_PACKAGES: Record<OneOffPackageKey, OneOffPackageDefinition>
     key: "STANDARD_AUDIT",
     badge: "INSTANT AUTOMATED AUDIT",
     name: "Instant Cadastral Audit",
-    priceNgn: 69767,
-    priceUsd: 46.51,
+    priceNgn: 45000,
+    priceUsd: 34.42,
     vatRate: STATUTORY_VAT_RATE,
-    vatAmountNgn: 5233,
-    totalPriceNgn: 75000, // ₦75,000 clean Naira total ($50.00 USD)
-    totalPriceUsd: 50.00, // $50 USD clean base
+    vatAmountNgn: 3375,
+    totalPriceNgn: 48375, // ₦45,000 base + 7.5% VAT (₦3,375) = ₦48,375 statutory total
+    totalPriceUsd: 37.00, // $37 USD (higher or same exchange floor, never lower than Naira)
     subtitle: "Single property automated deep-scan & risk scorecard",
     deliverableTimeframe: "Instant Access",
     features: [
@@ -65,12 +65,12 @@ export const ONE_OFF_PACKAGES: Record<OneOffPackageKey, OneOffPackageDefinition>
     key: "FULL_TITLE_VERIFICATION",
     badge: "FULL LEGAL SEARCH",
     name: "Full Title Verification Package",
-    priceNgn: 279070,
-    priceUsd: 186.05,
+    priceNgn: 175000,
+    priceUsd: 132.09,
     vatRate: STATUTORY_VAT_RATE,
-    vatAmountNgn: 20930,
-    totalPriceNgn: 300000, // ₦300,000 clean Naira total ($200.00 USD)
-    totalPriceUsd: 200.00, // $200 USD clean base
+    vatAmountNgn: 13125,
+    totalPriceNgn: 188125, // ₦175,000 base + 7.5% VAT (₦13,125) = ₦188,125 statutory total
+    totalPriceUsd: 142.00, // $142 USD (higher or same exchange floor, never lower than Naira)
     subtitle: "Official Ministry registry search, Surveyor General charting & written legal opinion",
     deliverableTimeframe: "Priority 48–72 Hour Express Deliverable",
     features: [
@@ -163,11 +163,11 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
   STARTER: {
     key: "STARTER",
     name: "Starter Investor",
-    priceNgn: 69767,
-    priceUsd: 46.51,
+    priceNgn: 45000,
+    priceUsd: 34.42,
     vatRate: STATUTORY_VAT_RATE,
-    totalPriceNgn: 75000, // ₦69,767 + 7.5% VAT (₦5,233)
-    totalPriceUsd: 50.00, // $50 USD clean base
+    totalPriceNgn: 48375, // ₦45,000 base + 7.5% VAT (₦3,375) = ₦48,375
+    totalPriceUsd: 37.00, // $37 USD (higher or same exchange floor, never lower than Naira)
     maxActiveCases: 5,
     maxDocumentsPerCase: 15,
     maxFileSizeBytes: 25 * 1024 * 1024, // 25MB
@@ -192,11 +192,11 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
   PROFESSIONAL: {
     key: "PROFESSIONAL",
     name: "Professional Portfolio",
-    priceNgn: 209302,
-    priceUsd: 139.53,
+    priceNgn: 95000,
+    priceUsd: 72.56,
     vatRate: STATUTORY_VAT_RATE,
-    totalPriceNgn: 225000, // ₦209,302 + 7.5% VAT (₦15,698)
-    totalPriceUsd: 150.00, // $150 USD clean base
+    totalPriceNgn: 102125, // ₦95,000 base + 7.5% VAT (₦7,125) = ₦102,125
+    totalPriceUsd: 78.00, // $78 USD (higher or same exchange floor, never lower than Naira)
     maxActiveCases: 25,
     maxDocumentsPerCase: 50,
     maxFileSizeBytes: 50 * 1024 * 1024, // 50MB

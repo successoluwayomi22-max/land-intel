@@ -122,12 +122,12 @@ export const PricingCards: React.FC = () => {
               </div>
               <div className="flex items-baseline gap-1 mt-1">
                 <div className="text-3xl font-extrabold font-heading text-brand-darkNavy">
-                  {formatPrice(50)}
+                  {formatPrice(48375)}
                 </div>
                 <span className="text-xs text-slate-600 font-medium">{t("perProperty") || "/ property"}</span>
               </div>
               <p className="text-[11px] text-slate-600 mt-0.5 font-mono">
-                Base: {formatPrice(46.51)} &bull; 7.5% Statutory VAT: {formatPrice(3.49)}
+                Base: {formatPrice(45000)} &bull; 7.5% Statutory VAT: {formatPrice(3375)}
               </p>
               <p className="text-xs text-slate-700 mt-1">
                 {t("reportPriceTitle") || "Instant 15-section risk audit & boundary cross-examination"}
@@ -164,7 +164,7 @@ export const PricingCards: React.FC = () => {
 
           <Link href={isLoggedIn ? "/properties/new" : "/register"} prefetch={true} className="w-full block">
             <Button variant="primary" size="md" className="w-full shadow-subtle font-bold bg-emerald-700 hover:bg-emerald-800">
-              <span>{isLoggedIn ? `${t("auditProperty") || "Start Property Audit"} (${formatPrice(50)})` : `${t("auditProperty") || "Audit Property"} (${formatPrice(50)})`}</span>
+              <span>{isLoggedIn ? `${t("auditProperty") || "Start Property Audit"} (${formatPrice(48375)})` : `${t("auditProperty") || "Audit Property"} (${formatPrice(48375)})`}</span>
               <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
             </Button>
           </Link>
@@ -189,12 +189,12 @@ export const PricingCards: React.FC = () => {
               </div>
               <div className="flex items-baseline gap-1 mt-1.5">
                 <div className="text-3xl font-extrabold font-heading text-white tracking-tight">
-                  {formatPrice(150)}
+                  {formatPrice(102125)}
                 </div>
                 <span className="text-xs text-slate-300 font-medium">/ month</span>
               </div>
               <p className="text-[11px] text-slate-300 mt-0.5 font-mono">
-                Base: {formatPrice(139.53)} &bull; 7.5% Statutory VAT: {formatPrice(10.47)}
+                Base: {formatPrice(95000)} &bull; 7.5% Statutory VAT: {formatPrice(7125)}
               </p>
               <p className="text-xs text-slate-200 mt-1.5 leading-relaxed">
                 Full-featured portfolio due-diligence for diaspora investors &amp; real-estate developers.
@@ -231,7 +231,7 @@ export const PricingCards: React.FC = () => {
 
           <Link href={isLoggedIn ? "/billing" : "/register"} prefetch={true} className="w-full block">
             <Button variant="primary" size="md" className="w-full bg-brand-blue hover:bg-brand-blueHover text-white font-bold border-0 shadow-md">
-              <span>{isLoggedIn ? "Upgrade to Professional" : "Subscribe Professional"} ({formatPrice(150)})</span>
+              <span>{isLoggedIn ? "Upgrade to Professional" : "Subscribe Professional"} ({formatPrice(102125)})</span>
               <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
             </Button>
           </Link>

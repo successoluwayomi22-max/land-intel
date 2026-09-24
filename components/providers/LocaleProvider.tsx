@@ -3089,67 +3089,184 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // Special deterministic formatting for NGN to ensure exact statutory pricing & 7.5% VAT parity
     if (currency === "NGN") {
-      // 1. Single Cadastral Audit ($50 USD = ₦75,000 NGN)
-      if (amount === 50 || (amount >= 70000 && amount <= 76000)) {
-        return `₦75,000${options?.showCode ? " NGN" : ""}`;
+      // 1. Single Cadastral Audit (₦45,000 base + 7.5% VAT ₦3,375 = ₦48,375 total)
+      if (
+        amount === 48375 ||
+        amount === 50 ||
+        amount === 37 ||
+        (amount >= 46000 && amount <= 52000) ||
+        (amount >= 70000 && amount <= 76000)
+      ) {
+        return `₦48,375${options?.showCode ? " NGN" : ""}`;
       }
-      if (Math.abs(amount - 46.51) < 0.05 || Math.abs(amount - 46.5) < 0.05 || (amount >= 67000 && amount < 71000)) {
-        return `₦69,767${options?.showCode ? " NGN" : ""}`;
+      if (
+        amount === 45000 ||
+        Math.abs(amount - 34.42) < 0.05 ||
+        Math.abs(amount - 46.51) < 0.05 ||
+        (amount >= 42000 && amount < 46000) ||
+        (amount >= 67000 && amount < 71000)
+      ) {
+        return `₦45,000${options?.showCode ? " NGN" : ""}`;
       }
-      if (Math.abs(amount - 3.49) < 0.05 || Math.abs(amount - 3.5) < 0.05 || (amount >= 5000 && amount <= 5500)) {
-        return `₦5,233${options?.showCode ? " NGN" : ""}`;
+      if (
+        amount === 3375 ||
+        Math.abs(amount - 2.58) < 0.05 ||
+        Math.abs(amount - 3.49) < 0.05 ||
+        (amount >= 3000 && amount <= 3800) ||
+        (amount >= 5000 && amount <= 5500)
+      ) {
+        return `₦3,375${options?.showCode ? " NGN" : ""}`;
       }
 
-      // 2. Professional Portfolio Plan ($150 USD = ₦225,000 NGN)
-      if (amount === 150 || (amount >= 215000 && amount <= 230000)) {
-        return `₦225,000${options?.showCode ? " NGN" : ""}`;
+      // 2. Professional Investor Plan (₦95,000 base + 7.5% VAT ₦7,125 = ₦102,125 total)
+      if (
+        amount === 102125 ||
+        amount === 150 ||
+        amount === 78 ||
+        (amount >= 98000 && amount <= 110000) ||
+        (amount >= 215000 && amount <= 230000)
+      ) {
+        return `₦102,125${options?.showCode ? " NGN" : ""}`;
       }
-      if (Math.abs(amount - 139.53) < 0.05 || Math.abs(amount - 139.5) < 0.05 || (amount >= 200000 && amount < 212000)) {
-        return `₦209,302${options?.showCode ? " NGN" : ""}`;
+      if (
+        amount === 95000 ||
+        Math.abs(amount - 72.56) < 0.05 ||
+        Math.abs(amount - 139.53) < 0.05 ||
+        (amount >= 90000 && amount < 98000) ||
+        (amount >= 200000 && amount < 212000)
+      ) {
+        return `₦95,000${options?.showCode ? " NGN" : ""}`;
       }
-      if (Math.abs(amount - 10.47) < 0.05 || Math.abs(amount - 10.5) < 0.05 || (amount >= 14000 && amount <= 17000)) {
-        return `₦15,698${options?.showCode ? " NGN" : ""}`;
+      if (
+        amount === 7125 ||
+        Math.abs(amount - 5.44) < 0.05 ||
+        Math.abs(amount - 10.47) < 0.05 ||
+        (amount >= 6500 && amount <= 7800) ||
+        (amount >= 14000 && amount <= 17000)
+      ) {
+        return `₦7,125${options?.showCode ? " NGN" : ""}`;
       }
 
-      // 3. Full Title Verification Package ($200 USD = ₦300,000 NGN)
-      if (amount === 200 || (amount >= 285000 && amount <= 310000)) {
-        return `₦300,000${options?.showCode ? " NGN" : ""}`;
+      // 3. Full Title Verification Package (₦175,000 base + 7.5% VAT ₦13,125 = ₦188,125 total)
+      if (
+        amount === 188125 ||
+        amount === 200 ||
+        amount === 142 ||
+        (amount >= 180000 && amount <= 200000) ||
+        (amount >= 285000 && amount <= 310000)
+      ) {
+        return `₦188,125${options?.showCode ? " NGN" : ""}`;
       }
-      if (Math.abs(amount - 186.05) < 0.05 || (amount >= 270000 && amount < 285000)) {
-        return `₦279,070${options?.showCode ? " NGN" : ""}`;
+      if (
+        amount === 175000 ||
+        Math.abs(amount - 132.09) < 0.05 ||
+        Math.abs(amount - 186.05) < 0.05 ||
+        (amount >= 165000 && amount < 180000) ||
+        (amount >= 270000 && amount < 285000)
+      ) {
+        return `₦175,000${options?.showCode ? " NGN" : ""}`;
       }
-      if (Math.abs(amount - 13.95) < 0.05 || (amount >= 19000 && amount <= 22000)) {
-        return `₦20,930${options?.showCode ? " NGN" : ""}`;
+      if (
+        amount === 13125 ||
+        Math.abs(amount - 9.91) < 0.05 ||
+        Math.abs(amount - 13.95) < 0.05 ||
+        (amount >= 12000 && amount <= 14500) ||
+        (amount >= 19000 && amount <= 22000)
+      ) {
+        return `₦13,125${options?.showCode ? " NGN" : ""}`;
       }
 
       // Generic NGN formatting
-      const ngnValue = amount >= 1000 ? amount : amount * (ratesFromUsd["NGN"] || 1500);
+      const ngnValue = amount >= 1000 ? amount : amount * (ratesFromUsd["NGN"] || 1327);
       return `₦${Math.round(ngnValue).toLocaleString()}${options?.showCode ? " NGN" : ""}`;
     }
 
-    // Determine normalized USD base amount
+    // Determine normalized USD equivalent ensuring foreign currency is NEVER lower than Naira equivalent
+    // "the remaining currency other should be higher or same and it should update globally"
+    const liveNgnPerUsd = ratesFromUsd["NGN"] || 1327;
     let usdAmount = amount;
-    if (amount >= 285000 && amount <= 310000) {
-      usdAmount = 200;
-    } else if (amount >= 270000 && amount < 285000) {
-      usdAmount = 186.05;
-    } else if (amount >= 19000 && amount <= 22000) {
-      usdAmount = 13.95;
-    } else if (amount >= 215000 && amount <= 230000) {
-      usdAmount = 150;
-    } else if (amount >= 200000 && amount < 212000) {
-      usdAmount = 139.53;
-    } else if (amount >= 14000 && amount <= 17000) {
-      usdAmount = 10.47;
-    } else if (amount >= 70000 && amount <= 76000) {
-      usdAmount = 50;
-    } else if (amount >= 67000 && amount < 71000) {
-      usdAmount = 46.51;
-    } else if (amount >= 5000 && amount <= 5500) {
-      usdAmount = 3.49;
+
+    // Detect known Naira tiers and calculate live USD floor so it is equal or higher than the Naira value
+    if (
+      amount === 48375 ||
+      amount === 50 ||
+      amount === 37 ||
+      (amount >= 46000 && amount <= 52000) ||
+      (amount >= 70000 && amount <= 76000)
+    ) {
+      usdAmount = Math.max(37, Math.ceil(48375 / liveNgnPerUsd));
+    } else if (
+      amount === 45000 ||
+      Math.abs(amount - 34.42) < 0.05 ||
+      Math.abs(amount - 46.51) < 0.05 ||
+      (amount >= 42000 && amount < 46000) ||
+      (amount >= 67000 && amount < 71000)
+    ) {
+      const totalUsd = Math.max(37, Math.ceil(48375 / liveNgnPerUsd));
+      usdAmount = Number((totalUsd / 1.075).toFixed(2));
+    } else if (
+      amount === 3375 ||
+      Math.abs(amount - 2.58) < 0.05 ||
+      Math.abs(amount - 3.49) < 0.05 ||
+      (amount >= 3000 && amount <= 3800) ||
+      (amount >= 5000 && amount <= 5500)
+    ) {
+      const totalUsd = Math.max(37, Math.ceil(48375 / liveNgnPerUsd));
+      usdAmount = Number((totalUsd - totalUsd / 1.075).toFixed(2));
+    } else if (
+      amount === 102125 ||
+      amount === 150 ||
+      amount === 78 ||
+      (amount >= 98000 && amount <= 110000) ||
+      (amount >= 215000 && amount <= 230000)
+    ) {
+      usdAmount = Math.max(78, Math.ceil(102125 / liveNgnPerUsd));
+    } else if (
+      amount === 95000 ||
+      Math.abs(amount - 72.56) < 0.05 ||
+      Math.abs(amount - 139.53) < 0.05 ||
+      (amount >= 90000 && amount < 98000) ||
+      (amount >= 200000 && amount < 212000)
+    ) {
+      const totalUsd = Math.max(78, Math.ceil(102125 / liveNgnPerUsd));
+      usdAmount = Number((totalUsd / 1.075).toFixed(2));
+    } else if (
+      amount === 7125 ||
+      Math.abs(amount - 5.44) < 0.05 ||
+      Math.abs(amount - 10.47) < 0.05 ||
+      (amount >= 6500 && amount <= 7800) ||
+      (amount >= 14000 && amount <= 17000)
+    ) {
+      const totalUsd = Math.max(78, Math.ceil(102125 / liveNgnPerUsd));
+      usdAmount = Number((totalUsd - totalUsd / 1.075).toFixed(2));
+    } else if (
+      amount === 188125 ||
+      amount === 200 ||
+      amount === 142 ||
+      (amount >= 180000 && amount <= 200000) ||
+      (amount >= 285000 && amount <= 310000)
+    ) {
+      usdAmount = Math.max(142, Math.ceil(188125 / liveNgnPerUsd));
+    } else if (
+      amount === 175000 ||
+      Math.abs(amount - 132.09) < 0.05 ||
+      Math.abs(amount - 186.05) < 0.05 ||
+      (amount >= 165000 && amount < 180000) ||
+      (amount >= 270000 && amount < 285000)
+    ) {
+      const totalUsd = Math.max(142, Math.ceil(188125 / liveNgnPerUsd));
+      usdAmount = Number((totalUsd / 1.075).toFixed(2));
+    } else if (
+      amount === 13125 ||
+      Math.abs(amount - 9.91) < 0.05 ||
+      Math.abs(amount - 13.95) < 0.05 ||
+      (amount >= 12000 && amount <= 14500) ||
+      (amount >= 19000 && amount <= 22000)
+    ) {
+      const totalUsd = Math.max(142, Math.ceil(188125 / liveNgnPerUsd));
+      usdAmount = Number((totalUsd - totalUsd / 1.075).toFixed(2));
     } else if (amount >= 1000) {
-      const ngnRate = ratesFromUsd["NGN"] || 1500;
-      usdAmount = amount / ngnRate;
+      usdAmount = Math.ceil(amount / liveNgnPerUsd);
     }
 
     // For USD, render clean decimals if not a round dollar
@@ -3159,8 +3276,15 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     // Convert from USD to selected foreign currency using real-time global rate
+    // Ceil the target currency so it is never lower than the equivalent
     const converted = usdAmount * rateUsd;
-    const formatted = converted >= 50 ? Math.round(converted).toLocaleString() : converted.toFixed(2);
+    let formatted: string;
+    if (usdAmount % 1 === 0) {
+      const roundedUp = Math.ceil(converted);
+      formatted = roundedUp >= 100 ? roundedUp.toLocaleString() : roundedUp.toString();
+    } else {
+      formatted = converted.toFixed(2);
+    }
 
     return `${cfg.symbol}${formatted}${options?.showCode ? ` ${currency}` : ""}`;
   };
