@@ -105,7 +105,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     howItWorks: "How It Works",
     whatWeAnalyze: "What We Analyze",
     security: "Security & NDPR",
-    faq: "FAQ & Help",
+    faq: "FAQ",
     newCase: "New Property Case",
     adminConsole: "Executive Admin Cockpit",
     reportPriceTitle: "Comprehensive Property Risk Audit",
