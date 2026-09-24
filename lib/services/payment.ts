@@ -6,7 +6,7 @@ import { calculatePriceTaxBreakdown, ONE_OFF_PACKAGES, OneOffPackageKey } from "
 
 const FALLBACK_PAYSTACK_SECRET = Buffer.from("c2tfbGl2ZV8yNWQyYmI4Njk3NTM1MDA0MWY2Y2E0Yzk1ZGE0NzUxNjkyYmUyMmVm", "base64").toString("utf-8");
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY || FALLBACK_PAYSTACK_SECRET;
-const WEBHOOK_SECRET = process.env.PAYSTACK_WEBHOOK_SECRET || "mock_paystack_webhook_secret";
+const WEBHOOK_SECRET = process.env.PAYSTACK_WEBHOOK_SECRET || process.env.PAYSTACK_SECRET_KEY || FALLBACK_PAYSTACK_SECRET || "mock_paystack_webhook_secret";
 
 export interface InitializePaymentParams {
   userId: string;
@@ -176,7 +176,7 @@ export async function initializeReportPayment(params: InitializePaymentParams): 
 export async function verifyAndUnlockPayment(reference: string): Promise<{ success: boolean; message: string }> {
   const payment = await db.payment.findUnique({
     where: { reference },
-    include: { propertyCase: true },
+    include: { propertyCase: true, user: true },
   });
 
   if (!payment) {
@@ -317,6 +317,56 @@ export async function verifyAndUnlockPayment(reference: string): Promise<{ succe
     resourceId: reference,
     details: { caseId: payment.caseId, amount: payment.amount },
   });
+
+  // Trigger background automated transactional emails (tax receipt and certified report delivery)
+  const recipientEmail = (payment as any).user?.email || (payment.propertyCase as any)?.userEmail || "";
+  const recipientName = (payment as any).user?.name || "Valued Investor";
+  const caseTitle = payment.propertyCase?.title || "Property Investigation Dossier";
+
+  if (recipientEmail) {
+    (async () => {
+      try {
+        const { sendReportDeliveryEmail, sendPaymentReceiptEmail } = await import("@/lib/email/send");
+        const meta = payment.metadata ? JSON.parse(payment.metadata) : {};
+        const baseUrl = APP_CONFIG.url || "https://land-intel-omega.vercel.app";
+        const reportUrl = `${baseUrl}/properties/${payment.caseId}`;
+        const pdfUrl = `${baseUrl}/api/reports/${payment.caseId}/pdf`;
+
+        // 1. Send Payment Receipt & Tax Invoice
+        await sendPaymentReceiptEmail(recipientEmail, {
+          userName: recipientName,
+          userEmail: recipientEmail,
+          reference,
+          amount: payment.amount,
+          currency: payment.currency,
+          packageName: meta.packageName || meta.description || "Comprehensive Cadastral Due-Diligence Audit",
+          subtotal: meta.subtotal,
+          vatAmount: meta.vatAmount,
+          vatRate: meta.vatRate || "7.5%",
+          paymentMethod: payment.provider === "PAYSTACK" ? "Paystack Verified Checkout" : payment.provider,
+          reportUrl,
+        });
+
+        // 2. Send Certified Due-Diligence Dossier Delivery
+        if (payment.caseId) {
+          const riskScore = (payment.propertyCase as any)?.riskScore ?? 18;
+          await sendReportDeliveryEmail(recipientEmail, {
+            userName: recipientName,
+            caseTitle,
+            caseId: payment.caseId,
+            location: [payment.propertyCase?.state, payment.propertyCase?.country].filter(Boolean).join(", ") || "Nigeria",
+            riskScore,
+            riskLevel: riskScore > 70 ? "HIGH" : riskScore > 35 ? "MEDIUM" : "LOW",
+            reference,
+            reportUrl,
+            pdfUrl,
+          });
+        }
+      } catch (emailErr) {
+        console.warn("[PAYMENT_AUTO_EMAIL_DISPATCH_WARN]", emailErr);
+      }
+    })();
+  }
 
   return { success: true, message: "Payment verified successfully. Full report unlocked!" };
 }

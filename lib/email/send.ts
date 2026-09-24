@@ -9,6 +9,8 @@ import {
 import { WelcomeEmail } from "./templates/welcome";
 import { OTPEmail } from "./templates/otp";
 import { PasswordResetEmail } from "./templates/password-reset";
+import { ReportDeliveryEmail, ReportDeliveryEmailProps } from "./templates/report-delivery";
+import { PaymentReceiptEmail, PaymentReceiptEmailProps } from "./templates/receipt";
 import crypto from "crypto";
 
 /**
@@ -193,3 +195,46 @@ export async function sendPasswordResetEmail(user: {
     return { success: false, error: err?.message };
   }
 }
+
+/**
+ * Send a certified property due-diligence report delivery notification.
+ */
+export async function sendReportDeliveryEmail(
+  toEmail: string,
+  props: ReportDeliveryEmailProps
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const html = ReportDeliveryEmail(props);
+    return await dispatchEmail({
+      to: toEmail,
+      subject: `Certified Due-Diligence Dossier Ready: "${props.caseTitle}" (${props.reference})`,
+      html,
+      label: "Report delivery email",
+    });
+  } catch (err: any) {
+    console.error("[EMAIL] sendReportDeliveryEmail unexpected error:", err);
+    return { success: false, error: err?.message };
+  }
+}
+
+/**
+ * Send a formal tax invoice and payment receipt to the customer.
+ */
+export async function sendPaymentReceiptEmail(
+  toEmail: string,
+  props: PaymentReceiptEmailProps
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const html = PaymentReceiptEmail(props);
+    return await dispatchEmail({
+      to: toEmail,
+      subject: `Payment Receipt & Invoice — ${props.reference} (${props.currency} ${props.amount.toLocaleString()})`,
+      html,
+      label: "Payment receipt email",
+    });
+  } catch (err: any) {
+    console.error("[EMAIL] sendPaymentReceiptEmail unexpected error:", err);
+    return { success: false, error: err?.message };
+  }
+}
+

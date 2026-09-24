@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { captureException } from "@/lib/telemetry";
 
 export default function GlobalFatalError({
   error,
@@ -11,6 +12,9 @@ export default function GlobalFatalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    captureException(error, { action: "FATAL_ROOT_CRASH", metadata: { digest: error.digest } });
+  }, [error]);
   return (
     <html lang="en">
       <body className="min-h-screen bg-[#050811] text-slate-100 flex items-center justify-center p-4 font-sans antialiased">

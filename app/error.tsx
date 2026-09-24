@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, RefreshCw, Home, ChevronDown, ChevronUp, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { captureException } from "@/lib/telemetry";
 
 export default function GlobalErrorPage({
   error,
@@ -16,8 +17,11 @@ export default function GlobalErrorPage({
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // Telemetry logging
-    console.error("LandIntel Global Error Boundary caught exception:", error);
+    // Production Telemetry logging with incident tracking
+    captureException(error, {
+      action: "GLOBAL_ERROR_BOUNDARY",
+      metadata: { digest: error.digest },
+    });
   }, [error]);
 
   const copyDigest = () => {
