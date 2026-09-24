@@ -128,19 +128,19 @@ export async function sendOTPEmail(user: {
 }
 
 /**
- * Send a secure password reset email.
+ * Send a secure password reset OTP email.
  */
 export async function sendPasswordResetEmail(user: {
   email: string;
   name: string;
-  resetUrl: string;
+  otpCode: string;
   expiresInMinutes?: number;
 }): Promise<{ success: boolean; error?: string }> {
-  const expiresInMinutes = user.expiresInMinutes || 60;
+  const expiresInMinutes = user.expiresInMinutes || 10;
 
   if (!isEmailEnabled()) {
     console.log(
-      `[EMAIL] Skipped password reset email to ${user.email} — RESEND_API_KEY not set. Reset URL: ${user.resetUrl}`
+      `[EMAIL] Skipped password reset email to ${user.email} — RESEND_API_KEY not set. OTP code: ${user.otpCode} (expires in ${expiresInMinutes}m)`
     );
     return { success: true };
   }
@@ -148,7 +148,7 @@ export async function sendPasswordResetEmail(user: {
   try {
     const html = PasswordResetEmail({
       userName: user.name,
-      resetUrl: user.resetUrl,
+      otpCode: user.otpCode,
       expiresInMinutes,
     });
 
@@ -156,7 +156,7 @@ export async function sendPasswordResetEmail(user: {
       from: EMAIL_FROM,
       to: user.email,
       replyTo: BRAND_EMAIL,
-      subject: "Reset Your LandIntel Password",
+      subject: `${user.otpCode} — Reset Your LandIntel Password`,
       html,
     });
 
@@ -168,7 +168,7 @@ export async function sendPasswordResetEmail(user: {
           from: EMAIL_FROM,
           to: BRAND_EMAIL,
           replyTo: BRAND_EMAIL,
-          subject: `[Sandbox Relay for ${user.email}] Reset Your LandIntel Password`,
+          subject: `[Sandbox Relay for ${user.email}] ${user.otpCode} — Reset Your LandIntel Password`,
           html,
         }).catch(() => {});
       }

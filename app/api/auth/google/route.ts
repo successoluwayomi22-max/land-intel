@@ -43,6 +43,13 @@ export async function GET(request: NextRequest) {
   return NextResponse.redirect(authUrl);
 }
 
+interface GoogleUserPayload {
+  email: string;
+  name: string;
+  sub: string;
+  picture?: string;
+}
+
 /**
  * Verify a Google ID token and extract the payload.
  * Uses google-auth-library when GOOGLE_CLIENT_ID is set.
@@ -50,7 +57,7 @@ export async function GET(request: NextRequest) {
  */
 async function verifyGoogleToken(
   credential: string
-): Promise<{ email: string; name: string; sub: string; picture?: string } | null> {
+): Promise<GoogleUserPayload | null> {
   const clientId = GOOGLE_CLIENT_ID;
 
   if (clientId) {
@@ -280,8 +287,9 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Google authentication failed";
     console.error("[GOOGLE_AUTH_ERROR]", error);
-    return NextResponse.json({ error: error.message || "Google authentication failed" }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

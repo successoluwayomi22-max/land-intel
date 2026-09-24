@@ -19,7 +19,7 @@ function ResetPasswordForm() {
   const { toast } = useToast();
   const { t } = useLocale();
 
-  const tokenParam = searchParams?.get("token") || "";
+  const tokenParam = searchParams?.get("code") || searchParams?.get("token") || "";
   const emailParam = searchParams?.get("email") || "";
 
   const [token, setToken] = useState(tokenParam);
@@ -37,7 +37,7 @@ function ResetPasswordForm() {
     setError("");
 
     if (!token) {
-      setError("Reset token is missing. Please click the link in your reset email.");
+      setError("Verification code is missing. Please enter your 6-digit code or request a new one.");
       return;
     }
     if (!email) {
@@ -150,11 +150,11 @@ function ResetPasswordForm() {
                 required
               />
 
-              {/* Token (if not present in URL) */}
+              {/* Code / Token (if not present in URL) */}
               {!tokenParam && (
                 <Input
-                  label="Reset Token"
-                  placeholder="Paste your 64-character reset token"
+                  label="Verification Code"
+                  placeholder="Enter your 6-digit verification code"
                   value={token}
                   onChange={(e) => setToken(e.target.value)}
                   required

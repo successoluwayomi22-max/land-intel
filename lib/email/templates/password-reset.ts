@@ -1,18 +1,19 @@
 interface PasswordResetEmailProps {
   userName: string;
-  resetUrl: string;
+  otpCode: string;
   expiresInMinutes?: number;
 }
 
 /**
- * Password reset email template.
+ * Password reset 6-digit OTP email template.
  */
 export function PasswordResetEmail({
   userName,
-  resetUrl,
-  expiresInMinutes = 60,
+  otpCode,
+  expiresInMinutes = 10,
 }: PasswordResetEmailProps): string {
   const firstName = userName.split(" ")[0] || userName;
+  const spacedCode = otpCode.split("").join(" &nbsp; ");
 
   return `
 <!DOCTYPE html>
@@ -32,7 +33,7 @@ export function PasswordResetEmail({
           <tr>
             <td style="background:linear-gradient(135deg,#0c1427 0%,#1e3a5f 100%);padding:36px;text-align:center;">
               <div style="display:inline-block;width:44px;height:44px;background-color:rgba(255,255,255,0.15);border-radius:10px;line-height:44px;font-size:20px;font-weight:900;color:#ffffff;text-align:center;">L</div>
-              <h1 style="color:#ffffff;font-size:22px;font-weight:800;margin:12px 0 4px;letter-spacing:-0.5px;">Password Reset Request</h1>
+              <h1 style="color:#ffffff;font-size:22px;font-weight:800;margin:12px 0 4px;letter-spacing:-0.5px;">Password Reset Code</h1>
               <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:0;font-weight:500;">LandIntel Account Security</p>
             </td>
           </tr>
@@ -44,16 +45,18 @@ export function PasswordResetEmail({
                 Hi <strong>${firstName}</strong>,
               </p>
               <p style="font-size:14px;color:#475569;margin:0 0 24px;line-height:1.6;">
-                We received a request to reset your password for your LandIntel account. Click the button below to choose a new password:
+                We received a request to reset your password for your LandIntel account. Enter this 6-digit verification code on the reset page:
               </p>
 
-              <!-- CTA Button -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+              <!-- OTP Code Block -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
                 <tr>
                   <td align="center">
-                    <a href="${resetUrl}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#059669,#047857);color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:10px;letter-spacing:0.3px;">
-                      Reset Password &rarr;
-                    </a>
+                    <div style="display:inline-block;padding:18px 36px;background-color:#f8fafc;border:2px dashed #0284c7;border-radius:14px;">
+                      <span style="font-size:36px;font-weight:900;letter-spacing:8px;color:#0369a1;font-family:'Courier New',monospace;">
+                        ${spacedCode}
+                      </span>
+                    </div>
                   </td>
                 </tr>
               </table>
@@ -63,14 +66,14 @@ export function PasswordResetEmail({
                 <tr>
                   <td style="padding:10px 14px;background-color:#fef3c7;border-radius:8px;border:1px solid #fde68a;">
                     <p style="font-size:12px;color:#92400e;margin:0;font-weight:600;">
-                      ⏱ This reset link expires in ${expiresInMinutes} minutes. If you did not request a password reset, you can safely ignore this email.
+                      ⏱ This verification code expires in ${expiresInMinutes} minutes. If you did not request a password reset, you can safely ignore this email.
                     </p>
                   </td>
                 </tr>
               </table>
 
               <p style="font-size:12px;color:#94a3b8;margin:0;line-height:1.6;text-align:center;">
-                Questions? Contact our team at <a href="mailto:successoluwayomi22@gmail.com" style="color:#2563eb;text-decoration:none;font-weight:600;">support@landintel.ai</a>
+                Questions? Contact our security team at <a href="mailto:support@landintel.ai" style="color:#2563eb;text-decoration:none;font-weight:600;">support@landintel.ai</a>
               </p>
             </td>
           </tr>

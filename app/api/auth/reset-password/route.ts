@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { hashPassword, validatePasswordStrength, comparePassword } from "@/lib/auth";
+import { hashOTP } from "@/lib/email/send";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
@@ -12,10 +13,12 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { token, email, password } = body;
+    const { token, code, email, password } = body;
 
-    if (!token || typeof token !== "string") {
-      return NextResponse.json({ error: "Reset token is required or invalid" }, { status: 400 });
+    const rawCodeOrToken = (code || token || "").trim();
+
+    if (!rawCodeOrToken) {
+      return NextResponse.json({ error: "Verification code is required" }, { status: 400 });
     }
 
     if (!email || typeof email !== "string") {
@@ -36,16 +39,28 @@ export async function POST(request: Request) {
       where: { email: normalizedEmail },
     });
 
-    if (!user || !user.resetToken || user.resetToken !== token) {
+    if (!user || !user.resetToken) {
       return NextResponse.json(
-        { error: "Invalid or expired password reset link. Please request a new one." },
+        { error: "Invalid or expired password reset request. Please request a new code." },
         { status: 400 }
       );
     }
 
     if (!user.resetExpires || new Date() > user.resetExpires) {
       return NextResponse.json(
-        { error: "This password reset token has expired. Please request a new link." },
+        { error: "This password reset code has expired. Please request a new code." },
+        { status: 400 }
+      );
+    }
+
+    // Check if token matches directly (legacy hex token) or hashed OTP (6-digit code)
+    const expectedToken = user.resetToken;
+    const matchesHashedCode = hashOTP(rawCodeOrToken) === expectedToken;
+    const matchesRawToken = rawCodeOrToken === expectedToken;
+
+    if (!matchesHashedCode && !matchesRawToken) {
+      return NextResponse.json(
+        { error: "Invalid verification code. Please check and try again." },
         { status: 400 }
       );
     }
@@ -78,7 +93,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // Also invalidate any existing active sessions for security
+    // Invalidate any existing active sessions for security
     await db.session.deleteMany({
       where: { userId: user.id },
     }).catch(() => {});

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
 import { db } from "@/lib/db";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
-import { sendPasswordResetEmail } from "@/lib/email/send";
+import { generateOTP, hashOTP, sendPasswordResetEmail } from "@/lib/email/send";
+import { isEmailEnabled } from "@/lib/email/client";
 
 export async function POST(request: Request) {
   try {
@@ -29,44 +29,44 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json({
         success: true,
-        message: "If an account exists for this email, password reset instructions have been dispatched.",
+        message: "If an account exists for this email, a 6-digit verification code has been dispatched.",
       });
     }
 
-    // Generate secure random reset token
-    const rawToken = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour validity
+    // Generate secure 6-digit OTP
+    const otpCode = generateOTP();
+    const otpHash = hashOTP(otpCode);
+    const expiresInMinutes = 10;
+    const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000);
 
     await db.user.update({
       where: { id: user.id },
       data: {
-        resetToken: rawToken,
+        resetToken: otpHash,
         resetExpires: expiresAt,
       },
     });
 
-    // Send password reset email via Resend
-    const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const resetUrl = `${origin}/reset-password?token=${rawToken}&email=${encodeURIComponent(normalizedEmail)}`;
-
-    console.log(`[AUTH] Password reset requested for ${normalizedEmail}. Reset URL: ${resetUrl}`);
+    console.log(`[AUTH] Password reset OTP requested for ${normalizedEmail}. OTP: ${otpCode} (expires in ${expiresInMinutes}m)`);
 
     // Non-blocking email dispatch
     sendPasswordResetEmail({
       email: user.email,
       name: user.name,
-      resetUrl,
-      expiresInMinutes: 60,
+      otpCode,
+      expiresInMinutes,
     }).catch((err) => {
       console.error("[AUTH] Password reset email dispatch failed:", err);
     });
 
+    // In sandbox or when email provider is disabled, return devOtpCode to ease local verification
+    const showDevCode = !isEmailEnabled() || process.env.NODE_ENV !== "production";
+
     return NextResponse.json({
       success: true,
-      message: "If an account exists for this email, password reset instructions have been dispatched.",
-      // Include simulation link for sandbox / local preview testing
-      simulatedResetUrl: resetUrl,
-      expiresAt: expiresAt.toISOString(),
+      message: "A 6-digit verification code has been dispatched to your email address.",
+      devOtpCode: showDevCode ? otpCode : undefined,
+      expiresInMinutes,
     });
   } catch (error: any) {
     console.error("Forgot password error:", error);
