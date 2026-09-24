@@ -134,8 +134,11 @@ export function isGibberishOrTestString(str?: string | null): boolean {
     return true;
   }
 
-  // Single character repeats like "aaaaaa" or "xxxxxx"
-  if (/^(.)\1{3,}$/.test(s)) return true;
+  // Single character repeats anywhere like "aaaaa", "mmmmmm", "||||||"
+  if (/(.)\1{3,}/.test(s)) return true;
+
+  // Repetitive pipe or symbol patterns
+  if (/^[|\s\-_.,/\\#~=+*!@$%^&()]+$/.test(s)) return true;
 
   // Consonant clusters: 4 or more consonants in a row (e.g. "gsjdkdjdbe", "qwrtyp", "sdfgh")
   if (/[bcdfghjklmnpqrstvwxz]{4,}/i.test(s)) {
@@ -145,7 +148,10 @@ export function isGibberishOrTestString(str?: string | null): boolean {
   // Tokens analysis
   const tokens = s.split(/[\s,.-]+/);
   for (const t of tokens) {
-    if (t.length >= 4 && !/[aeiouy]/i.test(t)) return true;
+    if (!t) continue;
+    // Any single token made entirely of symbols or repetitive chars
+    if (/(.)\1{3,}/.test(t)) return true;
+    if (t.length >= 4 && !/[aeiouy0-9]/i.test(t)) return true;
     if (t.length >= 6) {
       const vowelCount = (t.match(/[aeiouy]/gi) || []).length;
       if (vowelCount <= 1 && /[bcdfghjklmnpqrstvwxz]{4,}/i.test(t)) {

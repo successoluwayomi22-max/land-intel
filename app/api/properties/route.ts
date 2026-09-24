@@ -114,6 +114,14 @@ export async function POST(request: NextRequest) {
       details: { title: propertyCase.title, state: propertyCase.state },
     });
 
+    // Run initial risk analysis pipeline on case creation
+    try {
+      const { runCaseIntelligencePipeline } = await import("@/lib/ai/pipeline");
+      await runCaseIntelligencePipeline(propertyCase.id);
+    } catch (pipelineErr) {
+      console.warn("[CASE_CREATE_PIPELINE_WARNING]", pipelineErr);
+    }
+
     return NextResponse.json({ case: propertyCase }, { status: 201 });
   } catch (error) {
     console.error("[CREATE_CASE_ERROR]", error);

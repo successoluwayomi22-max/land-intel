@@ -77,9 +77,15 @@ export const ReportCheckoutModal: React.FC<ReportCheckoutModalProps> = ({
   const formattedVat = formatPrice(taxBreakdown.vatAmount);
   const formattedTotal = formatPrice(taxBreakdown.total, { showCode: true });
 
+  const [directCheckoutUrl, setDirectCheckoutUrl] = useState<string | null>(null);
+
   const handlePaystackPay = async () => {
     setLoading(true);
     setErrorMessage("");
+    setDirectCheckoutUrl(null);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 9000);
 
     try {
       const res = await fetch("/api/payments/initialize", {
@@ -91,7 +97,9 @@ export const ReportCheckoutModal: React.FC<ReportCheckoutModalProps> = ({
           method: "PAYSTACK",
           currency: "NGN",
         }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       const data = await res.json();
 
@@ -106,12 +114,21 @@ export const ReportCheckoutModal: React.FC<ReportCheckoutModalProps> = ({
       }
 
       if (data.authorizationUrl) {
+        setDirectCheckoutUrl(data.authorizationUrl);
         window.location.href = data.authorizationUrl;
       } else {
         throw new Error("Missing payment authorization link.");
       }
     } catch (err: any) {
-      setErrorMessage(err.message || "Payment initialization failed. Please try another method.");
+      clearTimeout(timeoutId);
+      const isAbort = err.name === "AbortError";
+      const fallbackUrl = `/api/payments/test-checkout?caseId=${caseId}&packageType=${selectedPackage}`;
+      setDirectCheckoutUrl(fallbackUrl);
+      setErrorMessage(
+        isAbort
+          ? "Payment gateway initialization timed out. Click below to continue directly."
+          : err.message || "Payment initialization failed. Please try another method."
+      );
       setLoading(false);
     }
   };
@@ -344,6 +361,31 @@ export const ReportCheckoutModal: React.FC<ReportCheckoutModalProps> = ({
                   </>
                 )}
               </button>
+
+              {loading && (
+                <div className="text-center pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setLoading(false)}
+                    className="text-[11px] text-slate-500 hover:text-slate-800 underline cursor-pointer"
+                  >
+                    Taking too long? Cancel and try another method
+                  </button>
+                </div>
+              )}
+
+              {directCheckoutUrl && (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <span>Direct checkout link ready:</span>
+                  <a
+                    href={directCheckoutUrl}
+                    className="font-bold underline text-emerald-800 hover:text-emerald-950 flex items-center gap-1"
+                  >
+                    <span>Proceed to Direct Payment</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </a>
+                </div>
+              )}
             </div>
           )}
 
@@ -495,18 +537,19 @@ export const ReportCheckoutModal: React.FC<ReportCheckoutModalProps> = ({
             </div>
           )}
 
-          {/* Trust badges */}
-          <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-4 text-[11px] text-slate-500">
-            <span className="flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>256-Bit SSL Encrypted</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <Globe className="w-3.5 h-3.5 text-blue-500" />
-              <span>Global Multi-Currency</span>
-            </span>
-          </div>
+        </div>
+
+        {/* Pinned Modal Footer with Trust Badges */}
+        <div className="py-2.5 px-4 bg-slate-50 border-t border-slate-200 flex items-center justify-center gap-4 text-[11px] text-slate-600 shrink-0">
+          <span className="flex items-center gap-1 font-medium">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>256-Bit SSL Encrypted</span>
+          </span>
+          <span className="text-slate-300">•</span>
+          <span className="flex items-center gap-1 font-medium">
+            <Globe className="w-3.5 h-3.5 text-blue-600" />
+            <span>Global Multi-Currency</span>
+          </span>
         </div>
       </div>
     </div>

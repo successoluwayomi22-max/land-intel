@@ -44,6 +44,29 @@ export async function GET(
       return NextResponse.json({ error: "Property case not found" }, { status: 404 });
     }
 
+    // Auto-calculate risk score on demand if not yet evaluated
+    if (!propertyCase.riskScore) {
+      try {
+        const { runCaseIntelligencePipeline } = await import("@/lib/ai/pipeline");
+        await runCaseIntelligencePipeline(caseId);
+        const refreshed = await db.propertyCase.findUnique({
+          where: { id: caseId },
+          include: {
+            riskScore: true,
+            findings: { orderBy: { severity: "asc" } },
+          },
+        });
+        if (refreshed?.riskScore) {
+          propertyCase.riskScore = refreshed.riskScore;
+        }
+        if (refreshed?.findings) {
+          propertyCase.findings = refreshed.findings;
+        }
+      } catch (pipeErr) {
+        console.warn("[PIPELINE_ON_DEMAND_ERR]", pipeErr);
+      }
+    }
+
     let latitude = propertyCase.latitude;
     let longitude = propertyCase.longitude;
     const { isNonsenseOrDummy } = await import("@/lib/geo/geocoding");

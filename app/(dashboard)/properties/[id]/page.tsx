@@ -31,6 +31,11 @@ import {
   Play,
   Check,
   Clock,
+  Sparkles,
+  Copy,
+  MessageSquare,
+  AlertCircle,
+  Trash2,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -50,6 +55,41 @@ const PropertyMap = dynamic(
   { ssr: false, loading: () => <div className="h-[380px] bg-slate-100 rounded-xl animate-pulse flex items-center justify-center text-xs text-slate-400">Loading satellite view...</div> }
 );
 
+function renderBoldSpans(text: string) {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, idx) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={idx} className="font-bold text-slate-900">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
+
+function formatAssistantMessage(text: string) {
+  return text.split("\n\n").map((para, pIdx) => {
+    const lines = para.split("\n");
+    if (lines.length > 1 && lines.some((l) => l.trim().startsWith("•") || l.trim().startsWith("-") || /^\d+\./.test(l.trim()))) {
+      return (
+        <ul key={pIdx} className="space-y-1.5 my-1.5 list-disc list-inside">
+          {lines.map((line, lIdx) => {
+            const cleanLine = line.replace(/^[•\-\*]\s*/, "").replace(/^\d+\.\s*/, "");
+            return (
+              <li key={lIdx} className="text-xs text-slate-800 leading-relaxed">
+                {renderBoldSpans(cleanLine)}
+              </li>
+            );
+          })}
+        </ul>
+      );
+    }
+    return (
+      <p key={pIdx} className="text-xs text-slate-800 leading-relaxed my-1">
+        {renderBoldSpans(para)}
+      </p>
+    );
+  });
+}
+
 export default function PropertyCaseHubPage() {
   const { formatPrice } = useLocale();
   const params = useParams();
@@ -58,7 +98,7 @@ export default function PropertyCaseHubPage() {
   const { toast } = useToast();
   const caseId = params.id as string;
 
-  const [activeTab, setActiveTab] = useState<"overview" | "documents" | "findings" | "verification" | "report">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "documents" | "findings" | "verification" | "assistant" | "report">("overview");
   const [propertyCase, setPropertyCase] = useState<any | null>(null);
   const [isReportUnlocked, setIsReportUnlocked] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -72,8 +112,20 @@ export default function PropertyCaseHubPage() {
 
   // Assistant state
   const [assistantInput, setAssistantInput] = useState("");
-  const [assistantMessages, setAssistantMessages] = useState<Array<{ sender: "user" | "ai"; text: string; evidence?: string; action?: string }>>([]);
+  const [assistantMessages, setAssistantMessages] = useState<
+    Array<{
+      id: string;
+      sender: "user" | "ai";
+      text: string;
+      evidence?: string;
+      action?: string;
+      timestamp: string;
+    }>
+  >([]);
   const [assistantLoading, setAssistantLoading] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [assistantError, setAssistantError] = useState<string | null>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
 
   // Payment unlock state
   const [unlockingPayment, setUnlockingPayment] = useState(false);
@@ -206,13 +258,37 @@ export default function PropertyCaseHubPage() {
     }
   };
 
+  useEffect(() => {
+    if (propertyCase && assistantMessages.length === 0) {
+      setAssistantMessages([
+        {
+          id: "welcome-ai",
+          sender: "ai",
+          text: `Welcome to the LandIntel Legal & Cadastral AI Counsel for "${propertyCase.title}".\n\nI have evaluated the ${propertyCase.documents.length} document(s) in this case file, the cross-document reconciliation matrix, and the current cadastral risk score (${propertyCase.riskScore?.score ?? "N/A"}/100, ${propertyCase.riskScore?.level ?? "PENDING"}).\n\nI am grounded strictly in this property's actual uploaded instruments, extracted beacon numbers, SURCON surveying standards, and statutory Nigerian conveyancing law. You can click any suggested inquiry below or ask anything directly!`,
+          evidence: `Case Dossier: ${propertyCase.title} | ${propertyCase.address}, ${propertyCase.lga}, ${propertyCase.state}.`,
+          action: "Select a suggested topic below or type an inquiry about this property.",
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
+    }
+  }, [propertyCase]);
+
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [assistantMessages, assistantLoading]);
+
   const handleSendAssistant = async (e?: React.FormEvent, directPrompt?: string) => {
     if (e) e.preventDefault();
     const query = (directPrompt || assistantInput).trim();
     if (!query || assistantLoading) return;
 
     setAssistantInput("");
-    setAssistantMessages((prev) => [...prev, { sender: "user", text: query }]);
+    setAssistantError(null);
+    const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const userMsgId = `user-${Date.now()}`;
+    setAssistantMessages((prev) => [...prev, { id: userMsgId, sender: "user", text: query, timestamp: now }]);
     setAssistantLoading(true);
 
     try {
@@ -227,26 +303,71 @@ export default function PropertyCaseHubPage() {
         setAssistantMessages((prev) => [
           ...prev,
           {
+            id: `ai-${Date.now()}`,
             sender: "ai",
             text: data.response.answer,
             evidence: data.response.evidence,
             action: data.response.recommendedAction,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
+        ]);
+      } else if (res.status === 403 && data.code === "QUOTA_EXCEEDED") {
+        setAssistantError(data.error);
+        setAssistantMessages((prev) => [
+          ...prev,
+          {
+            id: `err-${Date.now()}`,
+            sender: "ai",
+            text: `⚠️ **AI Question Quota Exceeded**: ${data.error}`,
+            action: "Unlock Full Certified Report to get unlimited AI Assistant inquiries.",
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           },
         ]);
       } else {
         setAssistantMessages((prev) => [
           ...prev,
-          { sender: "ai", text: "Unable to process query based on case documents." },
+          {
+            id: `err-${Date.now()}`,
+            sender: "ai",
+            text: data.error || "Unable to process query based on case documents. Please try rephrasing.",
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
         ]);
       }
     } catch {
       setAssistantMessages((prev) => [
         ...prev,
-        { sender: "ai", text: "Network error connecting to Case Assistant." },
+        {
+          id: `err-${Date.now()}`,
+          sender: "ai",
+          text: "Network error connecting to Case Assistant. Please check your internet connection.",
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
       ]);
     } finally {
       setAssistantLoading(false);
     }
+  };
+
+  const handleCopyMessage = (text: string, index: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    toast("Copied to clipboard!", "success");
+    setTimeout(() => setCopiedIndex(null), 2500);
+  };
+
+  const handleClearAssistant = () => {
+    setAssistantMessages([
+      {
+        id: "cleared-welcome",
+        sender: "ai",
+        text: `Conversation reset. I am ready to answer any due-diligence questions regarding "${propertyCase.title}".`,
+        evidence: `Case: ${propertyCase.title} | ${propertyCase.documents.length} document(s) indexed.`,
+        action: "Select a topic or type a new inquiry below.",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      },
+    ]);
+    setAssistantError(null);
   };
 
   const recommendation = propertyCase?.riskScore
@@ -312,7 +433,7 @@ export default function PropertyCaseHubPage() {
                 className="text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs cursor-pointer"
               >
                 <Lock className="w-3.5 h-3.5 mr-1.5" />
-                <span>Unlock Certified Report ({formatPrice(75000)})</span>
+                <span>Unlock Certified Report ({formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.totalPriceNgn)})</span>
               </Button>
               <Link
                 href="/billing"
@@ -378,18 +499,25 @@ export default function PropertyCaseHubPage() {
           { id: "documents", label: `Documents (${propertyCase.documents.length})` },
           { id: "findings", label: `Findings (${propertyCase.findings.length})` },
           { id: "verification", label: "Checklist" },
-          { id: "report", label: "Report & AI Assistant" },
+          { id: "assistant", label: "Case AI Assistant", isAi: true },
+          { id: "report", label: "15-Section Report" },
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
             className={`py-3 px-4 border-b-2 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
               activeTab === tab.id
-                ? "border-brand-blue text-brand-blue font-bold"
+                ? "border-brand-blue text-brand-blue font-bold bg-brand-blue/5 rounded-t-lg"
                 : "border-transparent text-brand-textSecondary hover:text-brand-textPrimary"
             }`}
           >
+            {tab.isAi && <Bot className={`w-3.5 h-3.5 ${activeTab === "assistant" ? "text-brand-blue" : "text-emerald-600"}`} />}
             <span>{tab.label}</span>
+            {tab.isAi && (
+              <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                AI Counsel
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -469,6 +597,33 @@ export default function PropertyCaseHubPage() {
             </Card>
           </div>
 
+          {/* Quick AI Assistant Gateway Banner */}
+          <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-brand-darkNavy text-white rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-slate-800 shadow-md">
+            <div className="flex items-start gap-3.5">
+              <div className="p-2.5 rounded-xl bg-brand-blue/20 text-sky-400 border border-brand-blue/30 shrink-0">
+                <Bot className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-white font-heading">Consult LandIntel AI Assistant</h3>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-500/40">Grounded Counsel</span>
+                </div>
+                <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
+                  Ask immediate questions about surveyor beacons, root of title (C of O / Governor&apos;s Consent), statutory setbacks, or whether this property is safe to purchase.
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setActiveTab("assistant")}
+              className="shrink-0 bg-brand-blue hover:bg-brand-blueHover text-white font-bold text-xs cursor-pointer shadow-xs"
+            >
+              <span>Launch AI Assistant</span>
+              <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+            </Button>
+          </div>
+
           {/* Satellite Property Reconnaissance Map */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-3">
@@ -510,16 +665,24 @@ export default function PropertyCaseHubPage() {
                   setCheckoutModalOpen(true);
                 }}
               />
-              <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
-                  Toggle Satellite / Map in control bar to inspect ground occupancy and structures
-                </span>
+              <div className="mt-3.5 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                {!propertyCase.isMapUnlocked && !isReportUnlocked ? (
+                  <span className="flex items-center gap-1.5 text-slate-500 font-medium">
+                    <Lock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <span>Cadastral Reconnaissance &amp; Overlay Preview Locked</span>
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1.5 text-slate-600">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse shrink-0" />
+                    <span>Toggle Satellite / Map in control bar to inspect ground occupancy and structures</span>
+                  </span>
+                )}
                 <Link
                   href={`/properties/${caseId}/analysis`}
-                  className="text-brand-blue font-semibold hover:underline flex items-center gap-1 self-start sm:self-auto"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-brand-blue/10 text-brand-blue font-bold text-xs transition-all self-start sm:self-auto cursor-pointer border border-slate-200 hover:border-brand-blue/30"
                 >
-                  View Full Cadastral Report <ArrowRight className="w-3.5 h-3.5" />
+                  <span>View Full Cadastral Report</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>
@@ -663,7 +826,7 @@ export default function PropertyCaseHubPage() {
                 </p>
               </div>
               <Button variant="secondary" size="sm" onClick={handleUnlockReport} isLoading={unlockingPayment} className="shrink-0">
-                Unlock Full Report ({formatPrice(75000)} incl. VAT)
+                Unlock Full Report ({formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.totalPriceNgn)} incl. VAT)
               </Button>
             </div>
           )}
@@ -782,51 +945,364 @@ export default function PropertyCaseHubPage() {
         </div>
       )}
 
-      {/* TAB 5: REPORT & ASSISTANT */}
-      {activeTab === "report" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Report Preview */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Property Due-Diligence Report</CardTitle>
-                    <CardDescription>15-Section Comprehensive Certification</CardDescription>
-                  </div>
-                  {isReportUnlocked ? (
-                    <a
-                      href={`/api/properties/${caseId}/report/pdf`}
-                      download
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-blue hover:bg-brand-blueHover text-white text-xs font-bold rounded-button shadow-subtle cursor-pointer"
-                    >
-                      <Download className="w-4 h-4" />
-                      <span>Download Genuine PDF</span>
-                    </a>
+      {/* TAB: CASE AI ASSISTANT */}
+      {activeTab === "assistant" && (
+        <div className="space-y-6">
+          {/* Header Bar */}
+          <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-brand-darkNavy text-white rounded-2xl p-5 sm:p-6 border border-slate-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-brand-blue/20 text-sky-400 border border-brand-blue/40 shadow-inner shrink-0">
+                <Bot className="w-7 h-7" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-lg sm:text-xl font-black font-heading tracking-tight text-white">
+                    LandIntel Cadastral &amp; Legal AI Counsel
+                  </h2>
+                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                    Live Grounded
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
+                  Grounded strictly in this property&apos;s submitted instruments ({propertyCase.documents.length} files), SURCON survey standards, Lagos e-GIS / AGIS cadastral registries, and statutory Nigerian land law (Land Use Act 1978).
+                </p>
+                <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] text-slate-400">
+                  <span>Case: <strong className="text-white">{propertyCase.title}</strong></span>
+                  <span>&bull;</span>
+                  <span>Location: <strong className="text-white">{propertyCase.lga}, {propertyCase.state}</strong></span>
+                  <span>&bull;</span>
+                  <span>Risk Score: <strong className={propertyCase.riskScore?.score >= 60 ? "text-rose-400" : "text-emerald-400"}>{propertyCase.riskScore?.score ?? "N/A"}/100 ({propertyCase.riskScore?.level ?? "PENDING"})</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleClearAssistant}
+                className="text-xs text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white"
+              >
+                <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                <span>Reset Chat</span>
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setActiveTab("report")}
+                className="text-xs font-bold"
+              >
+                <FileText className="w-3.5 h-3.5 mr-1.5" />
+                <span>View 15-Section Report</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Preset Suggested Inquiries */}
+          <Card className="p-4 sm:p-5 bg-white border-brand-border">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-brand-blue" />
+                  <span>Due-Diligence Fast Inquiries (Click to Ask)</span>
+                </span>
+                <span className="text-[11px] text-slate-400">Instant cadastral &amp; legal answers</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {[
+                  {
+                    icon: "🚨",
+                    title: "Safety & Purchase Verdict",
+                    prompt: "Is this land safe to buy or pay deposit?",
+                  },
+                  {
+                    icon: "📍",
+                    title: "Survey Beacons & Pillars",
+                    prompt: "What do the survey beacons mean and how do I verify them?",
+                  },
+                  {
+                    icon: "📜",
+                    title: "Root of Title / C of O",
+                    prompt: "How do I verify the root of title and Governor's Consent?",
+                  },
+                  {
+                    icon: "⚖️",
+                    title: "Inquiries for Property Lawyer",
+                    prompt: "What should my lawyer search at Lands Registry and court registries?",
+                  },
+                  {
+                    icon: "📐",
+                    title: "Instructions for Surveyor",
+                    prompt: "What should the surveyor chart at the Office of the Surveyor General?",
+                  },
+                  {
+                    icon: "🔍",
+                    title: "Cross-Document Conflicts",
+                    prompt: "Which documents conflict or have discrepancies in this case?",
+                  },
+                  {
+                    icon: "👥",
+                    title: "Omonile & Customary Land",
+                    prompt: "What are the rules for buying customary family land from Omonile?",
+                  },
+                  {
+                    icon: "🏗️",
+                    title: "Demolitions & Drainage Setbacks",
+                    prompt: "Are there demolition risks, coastal road alignments, or drainage canal setbacks?",
+                  },
+                  {
+                    icon: "💵",
+                    title: "Valuation & Purchase Consideration",
+                    prompt: "Is the stated purchase price and consideration terms reasonable?",
+                  },
+                  {
+                    icon: "📋",
+                    title: "Missing Statutory Documents",
+                    prompt: "What mandatory statutory documents are missing from this case file?",
+                  },
+                ].map((item, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleSendAssistant(undefined, item.prompt)}
+                    disabled={assistantLoading}
+                    className="p-3 text-left rounded-xl border border-slate-200 hover:border-brand-blue hover:bg-brand-blue/5 transition-all text-xs group cursor-pointer disabled:opacity-50 flex items-start gap-2.5 shadow-2xs"
+                  >
+                    <span className="text-base shrink-0">{item.icon}</span>
+                    <div className="min-w-0">
+                      <p className="font-bold text-slate-800 group-hover:text-brand-blue transition-colors truncate">
+                        {item.title}
+                      </p>
+                      <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+                        {item.prompt}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </Card>
+
+          {/* Interactive Chat Console */}
+          <Card className="flex flex-col h-[650px] shadow-sm overflow-hidden border-brand-border">
+            {/* Messages Scroll Area */}
+            <div
+              ref={chatScrollRef}
+              className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-slate-50/60"
+            >
+              {assistantMessages.map((msg, i) => (
+                <div key={msg.id || i} className="space-y-2">
+                  {msg.sender === "user" ? (
+                    /* User Message */
+                    <div className="flex justify-end">
+                      <div className="max-w-xl bg-brand-blue text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm space-y-1">
+                        <div className="flex items-center justify-between gap-4 text-[10px] text-blue-100 font-medium">
+                          <span>You (Investor / Counsel)</span>
+                          <span>{msg.timestamp}</span>
+                        </div>
+                        <p className="text-xs sm:text-sm font-medium leading-relaxed whitespace-pre-wrap">
+                          {msg.text}
+                        </p>
+                      </div>
+                    </div>
                   ) : (
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => handleUnlockReport("STANDARD_AUDIT")}
-                        isLoading={unlockingPayment}
-                        className="text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs cursor-pointer"
-                      >
-                        <Lock className="w-3.5 h-3.5 mr-1.5" />
-                        <span>Unlock Certified Report ({formatPrice(75000)})</span>
-                      </Button>
-                      <Link
-                        href="/billing"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
-                      >
-                        <CreditCard className="w-3.5 h-3.5 text-slate-500" />
-                        <span>Subscription Plans</span>
-                      </Link>
+                    /* AI Assistant Message */
+                    <div className="flex justify-start">
+                      <div className="max-w-2xl bg-white border border-slate-200/90 rounded-2xl rounded-tl-sm p-4 sm:p-5 shadow-xs space-y-3">
+                        {/* Assistant Header */}
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                          <div className="flex items-center gap-2">
+                            <div className="p-1 rounded-md bg-emerald-100 text-emerald-800">
+                              <Bot className="w-3.5 h-3.5" />
+                            </div>
+                            <span className="text-xs font-bold text-slate-900 font-heading">
+                              LandIntel AI Counsel
+                            </span>
+                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                              Cadastral Audit
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                            <span>{msg.timestamp}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyMessage(msg.text, i)}
+                              className="p-1 hover:text-brand-blue hover:bg-slate-100 rounded transition-colors cursor-pointer"
+                              title="Copy Answer"
+                            >
+                              {copiedIndex === i ? (
+                                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                              ) : (
+                                <Copy className="w-3.5 h-3.5" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Message Content */}
+                        <div className="text-xs leading-relaxed text-slate-800">
+                          {formatAssistantMessage(msg.text)}
+                        </div>
+
+                        {/* Evidence Citation Box */}
+                        {msg.evidence && (
+                          <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 text-[11px] text-slate-600 space-y-1">
+                            <div className="flex items-center gap-1.5 font-bold text-slate-700">
+                              <FileCheck className="w-3 h-3 text-emerald-600" />
+                              <span>Ground Evidence &amp; Case Citations:</span>
+                            </div>
+                            <p className="leading-relaxed font-mono text-[10px] text-slate-700">
+                              {msg.evidence}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Recommended Next Step Callout */}
+                        {msg.action && (
+                          <div className="p-3 rounded-lg bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950 space-y-1">
+                            <div className="flex items-center gap-1.5 font-bold text-emerald-900">
+                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                              <span>Recommended Procedural Next Step:</span>
+                            </div>
+                            <p className="leading-relaxed text-emerald-900 font-medium">
+                              {msg.action}
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
-              </CardHeader>
+              ))}
 
+              {assistantLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-sm p-4 shadow-xs flex items-center gap-3">
+                    <RefreshCw className="w-4 h-4 text-brand-blue animate-spin" />
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-bold text-slate-800">Evaluating case documents &amp; cadastral heuristics...</p>
+                      <p className="text-[10px] text-slate-400">Cross-checking beacons, SURCON seals, and statutory Land Use Act records</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Quota Exceeded Inline Banner */}
+            {assistantError && (
+              <div className="p-3 bg-amber-50 border-t border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2 text-amber-900">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>{assistantError}</span>
+                </div>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => handleUnlockReport("STANDARD_AUDIT")}
+                  className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shrink-0 cursor-pointer"
+                >
+                  <Lock className="w-3 h-3 mr-1" />
+                  <span>Unlock Full Report ({formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.totalPriceNgn)})</span>
+                </Button>
+              </div>
+            )}
+
+            {/* Chat Input Bar */}
+            <form
+              onSubmit={handleSendAssistant}
+              className="p-3 sm:p-4 bg-white border-t border-slate-200 flex gap-2 sm:gap-3 items-center"
+            >
+              <input
+                type="text"
+                placeholder="Ask about this property's title, beacons, seller, zoning, setbacks, or risks..."
+                value={assistantInput}
+                onChange={(e) => setAssistantInput(e.target.value)}
+                disabled={assistantLoading}
+                className="flex-1 px-4 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue transition-all disabled:opacity-50"
+              />
+              <Button
+                variant="primary"
+                size="md"
+                type="submit"
+                isLoading={assistantLoading}
+                disabled={!assistantInput.trim() || assistantLoading}
+                className="px-4 shrink-0 font-bold bg-brand-blue hover:bg-brand-blueHover text-white rounded-xl shadow-xs cursor-pointer"
+                aria-label="Send inquiry"
+              >
+                <Send className="w-4 h-4 mr-1.5" />
+                <span className="hidden sm:inline">Ask AI Counsel</span>
+              </Button>
+            </form>
+          </Card>
+        </div>
+      )}
+
+      {/* TAB 5: 15-SECTION REPORT */}
+      {activeTab === "report" && (
+        <div className="max-w-5xl mx-auto space-y-6">
+          {/* Quick banner to launch AI Assistant from report */}
+          <div className="bg-gradient-to-r from-blue-900 to-slate-900 text-white p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm border border-blue-800/50">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-white/10 text-sky-300 shrink-0">
+                <Bot className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-white">Have questions about this 15-Section Cadastral Report?</h4>
+                <p className="text-[11px] text-blue-200">Our Case AI Assistant is ready to explain any beacon, finding, or statutory law.</p>
+              </div>
+            </div>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setActiveTab("assistant")}
+              className="bg-brand-blue hover:bg-brand-blueHover text-white font-bold text-xs shrink-0"
+            >
+              <span>Launch Case AI Assistant</span>
+              <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+            </Button>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <CardTitle>Property Due-Diligence Report</CardTitle>
+                  <CardDescription>15-Section Comprehensive Certification</CardDescription>
+                </div>
+                {isReportUnlocked ? (
+                  <a
+                    href={`/api/properties/${caseId}/report/pdf`}
+                    download
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-blue hover:bg-brand-blueHover text-white text-xs font-bold rounded-button shadow-subtle cursor-pointer self-start sm:self-auto"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Download Genuine PDF</span>
+                  </a>
+                ) : (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleUnlockReport("STANDARD_AUDIT")}
+                      isLoading={unlockingPayment}
+                      className="text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs cursor-pointer"
+                    >
+                      <Lock className="w-3.5 h-3.5 mr-1.5" />
+                      <span>Unlock Certified Report ({formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.totalPriceNgn)})</span>
+                    </Button>
+                    <Link
+                      href="/billing"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      <CreditCard className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Subscription Plans</span>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </CardHeader>
+
+            <div className="p-6 pt-0 space-y-4">
               <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 space-y-4">
                 <div className="border-b pb-3">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">DOCUMENT HEADER</span>
@@ -834,7 +1310,7 @@ export default function PropertyCaseHubPage() {
                     LANDINTEL DUE-DILIGENCE CERTIFICATION
                   </h4>
                   <p className="text-[11px] font-medium text-brand-blue">
-                    LandIntel Global — Property Due-Diligence & Cadastral Verification
+                    LandIntel Global — Property Due-Diligence &amp; Cadastral Verification
                   </p>
                   <p className="text-xs text-brand-textSecondary mt-0.5">
                     Case: {propertyCase.title} | Cadastral Scope: {propertyCase.lga}, {propertyCase.state}, {propertyCase.country || "International"}
@@ -879,14 +1355,14 @@ export default function PropertyCaseHubPage() {
                 <div className="pt-3 border-t text-xs space-y-2 text-brand-textSecondary leading-relaxed">
                   <p className="font-semibold text-brand-textPrimary">Report Sections Included in Full PDF:</p>
                   <ol className="list-decimal list-inside grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px]">
-                    <li>Executive Summary & Risk Index</li>
+                    <li>Executive Summary &amp; Risk Index</li>
                     <li>Cadastral Property Identifiers</li>
-                    <li>Document Inventory & Provenance</li>
+                    <li>Document Inventory &amp; Provenance</li>
                     <li>Cross-Document Consistency Matrix</li>
-                    <li>Key Risk Indicators & Weighting</li>
-                    <li>Detailed Findings & Beacon Citations</li>
+                    <li>Key Risk Indicators &amp; Weighting</li>
+                    <li>Detailed Findings &amp; Beacon Citations</li>
                     <li>Missing or Uncertain Records</li>
-                    <li>Geographic & Coordinate Boundary Checks</li>
+                    <li>Geographic &amp; Coordinate Boundary Checks</li>
                     <li>11-Point Statutory Verification Status</li>
                     <li>Actionable Due-Diligence Playbook</li>
                     <li>Specialized Questions for Seller</li>
@@ -923,11 +1399,11 @@ export default function PropertyCaseHubPage() {
                           </div>
                           <div>
                             <div className="flex items-baseline gap-1">
-                              <h4 className="text-2xl font-black font-heading text-slate-900">{formatPrice(75000)}</h4>
+                              <h4 className="text-2xl font-black font-heading text-slate-900">{formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.totalPriceNgn)}</h4>
                               <span className="text-xs text-slate-500">/ property</span>
                             </div>
                             <p className="text-[11px] text-slate-500 mt-0.5">
-                              Base: {formatPrice(69767)} &bull; 7.5% Statutory VAT: {formatPrice(5233)}
+                              Base: {formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.priceNgn)} &bull; 7.5% Statutory VAT: {formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.vatAmountNgn)}
                             </p>
                             <p className="text-xs text-slate-600 mt-1">
                               Automated 15-section audit, beacon matrix, boundary conflict check &amp; publication-grade PDF
@@ -967,7 +1443,7 @@ export default function PropertyCaseHubPage() {
                           isLoading={unlockingPayment}
                           className="w-full font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs cursor-pointer"
                         >
-                          <span>Unlock Report for this Property ({formatPrice(75000)})</span>
+                          <span>Unlock Report for this Property ({formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.totalPriceNgn)})</span>
                           <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                         </Button>
                       </div>
@@ -1035,103 +1511,8 @@ export default function PropertyCaseHubPage() {
                   </div>
                 )}
               </div>
-            </Card>
-          </div>
-
-          {/* AI Case Assistant */}
-          <div className="space-y-4">
-            <Card className="h-full flex flex-col justify-between">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Bot className="w-5 h-5 text-brand-blue" />
-                  <div>
-                    <CardTitle>Case AI Assistant</CardTitle>
-                    <CardDescription>Grounded strictly in this property&apos;s records</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-
-              {/* Chat messages */}
-              <div className="flex-1 overflow-y-auto max-h-96 space-y-3 p-2">
-                <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-brand-textSecondary space-y-2">
-                  <p className="font-semibold text-brand-textPrimary">Suggested Due-Diligence Inquiries:</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      "Is this land safe to buy or pay deposit?",
-                      "What do the survey beacons mean?",
-                      "What does 'Excision in Progress' mean?",
-                      "What should my lawyer search at Lands Registry?",
-                      "What should the surveyor chart?",
-                      "Which documents conflict?",
-                    ].map((promptText) => (
-                      <button
-                        key={promptText}
-                        type="button"
-                        onClick={() => handleSendAssistant(undefined, promptText)}
-                        disabled={assistantLoading}
-                        className="text-[11px] px-2.5 py-1 bg-white hover:bg-brand-blue/10 hover:border-brand-blue border border-brand-border rounded-full text-brand-textPrimary font-medium transition-colors text-left cursor-pointer disabled:opacity-50"
-                      >
-                        {promptText}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {assistantMessages.map((msg, i) => (
-                  <div
-                    key={i}
-                    className={`p-3 rounded-lg text-xs leading-relaxed ${
-                      msg.sender === "user"
-                        ? "bg-blue-50 text-blue-950 border border-blue-200 ml-4 font-medium"
-                        : "bg-slate-100 text-brand-textPrimary mr-4 space-y-1.5"
-                    }`}
-                  >
-                    <p>{msg.text}</p>
-                    {msg.evidence && (
-                      <div className="pt-1 text-[11px] text-brand-textMuted border-t border-slate-200/60">
-                        <strong>Evidence:</strong> {msg.evidence}
-                      </div>
-                    )}
-                    {msg.action && (
-                      <div className="text-[11px] text-brand-darkNavy font-semibold">
-                        <strong>Next Step:</strong> {msg.action}
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {assistantLoading && (
-                  <div className="flex items-center gap-2 text-xs text-brand-textMuted p-2">
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    <span>Analyzing case documents...</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Chat Input */}
-              <form onSubmit={handleSendAssistant} className="pt-4 border-t border-brand-border flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Ask a question about this property..."
-                  value={assistantInput}
-                  onChange={(e) => setAssistantInput(e.target.value)}
-                  disabled={assistantLoading}
-                  className="flex-1 px-3 py-2 text-xs border border-brand-border rounded-input bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue disabled:bg-slate-50"
-                />
-                <Button
-                  variant="primary"
-                  size="sm"
-                  type="submit"
-                  isLoading={assistantLoading}
-                  disabled={!assistantInput.trim() || assistantLoading}
-                  className="px-3 shrink-0"
-                  aria-label="Send query"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                </Button>
-              </form>
-            </Card>
-          </div>
+            </div>
+          </Card>
         </div>
       )}
 

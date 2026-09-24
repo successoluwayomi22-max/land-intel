@@ -44,6 +44,12 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  verification: {
+    google: "d610769079a4ec09",
+  },
+  other: {
+    "google-site-verification": "googled610769079a4ec09.html",
+  },
   icons: {
     icon: [
       { url: "/favicon.ico" },

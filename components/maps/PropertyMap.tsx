@@ -15,6 +15,8 @@ import {
   Layers,
 } from "lucide-react";
 import Link from "next/link";
+import { useLocale } from "@/components/providers/LocaleProvider";
+import { ONE_OFF_PACKAGES } from "@/lib/services/plans";
 
 interface Coordinate {
   lat: number;
@@ -55,6 +57,7 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
   isLocked = false,
   onUnlock,
 }) => {
+  const { formatPrice } = useLocale();
   const [mapType, setMapType] = useState<"hybrid" | "roadmap">(showSatellite ? "hybrid" : "roadmap");
   const isLocated = Boolean(center && locationFound !== false);
 
@@ -200,7 +203,7 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
                   onClick={onUnlock}
                   className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Unlock Single Case Audit ($50.00 / ₦75,000)
+                  Unlock Cadastral Audit Report ({formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.totalPriceNgn)})
                   <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
@@ -208,16 +211,16 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
                   href={`/properties`}
                   className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Unlock Cadastral Audit Report
+                  Unlock Cadastral Audit Report ({formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.totalPriceNgn)})
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               )}
 
               <Link
-                href="/pricing"
+                href="/billing"
                 className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5"
               >
-                Upgrade to Professional ($150 / mo)
+                Upgrade to Professional ({formatPrice(134375)}/mo)
               </Link>
             </div>
           </div>

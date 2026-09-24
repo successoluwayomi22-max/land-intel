@@ -334,6 +334,109 @@ export async function askCaseAssistant(caseId: string, question: string): Promis
   );
 
   // -------------------------------------------------------------
+  // TOPIC 0: Seller, Vendor, Agent, and Ownership Identity
+  // -------------------------------------------------------------
+  if (q.includes("seller") || q.includes("vendor") || q.includes("owner") || q.includes("who is selling") || q.includes("agent") || q.includes("who owns")) {
+    const disclosedSeller = propertyCase.sellerName || "Not disclosed in case record";
+    const disclosedAgent = propertyCase.agentName || "No agent specified";
+    const assignorNames = Array.from(new Set(
+      propertyCase.documents.flatMap((d) => d.extractions.filter((e) => e.fieldName === "seller_name").map((e) => e.fieldValue))
+    ));
+    const assigneeNames = Array.from(new Set(
+      propertyCase.documents.flatMap((d) => d.extractions.filter((e) => e.fieldName === "buyer_name").map((e) => e.fieldValue))
+    ));
+
+    return {
+      answer: `Ownership & Vendor Due Diligence for "${propertyCase.title}":
+• Declared Vendor / Seller: ${disclosedSeller}
+• Declared Real Estate Agent: ${disclosedAgent}
+• Legal Assignor(s) on Documented Deeds: ${assignorNames.length > 0 ? assignorNames.join(", ") : "None extracted from submitted instruments"}
+• Legal Assignee(s) / Purchasers: ${assigneeNames.length > 0 ? assigneeNames.join(", ") : "None extracted"}
+
+Legal Scrutiny: In real estate transactions, the declared vendor must strictly match the registered proprietor on the statutory root of title or hold an irrevocable, registered Power of Attorney. If the vendor claims inheritance or family ownership, insist on letters of administration or a certified family resolution executed by the accredited Family Head and principal elders.`,
+      evidence: `Case Vendor: ${disclosedSeller} | Agent: ${disclosedAgent} | Deeds Assignor(s): ${assignorNames.join(", ") || "None"}.`,
+      confidence: 0.95,
+      recommendedAction: "Request official government-issued photo ID (NIN / International Passport) of the vendor and cross-check against the memorial on the registered title deed at the Lands Registry.",
+    };
+  }
+
+  // -------------------------------------------------------------
+  // TOPIC 0B: Price, Valuation, Consideration, Payment terms
+  // -------------------------------------------------------------
+  if (q.includes("price") || q.includes("cost") || q.includes("how much") || q.includes("valuation") || q.includes("market") || q.includes("consideration")) {
+    const priceFormatted = propertyCase.purchasePrice
+      ? `${propertyCase.currency || "NGN"} ${propertyCase.purchasePrice.toLocaleString()}`
+      : "No purchase consideration stated";
+
+    return {
+      answer: `Commercial Consideration & Valuation Analysis:
+• Stated Asking / Purchase Price: ${priceFormatted}
+• Jurisdiction / District: ${propertyCase.lga}, ${propertyCase.state} (${propertyCase.country || "Nigeria"})
+• Property Category: ${propertyCase.propertyType.replace(/_/g, " ")}
+
+Commercial Due Diligence: Ensure the consideration stated in the Contract of Sale reflects the true transaction amount. Beware of vendors demanding off-the-record cash payments or under-declaring consideration to evade statutory stamp duties (typically 1.5% to 3%) and capital gains tax, as this renders the deed vulnerable to investigation during Governor's Consent processing.`,
+      evidence: `Price on file: ${priceFormatted} | Case Ref: ${caseId.slice(0, 8).toUpperCase()}.`,
+      confidence: 0.93,
+      recommendedAction: "Consult an accredited Nigerian estate surveyor and valuer (NIESV) to conduct a comparative market analysis for properties in this specific layout.",
+    };
+  }
+
+  // -------------------------------------------------------------
+  // TOPIC 0C: Documents Uploaded vs Missing Statutory Instruments
+  // -------------------------------------------------------------
+  if (q.includes("document") || q.includes("upload") || q.includes("missing") || q.includes("what do i have") || q.includes("instruments")) {
+    const uploadedCats = propertyCase.documents.map((d) => d.category);
+    const hasSurvey = uploadedCats.includes("SURVEY_PLAN");
+    const hasDeed = uploadedCats.includes("DEED_OF_ASSIGNMENT");
+    const hasTitle = uploadedCats.includes("CERTIFICATE_OF_OCCUPANCY") || uploadedCats.includes("GOVERNORS_CONSENT");
+    const hasReceipt = uploadedCats.includes("PURCHASE_RECEIPT");
+
+    const missingList: string[] = [];
+    if (!hasSurvey) missingList.push("Registered Cadastral Survey Plan (with SURCON Red Copy)");
+    if (!hasDeed) missingList.push("Deed of Assignment with unbroken chain of title");
+    if (!hasTitle) missingList.push("Primary Statutory Root of Title (C of O, Governor's Consent, or Gazette)");
+    if (!hasReceipt) missingList.push("Purchase Receipt acknowledging financial consideration");
+
+    return {
+      answer: `Audit of Case Documentation (${docCount} file(s) evaluated):
+Uploaded Instruments:
+${propertyCase.documents.map((d, i) => `${i + 1}. ${d.originalName} — [${d.category.replace(/_/g, " ")}]`).join("\n") || "No documents uploaded yet"}
+
+Critical Missing Instruments:
+${missingList.map((m, i) => `❌ ${m}`).join("\n") || "All core instrument categories have been submitted"}
+
+Statutory Conveyancing Rule: A valid real estate transfer cannot proceed without both the certified survey plan (defining boundary coordinate pillars) and a registered deed (transferring legal ownership).`,
+      evidence: `Submitted files: ${propertyCase.documents.map((d) => d.originalName).join(", ") || "None"}. Missing: ${missingList.join("; ") || "None"}.`,
+      confidence: 0.96,
+      recommendedAction: missingList.length > 0
+        ? `Request the following missing instruments from the vendor before paying any earnest deposit: ${missingList.join(", ")}.`
+        : "Proceed to physical beacon pickup and digital land registry charting.",
+    };
+  }
+
+  // -------------------------------------------------------------
+  // TOPIC 0D: Risk Score Breakdown and Integrity Red Flags
+  // -------------------------------------------------------------
+  if (q.includes("risk score") || q.includes("explain score") || q.includes("score breakdown") || q.includes("why is it high") || q.includes("red flag") || q.includes("flag")) {
+    return {
+      answer: `Risk Indicator Analysis for "${propertyCase.title}":
+• Overall Risk Index: ${score}/100 (${level} Risk Exposure)
+• Documentation Sub-Score: ${propertyCase.riskScore?.documentationScore || 0}/100
+• Ownership Sub-Score: ${propertyCase.riskScore?.ownershipScore || 0}/100
+• Geographic Sub-Score: ${propertyCase.riskScore?.geographicScore || 0}/100
+• Cross-Document Consistency: ${propertyCase.riskScore?.consistencyScore || 0}/100
+
+Primary Drivers:
+${findings.map((f, i) => `${i + 1}. [${f.severity}] ${f.title}: ${f.description}`).join("\n\n") || "No critical defects detected."}
+
+Evaluation Verdict: ${score >= 80 ? "CRITICAL RISK — DO NOT BUY. Severe legal, spatial, or documentation defects detected." : score >= 60 ? "HIGH RISK — Significant issues flagged. Detailed investigation required." : score >= 40 ? "ELEVATED RISK — Caution required. Perform full search." : "MODERATE / LOW — Standard procedural diligence required."}`,
+      evidence: `Deterministic Risk Score: ${score}/100 (${level}) | Identified Findings: ${findings.length}.`,
+      confidence: 0.96,
+      recommendedAction: "Review all high-severity findings and resolve coordinate or root-of-title discrepancies with your legal counsel before signing any agreement.",
+    };
+  }
+
+  // -------------------------------------------------------------
   // TOPIC 1: Excision in Progress, Gazette, Government Acquisition
   // -------------------------------------------------------------
   if (q.includes("excision") || q.includes("gazette") || q.includes("file number") || q.includes("acquisition")) {
@@ -404,14 +507,14 @@ export async function askCaseAssistant(caseId: string, question: string): Promis
   // TOPIC 4: Safety, Deposit, Payment Advice, Overall Risk
   // -------------------------------------------------------------
   if (q.includes("safe") || q.includes("buy") || q.includes("pay") || q.includes("deposit") || q.includes("should i") || q.includes("risk") || q.includes("concern") || q.includes("problem")) {
-    const isHighRisk = score > 40 || highRiskFindings.length > 0;
+    const isHighRisk = score >= 60 || highRiskFindings.length > 0;
     const topFinding = highRiskFindings[0] || findings[0];
 
     return {
-      answer: `Current Purchase Safety Assessment: ${isHighRisk ? "HIGH RISK — DO NOT TRANSFER FUNDS YET" : "MODERATE — PROCEDURAL CLEARANCE REQUIRED"}.
+      answer: `Current Purchase Safety Assessment: ${isHighRisk ? "🚨 CRITICAL RISK / HIGH CAUTION — DO NOT TRANSFER FUNDS YET" : "⚠️ PROCEDURAL CLEARANCE REQUIRED"}.
 The deterministic Risk Indicator Score is ${score}/100 (${level} Risk Exposure) across ${docCount} submitted document(s).
 Primary issues flagged:
-${highRiskFindings.map((f, i) => `${i + 1}. [${f.severity}] ${f.title}: ${f.description}`).join("\n") || "No severe discrepancies found."}
+${highRiskFindings.map((f, i) => `${i + 1}. [${f.severity}] ${f.title}: ${f.description}`).join("\n\n") || "No severe discrepancies found."}
 
 Under current 2026 Nigerian conveyancing practice, paying a deposit or consideration before legal search and cadastral charting exposes buyers to total capital forfeiture, disputed ownership with local families ("Omonile"), or statutory demolition.`,
       evidence: `Risk Score: ${score}/100 (${level}) | Top Concern: ${topFinding?.title || "Routine verification"} | Documents: ${propertyCase.documents.map((d) => d.originalName).join(", ")}.`,
@@ -500,7 +603,7 @@ Under established Nigerian customary jurisprudence affirmed by the Supreme Court
   // -------------------------------------------------------------
   // TOPIC 9: Drainage, Coastal Road, and Road Right-of-Way Demolition Setbacks
   // -------------------------------------------------------------
-  if (q.includes("drainage") || q.includes("canal") || q.includes("setback") || q.includes("coastal") || q.includes("demolition") || q.includes("right of way")) {
+  if (q.includes("drainage") || q.includes("canal") || q.includes("setback") || q.includes("coastal") || q.includes("demolition") || q.includes("right of way") || q.includes("building") || q.includes("apartment")) {
     return {
       answer: `Current 2024–2026 Demolition & Statutory Setback Enforcement:
 1. Active Enforcement: The Lagos State Ministry of the Environment & Water Resources, LASPPPA, and the Federal Ministry of Works are actively executing non-negotiable demolitions of structures encroaching on:
@@ -511,6 +614,90 @@ Under established Nigerian customary jurisprudence affirmed by the Supreme Court
       confidence: 0.95,
       recommendedAction: "Request a formal Planning Information / Zoning Clearance certificate from the State Physical Planning Permit Authority (LASPPPA) before commencing any construction.",
     };
+  }
+
+  // -------------------------------------------------------------
+  // AI LLM Synthesis via Gemini (if GEMINI_API_KEY is available)
+  // -------------------------------------------------------------
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (geminiKey) {
+    try {
+      const prompt = `You are the LandIntel Cadastral & Legal AI Counsel, an expert in Nigerian conveyancing law, Land Use Act 1978, cadastral surveying (SURCON standards), and real estate fraud investigation.
+
+CASE DOSSIER:
+- Property Title: "${propertyCase.title}"
+- Address: ${propertyCase.address}, ${propertyCase.lga}, ${propertyCase.state}
+- Disclosed Seller / Vendor: ${allSellers.join(", ") || "Not Disclosed"}
+- Disclosed Agent: ${propertyCase.agentName || "None"}
+- Property Type: ${propertyCase.propertyType}
+- Stated Consideration / Price: ${propertyCase.purchasePrice ? `${propertyCase.currency || "NGN"} ${propertyCase.purchasePrice.toLocaleString()}` : "Not Disclosed"}
+- Overall Cadastral Risk Score: ${score}/100 (${level})
+- Uploaded Documents (${docCount}): ${propertyCase.documents.map((d) => `${d.originalName} (${d.category})`).join(", ") || "None"}
+- Extracted Plots: ${allPlots.join(", ") || "None"}
+- Extracted Survey Plans: ${allSurveys.join(", ") || "None"}
+- Extracted Beacons: ${allBeacons.join(", ") || "None"}
+- Coordinates / GPS: ${propertyCase.latitude && propertyCase.longitude ? `${propertyCase.latitude}, ${propertyCase.longitude}` : "Unsupplied"}
+- Identified Findings:
+${findings.map((f) => `  * [${f.severity}] ${f.title}: ${f.description}`).join("\n") || "  * No findings recorded"}
+
+USER QUESTION:
+"${cleanQuestion}"
+
+INSTRUCTIONS:
+1. Provide a direct, authoritative, and practical answer grounded in this specific property case and statutory Nigerian land law.
+2. If the user asks whether to buy or pay a deposit, provide clear legal safety guidance based on the risk score (${score}/100) and whether documents were verified.
+3. Be professional, direct, and actionable. Do not hallucinate documents that are not listed in the dossier.
+4. Format your response clearly with concise paragraphs and bullet points where helpful.
+5. In addition to your answer, provide:
+   - A short "Evidence" statement citing the specific documents or case records consulted.
+   - A short "Recommended Next Step" outlining the exact next procedural action the buyer/investor should take.
+
+Respond ONLY with valid JSON in this exact structure:
+{
+  "answer": "Your detailed legal and cadastral analysis...",
+  "evidence": "Case records, survey references, or statutory provisions cited...",
+  "recommendedAction": "Single concrete next step for buyer..."
+}`;
+
+      const modelNames = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-2.0-flash"];
+      for (const model of modelNames) {
+        try {
+          const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                  temperature: 0.2,
+                  responseMimeType: "application/json",
+                },
+              }),
+            }
+          );
+          if (res.ok) {
+            const data = await res.json();
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) {
+              const parsed = JSON.parse(text);
+              if (parsed.answer) {
+                return {
+                  answer: parsed.answer,
+                  evidence: parsed.evidence || `Grounded in ${docCount} case document(s) & Risk Score ${score}/100.`,
+                  confidence: 0.95,
+                  recommendedAction: parsed.recommendedAction || "Conduct on-ground beacon recovery and digital search at State Lands Bureau.",
+                };
+              }
+            }
+          }
+        } catch {
+          // Continue to next model or fallback
+        }
+      }
+    } catch {
+      // Fall through to deterministic synthesis
+    }
   }
 
   // -------------------------------------------------------------

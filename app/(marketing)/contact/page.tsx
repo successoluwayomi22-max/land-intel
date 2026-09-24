@@ -277,11 +277,11 @@ export default function ContactPage() {
                     {t("detailedMessage") || "Detailed Message"}
                   </label>
                   <textarea
-                    rows={4}
+                    rows={5}
                     placeholder="Provide specific details, plot numbers, beacon coordinates, or any issues you are experiencing..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-white border border-brand-border rounded-input text-xs text-brand-textPrimary focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                    className="w-full px-4 py-3 bg-white border border-brand-border rounded-xl text-xs text-brand-textPrimary focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 resize-y min-h-[120px] transition-all shadow-xs"
                     required
                   />
                 </div>
@@ -291,10 +291,10 @@ export default function ContactPage() {
                   size="md"
                   type="submit"
                   isLoading={submitting}
-                  className="w-full gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold"
+                  className="w-full gap-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold py-3 text-xs sm:text-sm shadow-md rounded-xl transition-all cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
-                  {t("sendInquiry") || "Dispatch Support Request"}
+                  <span>{t("sendInquiry") || "Dispatch Support Request"}</span>
                 </Button>
               </form>
             </Card>

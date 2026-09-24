@@ -31,6 +31,7 @@ import { RiskBadge } from "@/components/ui/RiskBadge";
 import { useToast } from "@/components/ui/Toast";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { ReportCheckoutModal } from "@/components/payments/ReportCheckoutModal";
+import { ONE_OFF_PACKAGES } from "@/lib/services/plans";
 import dynamic from "next/dynamic";
 
 // Lazy-load map to avoid SSR issues
@@ -95,8 +96,9 @@ export default function PropertyAnalysisPage() {
   const docs = pc.documents || [];
   const findings = pc.findings || [];
   const riskScoreData = pc.riskScore || {};
-  const riskScore = riskScoreData.score ?? 50;
-  const riskLevel = riskScoreData.level ?? (riskScore > 80 ? "CRITICAL" : riskScore > 60 ? "HIGH" : riskScore > 40 ? "ELEVATED" : riskScore > 20 ? "MODERATE" : "LOW");
+  const isUnverifiedWithoutDocs = docs.length === 0;
+  const riskScore = riskScoreData.score ?? (isUnverifiedWithoutDocs ? 90 : 50);
+  const riskLevel = riskScoreData.level ?? (riskScore >= 80 ? "CRITICAL" : riskScore >= 60 ? "HIGH" : riskScore >= 40 ? "ELEVATED" : riskScore >= 20 ? "MODERATE" : "LOW");
   const explanation = riskScoreData.explanation || "";
 
   // Ground Occupancy: Occupied structure vs Bare / Empty undeveloped land
@@ -202,7 +204,7 @@ export default function PropertyAnalysisPage() {
                 className="text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs cursor-pointer"
               >
                 <Lock className="w-3.5 h-3.5 mr-1.5" />
-                Unlock Full Scam & Title Report ({formatPrice(75000)})
+                Unlock Full Scam & Title Report ({formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.totalPriceNgn)})
               </Button>
             )}
           </div>
@@ -534,7 +536,7 @@ export default function PropertyAnalysisPage() {
                     className="font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-md cursor-pointer"
                   >
                     <Lock className="w-4 h-4 mr-2" />
-                    <span>Unlock Full Fraud Audit ({formatPrice(75000)})</span>
+                    <span>Unlock Full Fraud Audit ({formatPrice(ONE_OFF_PACKAGES.STANDARD_AUDIT.totalPriceNgn)})</span>
                   </Button>
                 </div>
               </div>
