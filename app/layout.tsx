@@ -7,6 +7,7 @@ import { GoogleTranslateIntegration } from "@/components/providers/GoogleTransla
 import { PlatformContactProvider } from "@/components/providers/PlatformContactProvider";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 import { ConnectionStatus } from "@/components/ui/ConnectionStatus";
+import { GoogleAnalytics } from "@/components/providers/GoogleAnalytics";
 
 const urbanist = Urbanist({
   subsets: ["latin"],
@@ -62,18 +63,18 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://land-intel-omega.vercel.app/icon",
-        width: 512,
-        height: 512,
-        alt: "LandIntel Cadastral Intelligence",
+        url: "https://land-intel-omega.vercel.app/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "LandIntel Cadastral Intelligence & Property Due-Diligence",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LandIntel | Global Property Due-Diligence",
+    title: "LandIntel — Global Property Intelligence & Due-Diligence",
     description: "Institutional property due-diligence, cadastral verification, and title certification.",
-    images: ["https://land-intel-omega.vercel.app/icon"],
+    images: ["https://land-intel-omega.vercel.app/og-image.png"],
   },
   robots: {
     index: true,
@@ -179,6 +180,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${urbanist.variable} font-urbanist min-h-screen bg-brand-background text-brand-textPrimary antialiased selection:bg-blue-100 selection:text-blue-900`}>
+        <GoogleAnalytics />
         <LocaleProvider>
           <PlatformContactProvider>
             <GoogleTranslateIntegration />
