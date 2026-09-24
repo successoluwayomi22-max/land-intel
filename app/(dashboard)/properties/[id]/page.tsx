@@ -479,16 +479,20 @@ export default function PropertyCaseHubPage() {
                   High-resolution aerial satellite imagery to inspect parcel occupancy, physical structures, vegetation, and surrounding infrastructure.
                 </CardDescription>
               </div>
-              {propertyCase.latitude && propertyCase.longitude && (
-                <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+              {propertyCase.latitude && propertyCase.longitude && propertyCase.locationFound !== false ? (
+                <span className="text-[11px] font-mono text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
                   {Number(propertyCase.latitude).toFixed(4)}, {Number(propertyCase.longitude).toFixed(4)}
+                </span>
+              ) : (
+                <span className="text-[11px] font-medium text-rose-700 bg-rose-50 px-2.5 py-1 rounded-md border border-rose-200">
+                  Location Unverified
                 </span>
               )}
             </CardHeader>
             <div className="p-4 sm:p-6 pt-0">
               <PropertyMap
                 center={
-                  propertyCase.latitude && propertyCase.longitude
+                  propertyCase.latitude && propertyCase.longitude && propertyCase.locationFound !== false
                     ? { lat: Number(propertyCase.latitude), lng: Number(propertyCase.longitude) }
                     : undefined
                 }
@@ -498,6 +502,11 @@ export default function PropertyCaseHubPage() {
                 locationFound={propertyCase.locationFound !== false && Boolean(propertyCase.latitude && propertyCase.longitude)}
                 address={`${propertyCase.address}, ${propertyCase.lga}, ${propertyCase.state}`}
                 occupancyStatus={propertyCase.occupancyStatus || (propertyCase.propertyType === "LAND" ? "BARE" : "OCCUPIED")}
+                isLocked={!propertyCase.isMapUnlocked && !isReportUnlocked}
+                onUnlock={() => {
+                  setSelectedCheckoutPackage("STANDARD_AUDIT");
+                  setCheckoutModalOpen(true);
+                }}
               />
               <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-500">
                 <span className="flex items-center gap-1.5">

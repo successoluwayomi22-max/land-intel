@@ -46,30 +46,49 @@ export async function GET(
 
     let latitude = propertyCase.latitude;
     let longitude = propertyCase.longitude;
+    const { isNonsenseOrDummy } = await import("@/lib/geo/geocoding");
+    const addressIsDummy = isNonsenseOrDummy(propertyCase.address) || isNonsenseOrDummy(propertyCase.lga);
+
+    // If coordinates are exact Lagos center fallback (6.5244, 3.3792) with dummy address or invalid input
+    if (addressIsDummy || (latitude && longitude && Math.abs(latitude - 6.5244) < 0.0005 && Math.abs(longitude - 3.3792) < 0.0005 && addressIsDummy)) {
+      latitude = null;
+      longitude = null;
+      if (propertyCase.latitude !== null || propertyCase.longitude !== null) {
+        await db.propertyCase.update({
+          where: { id: caseId },
+          data: { latitude: null, longitude: null },
+        }).catch(() => {});
+      }
+    }
+
     let locationFound = Boolean(latitude && longitude);
 
     if (!latitude || !longitude) {
-      try {
-        const { geocodePropertyLocation } = await import("@/lib/geo/geocoding");
-        const geo = await geocodePropertyLocation({
-          address: propertyCase.address,
-          lga: propertyCase.lga,
-          state: propertyCase.state,
-          country: propertyCase.country || "Nigeria",
-        });
-        if (geo.found && geo.lat && geo.lng) {
-          latitude = geo.lat;
-          longitude = geo.lng;
-          locationFound = true;
-          await db.propertyCase.update({
-            where: { id: caseId },
-            data: { latitude, longitude },
-          }).catch(() => {});
-        } else {
-          locationFound = false;
+      if (!addressIsDummy) {
+        try {
+          const { geocodePropertyLocation } = await import("@/lib/geo/geocoding");
+          const geo = await geocodePropertyLocation({
+            address: propertyCase.address,
+            lga: propertyCase.lga,
+            state: propertyCase.state,
+            country: propertyCase.country || "Nigeria",
+          });
+          if (geo.found && geo.lat && geo.lng) {
+            latitude = geo.lat;
+            longitude = geo.lng;
+            locationFound = true;
+            await db.propertyCase.update({
+              where: { id: caseId },
+              data: { latitude, longitude },
+            }).catch(() => {});
+          } else {
+            locationFound = false;
+          }
+        } catch (geoErr) {
+          console.warn("[GEOCODE_FETCH_ERR]", geoErr);
         }
-      } catch (geoErr) {
-        console.warn("[GEOCODE_FETCH_ERR]", geoErr);
+      } else {
+        locationFound = false;
       }
     }
 
@@ -104,7 +123,18 @@ export async function GET(
       occupancyStatus = "PENDING_VERIFICATION";
     }
 
+    const { getUserEntitlements } = await import("@/lib/services/entitlement");
+    const userEntitlements = await getUserEntitlements(user.id);
     const isUnlocked = await isReportUnlocked(caseId, user.id, user.role);
+
+    // Map usage is paid only (requires active paid subscription, geospatial entitlement, or unlocked case audit)
+    const isMapUnlocked = Boolean(
+      user.role === "ADMIN" ||
+      user.role === "SUPER_ADMIN" ||
+      isUnlocked ||
+      userEntitlements.canAccessGeospatial ||
+      (userEntitlements.planKey !== "FREE" && user.role === "PAID")
+    );
 
     // Check if user has unlocked Full Title Verification Package
     const fullVerifPayment = await db.payment.findFirst({
@@ -182,6 +212,8 @@ export async function GET(
         locationFound,
         occupancyStatus,
         findings: sanitizedFindings,
+        isMapUnlocked,
+        isMapLocked: !isMapUnlocked,
       },
       case: {
         ...propertyCase,
@@ -190,8 +222,12 @@ export async function GET(
         locationFound,
         occupancyStatus,
         findings: sanitizedFindings,
+        isMapUnlocked,
+        isMapLocked: !isMapUnlocked,
       },
       isReportUnlocked: isUnlocked,
+      isMapUnlocked,
+      isMapLocked: !isMapUnlocked,
       hasFullVerification,
       fullVerificationDossier,
     });

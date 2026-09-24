@@ -319,9 +319,15 @@ export default function PropertyAnalysisPage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
-                {centerLat && centerLng ? `${centerLat.toFixed(4)}, ${centerLng.toFixed(4)}` : "Regional Anchor"}
-              </span>
+              {locationFound && centerLat && centerLng ? (
+                <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+                  {centerLat.toFixed(4)}, {centerLng.toFixed(4)}
+                </span>
+              ) : (
+                <span className="text-[11px] font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-md border border-rose-200">
+                  Location Unverified
+                </span>
+              )}
               {beacons.length > 0 && (
                 <span className="text-[11px] font-bold text-brand-blue bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
                   {beacons.length} Beacons Plotted
@@ -332,13 +338,15 @@ export default function PropertyAnalysisPage() {
 
           <div className="p-4 sm:p-6">
             <PropertyMap
-              center={centerLat && centerLng ? { lat: centerLat, lng: centerLng } : undefined}
-              coordinates={beacons}
+              center={locationFound && centerLat && centerLng ? { lat: centerLat, lng: centerLng } : undefined}
+              coordinates={locationFound ? beacons : []}
               height="430px"
               showSatellite={true}
               locationFound={locationFound}
               address={`${pc.address}, ${pc.lga}, ${pc.state}`}
               occupancyStatus={occupancyStatus}
+              isLocked={!pc.isMapUnlocked && !isReportUnlocked}
+              onUnlock={() => setCheckoutModalOpen(true)}
             />
           </div>
         </div>

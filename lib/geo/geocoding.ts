@@ -11,7 +11,7 @@ export interface GeocodeResult {
 }
 
 // Well-known cadastral anchor coordinates for Nigerian states / cities
-const KNOWN_NIGERIAN_COORDINATES: Record<string, { lat: number; lng: number }> = {
+export const KNOWN_NIGERIAN_COORDINATES: Record<string, { lat: number; lng: number }> = {
   lagos: { lat: 6.5244, lng: 3.3792 },
   ikeja: { lat: 6.6018, lng: 3.3515 },
   "eti-osa": { lat: 6.4584, lng: 3.6015 },
@@ -39,6 +39,41 @@ const KNOWN_NIGERIAN_COORDINATES: Record<string, { lat: number; lng: number }> =
   "benin city": { lat: 6.335, lng: 5.6037 },
 };
 
+/**
+ * Detects placeholder, gibberish, or test input string.
+ */
+export function isNonsenseOrDummy(str?: string | null): boolean {
+  if (!str) return false;
+  const s = str.trim().toLowerCase();
+  if (!s || s.length < 3) return true;
+
+  // Obvious placeholder keywords and keyboard walks
+  if (
+    /^(qwerty|asdf|zxcv|12345|test|dummy|fake|sample|weere|werey|xyz|abc|none|na|n\/a|null|undefined|blah|foo|bar)/i.test(
+      s
+    )
+  ) {
+    return true;
+  }
+
+  // Common Yoruba / slang test words meaning crazy or gibberish
+  if (s === "weere" || s === "werey" || s === "were") return true;
+
+  // Single character repeats like "aaaaa" or "xxxxxx"
+  if (/^(.)\1{3,}$/.test(s)) return true;
+
+  // Substring checks for obvious keyboard mashed strings
+  if (s.includes("qwerty") || s.includes("asdfgh") || s.includes("zxcvb")) return true;
+
+  // Words with 5+ consonants and no vowels (e.g. "sdfghjk")
+  const words = s.split(/[\s,.-]+/);
+  for (const w of words) {
+    if (w.length >= 5 && !/[aeiouy]/i.test(w)) return true;
+  }
+
+  return false;
+}
+
 export async function geocodePropertyLocation(params: {
   address?: string;
   lga?: string;
@@ -50,11 +85,16 @@ export async function geocodePropertyLocation(params: {
   const state = params.state?.trim() || "";
   const country = params.country?.trim() || "Nigeria";
 
-  // Check if all fields are empty or purely placeholder
-  const combined = `${address} ${lga} ${state}`.trim().toLowerCase();
-  const isDummy = !combined || /^(qwerty|test|dummy|asdf|foo|bar|none|n\/a)$/i.test(combined);
+  // Check if address or LGA is clearly placeholder / gibberish
+  if (isNonsenseOrDummy(address) || isNonsenseOrDummy(lga)) {
+    return {
+      found: false,
+      status: "INVALID_LOCATION_INPUT",
+    };
+  }
 
-  if (isDummy && !state && !lga) {
+  const queryParts = [address, lga, state, country].filter(Boolean).join(", ");
+  if (!queryParts || queryParts.length < 4) {
     return {
       found: false,
       status: "UNRESOLVABLE_LOCATION",
@@ -63,68 +103,110 @@ export async function geocodePropertyLocation(params: {
 
   const apiKey = GOOGLE_MAPS_API_KEY;
 
-  // 1. Try full Google Maps Geocoding API if key is present
+  // 1. Try Google Maps Geocoding API
   if (apiKey) {
-    const queryParts = [address, lga, state, country].filter(Boolean).join(", ");
     try {
       const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(queryParts)}&key=${apiKey}`;
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
       const data = await res.json();
 
       if (data.status === "OK" && data.results && data.results.length > 0) {
-        const loc = data.results[0].geometry.location;
-        return {
-          found: true,
-          lat: loc.lat,
-          lng: loc.lng,
-          formattedAddress: data.results[0].formatted_address,
-          placeId: data.results[0].place_id,
-          status: "OK",
-          isApproximate: false,
-        };
-      }
+        const firstResult = data.results[0];
+        const types: string[] = firstResult.types || [];
+        const loc = firstResult.geometry?.location;
 
-      // If full query didn't match, fallback to district / city / state
-      if (lga || state) {
-        const fallbackParts = [lga, state, country].filter(Boolean).join(", ");
-        const fallbackUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(fallbackParts)}&key=${apiKey}`;
-        const fallbackRes = await fetch(fallbackUrl);
-        const fallbackData = await fallbackRes.json();
+        // If the user specified a street address or specific LGA, verify whether Google
+        // actually matched the location or just fell back to the broad State or Country!
+        const isBroadAdminOnly =
+          (types.includes("administrative_area_level_1") || types.includes("country")) &&
+          !types.includes("route") &&
+          !types.includes("street_address") &&
+          !types.includes("sublocality") &&
+          !types.includes("sublocality_level_1") &&
+          !types.includes("neighborhood") &&
+          !types.includes("locality") &&
+          !types.includes("establishment") &&
+          !types.includes("point_of_interest") &&
+          !types.includes("premise");
 
-        if (fallbackData.status === "OK" && fallbackData.results && fallbackData.results.length > 0) {
-          const loc = fallbackData.results[0].geometry.location;
+        if (address && isBroadAdminOnly) {
+          // The specific address was NOT found by Google; it only returned the broad state
+          return {
+            found: false,
+            status: "LOCATION_NOT_FOUND",
+            isApproximate: true,
+          };
+        }
+
+        if (loc && typeof loc.lat === "number" && typeof loc.lng === "number") {
           return {
             found: true,
             lat: loc.lat,
             lng: loc.lng,
-            formattedAddress: fallbackData.results[0].formatted_address,
-            placeId: fallbackData.results[0].place_id,
-            status: "APPROXIMATE_AREA",
-            isApproximate: true,
+            formattedAddress: firstResult.formatted_address,
+            placeId: firstResult.place_id,
+            status: "OK",
+            isApproximate: firstResult.geometry?.location_type === "APPROXIMATE",
           };
         }
+      } else if (data.status === "ZERO_RESULTS") {
+        return {
+          found: false,
+          status: "LOCATION_NOT_FOUND",
+        };
       }
     } catch (err) {
       console.warn("[GEOCODE] Google Geocoding API notice:", err);
     }
   }
 
-  // 2. Fallback to Known Regional Cadastral Registry Anchors
-  for (const [key, coords] of Object.entries(KNOWN_NIGERIAN_COORDINATES)) {
-    if (combined.includes(key)) {
-      return {
-        found: true,
-        lat: coords.lat,
-        lng: coords.lng,
-        formattedAddress: `${state || lga || "Nigeria"} Cadastral District`,
-        status: "REGIONAL_ANCHOR",
-        isApproximate: true,
-      };
+  // 2. OpenStreetMap Nominatim fallback if Google is unavailable or inconclusive
+  try {
+    const osmQuery = [address, lga, state, country].filter(Boolean).join(", ");
+    const osmUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(osmQuery)}&format=json&limit=1`;
+    const osmRes = await fetch(osmUrl, {
+      headers: { "User-Agent": "LandIntel-Cadastral-Platform/1.0" },
+      signal: AbortSignal.timeout(3000),
+    });
+    if (osmRes.ok) {
+      const osmData = await osmRes.json();
+      if (Array.isArray(osmData) && osmData.length > 0) {
+        const item = osmData[0];
+        const lat = parseFloat(item.lat);
+        const lng = parseFloat(item.lon);
+        const itemClass = item.class || "";
+        const itemType = item.type || "";
+
+        // If OSM only returned boundary / administrative state, reject fake address
+        if (address && (itemClass === "boundary" && itemType === "administrative")) {
+          return {
+            found: false,
+            status: "LOCATION_NOT_FOUND",
+            isApproximate: true,
+          };
+        }
+
+        if (!isNaN(lat) && !isNaN(lng)) {
+          return {
+            found: true,
+            lat,
+            lng,
+            formattedAddress: item.display_name,
+            placeId: String(item.place_id),
+            status: "OK",
+            isApproximate: false,
+          };
+        }
+      }
     }
+  } catch {
+    // OSM lookup silent fallback
   }
 
+  // 3. Fallback: If address was provided but failed resolution, do NOT fake coordinates!
+  // Return found: false so the UI accurately displays "Location Not Found / Unverified"
   return {
     found: false,
-    status: "ZERO_RESULTS",
+    status: "LOCATION_NOT_FOUND",
   };
 }
