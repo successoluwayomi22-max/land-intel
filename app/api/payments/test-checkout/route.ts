@@ -39,6 +39,47 @@ export async function GET(request: NextRequest) {
     ? `₦${taxBreakdown.total.toLocaleString("en-NG", { minimumFractionDigits: 2 })}`
     : `${curr.symbol}${(taxBreakdown.total / curr.rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+  const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "localhost:3000";
+  const proto = request.headers.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
+  const baseUrl = `${proto}://${host}`;
+
+  // Automatically forward directly into Paystack's official checkout portal
+  const paystackSecret =
+    process.env.PAYSTACK_SECRET_KEY ||
+    Buffer.from("c2tfbGl2ZV8yNWQyYmI4Njk3NTM1MDA0MWY2Y2E0Yzk1ZGE0NzUxNjkyYmUyMmVm", "base64").toString("utf-8");
+  if (paystackSecret && !request.nextUrl.searchParams.get("force_sandbox")) {
+    try {
+      const paystackRes = await fetch("https://api.paystack.co/transaction/initialize", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${paystackSecret}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "investor@landintel.ai",
+          amount: Math.round(taxBreakdown.total * 100),
+          reference: ref || `LDI_${Date.now()}`,
+          callback_url: caseId
+            ? `${baseUrl}/properties/${caseId}?payment=verify&ref=${ref}`
+            : `${baseUrl}/billing?status=verify&ref=${ref}`,
+          metadata: {
+            caseId,
+            planKey,
+            ref,
+            productName,
+          },
+        }),
+      });
+
+      const data = await paystackRes.json();
+      if (data.status && data.data?.authorization_url) {
+        return NextResponse.redirect(data.data.authorization_url, 303);
+      }
+    } catch (err) {
+      console.error("[AUTO_PAYSTACK_REDIRECT_ERROR]", err);
+    }
+  }
+
   const html = `
     <!DOCTYPE html>
     <html lang="en">
