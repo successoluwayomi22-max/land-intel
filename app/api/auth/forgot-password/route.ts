@@ -7,8 +7,8 @@ import { isEmailEnabled } from "@/lib/email/client";
 export async function POST(request: Request) {
   try {
     const ip = getClientIp(request);
-    // Rate limit: 5 requests per 10 minutes per IP
-    const rateCheck = checkRateLimit(`forgot-pw-${ip}`, 5, 600);
+    // Rate limit: 30 requests per 10 minutes per IP
+    const rateCheck = checkRateLimit(`forgot-pw-${ip}`, 30, 600);
     if (!rateCheck.success) {
       return rateLimitResponse(rateCheck);
     }
@@ -70,6 +70,6 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     console.error("Forgot password error:", error);
-    return NextResponse.json({ error: "Failed to process password reset" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Failed to process password reset" }, { status: 500 });
   }
 }

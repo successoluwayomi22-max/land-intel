@@ -6,8 +6,8 @@ import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit
 export async function POST(request: Request) {
   try {
     const ip = getClientIp(request);
-    // Rate limit: 10 attempts per 5 minutes per IP
-    const rateCheck = checkRateLimit(`verify-reset-otp-${ip}`, 10, 300);
+    // Rate limit: 30 attempts per 5 minutes per IP
+    const rateCheck = checkRateLimit(`verify-reset-otp-${ip}`, 30, 300);
     if (!rateCheck.success) {
       return rateLimitResponse(rateCheck);
     }
@@ -62,6 +62,6 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     console.error("Verify reset OTP error:", error);
-    return NextResponse.json({ error: "Failed to verify reset code" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Failed to verify reset code" }, { status: 500 });
   }
 }
