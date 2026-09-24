@@ -13,7 +13,6 @@ import {
   EyeOff,
   RefreshCw,
   Clock,
-  Sparkles,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -41,8 +40,6 @@ export default function ForgotPasswordPage() {
 
   // Step 2: OTP
   const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
-  const [devOtpCode, setDevOtpCode] = useState<string | null>(null);
-  const [deliveryNotice, setDeliveryNotice] = useState<string | null>(null);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [expiryCountdown, setExpiryCountdown] = useState(INITIAL_EXPIRY_SECONDS);
   const [resending, setResending] = useState(false);
@@ -113,12 +110,6 @@ export default function ForgotPasswordPage() {
         return;
       }
 
-      if (data.devOtpCode) {
-        setDevOtpCode(data.devOtpCode);
-      }
-      if (data.deliveryNotice) {
-        setDeliveryNotice(data.deliveryNotice);
-      }
       setExpiryCountdown(INITIAL_EXPIRY_SECONDS);
       setResendCooldown(60);
       setStep(2);
@@ -199,14 +190,6 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  const handleAutoFillDevCode = () => {
-    if (!devOtpCode) return;
-    const digits = devOtpCode.split("").slice(0, 6);
-    setOtpDigits(digits);
-    setError("");
-    handleVerifyOtp(devOtpCode);
-  };
-
   const handleVerifyOtp = async (codeToVerify?: string) => {
     const fullCode = codeToVerify || otpDigits.join("");
     if (fullCode.length !== 6) {
@@ -261,12 +244,6 @@ export default function ForgotPasswordPage() {
         return;
       }
 
-      if (data.devOtpCode) {
-        setDevOtpCode(data.devOtpCode);
-      }
-      if (data.deliveryNotice) {
-        setDeliveryNotice(data.deliveryNotice);
-      }
       setExpiryCountdown(INITIAL_EXPIRY_SECONDS);
       setResendCooldown(60);
       setOtpDigits(["", "", "", "", "", ""]);
@@ -467,32 +444,7 @@ export default function ForgotPasswordPage() {
                 </span>
               </div>
 
-              {/* Local Dev Sandbox Helper */}
-              {devOtpCode && (
-                <div className="p-3 bg-blue-50/80 border border-blue-200/80 rounded-lg text-left space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-900 flex items-center gap-1">
-                      <Sparkles className="w-3 h-3 text-blue-600" />
-                      Testing Sandbox Code
-                    </span>
-                    <span className="font-mono font-bold text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
-                      {devOtpCode}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleAutoFillDevCode}
-                    className="text-[11px] text-blue-700 hover:text-blue-950 font-semibold underline cursor-pointer"
-                  >
-                    Click to auto-fill sandbox code &rarr;
-                  </button>
-                  {deliveryNotice && (
-                    <p className="text-[10px] text-blue-900/80 pt-1 border-t border-blue-200/60 leading-tight">
-                      <strong>Delivery Notice:</strong> Resend is using test domain (<code>onboarding@resend.dev</code>), which restricts live dispatch to non-owner inboxes until custom domain is verified. Use the code above to test.
-                    </p>
-                  )}
-                </div>
-              )}
+
 
               <Button
                 variant="primary"

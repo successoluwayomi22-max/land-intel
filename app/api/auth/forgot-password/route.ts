@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 import { generateOTP, hashOTP, sendPasswordResetEmail } from "@/lib/email/send";
-import { isEmailEnabled } from "@/lib/email/client";
 
 export async function POST(request: Request) {
   try {
@@ -25,12 +24,12 @@ export async function POST(request: Request) {
       where: { email: normalizedEmail },
     });
 
-    // To prevent email enumeration, return a success message even if the user isn't found
+    // Check if the user has a registered account
     if (!user) {
-      return NextResponse.json({
-        success: true,
-        message: "If an account exists for this email, a 6-digit verification code has been dispatched.",
-      });
+      return NextResponse.json(
+        { error: "No account found with this email address. Please make sure the email is registered." },
+        { status: 404 }
+      );
     }
 
     // Generate secure 6-digit OTP (overwrites any previous OTP so only the latest is valid)
@@ -49,7 +48,7 @@ export async function POST(request: Request) {
 
     console.log(`[AUTH] Password reset OTP requested for ${normalizedEmail}. OTP: ${otpCode} (expires in ${expiresInMinutes}m)`);
 
-    // Await email dispatch to verify delivery
+    // Await email dispatch directly to the user's registered email
     const emailResult = await sendPasswordResetEmail({
       email: user.email,
       name: user.name,
@@ -57,19 +56,21 @@ export async function POST(request: Request) {
       expiresInMinutes,
     });
 
-    const isDeliveryBlocked = !emailResult.success;
-    // Always provide devOtpCode if delivery was blocked by provider or in dev mode
-    const showDevCode = isDeliveryBlocked || !isEmailEnabled() || process.env.NODE_ENV !== "production";
+    if (!emailResult.success) {
+      console.error(`[AUTH] Failed to dispatch password reset email to ${user.email}:`, emailResult.error);
+      return NextResponse.json(
+        {
+          error:
+            emailResult.error ||
+            "Unable to deliver verification code to your email. Please try again or contact support.",
+        },
+        { status: 502 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      message: emailResult.success
-        ? "A 6-digit verification code has been dispatched to your email address."
-        : "Email delivery restricted by provider sandbox. Testing code provided below.",
-      devOtpCode: showDevCode ? otpCode : undefined,
-      deliveryNotice: isDeliveryBlocked
-        ? "Resend is currently using onboarding@resend.dev, which only delivers to the Resend account owner. To send to any recipient, verify your domain in Resend."
-        : undefined,
+      message: `A 6-digit verification code has been dispatched to ${user.email}.`,
       expiresInMinutes,
     });
   } catch (error: any) {
