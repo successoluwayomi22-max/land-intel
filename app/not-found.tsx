@@ -35,7 +35,7 @@ export default function NotFound() {
           </Link>
 
           <Link href="/" className="w-full sm:w-auto">
-            <Button variant="outline" size="md" className="w-full border-slate-800 text-slate-300 hover:text-white text-xs bg-slate-900">
+            <Button variant="outline-dark" size="md" className="w-full border-slate-700 text-slate-100 hover:text-white text-xs bg-slate-900/95 font-semibold">
               <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
               <span>Platform Home</span>
             </Button>

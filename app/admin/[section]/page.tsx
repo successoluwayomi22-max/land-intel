@@ -339,17 +339,17 @@ export default function AdminSectionPage() {
 
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
+            variant="outline-dark"
             size="sm"
             onClick={fetchData}
             isLoading={refreshing}
-            className="border-slate-800 text-slate-300 hover:text-white text-xs bg-slate-900/80"
+            className="border-slate-700 text-slate-100 hover:text-white text-xs bg-slate-900/95 hover:bg-slate-800 font-semibold shadow-xs"
           >
-            <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+            <RefreshCw className="w-3.5 h-3.5 mr-1.5 text-amber-400" />
             <span>Refresh</span>
           </Button>
           <Link href="/admin">
-            <Button variant="ghost" size="sm" className="text-xs text-slate-400 hover:text-white">
+            <Button variant="ghost" size="sm" className="text-xs text-slate-300 hover:text-white hover:bg-slate-900 font-semibold">
               <span>Command Deck</span>
               <ChevronRight className="w-3.5 h-3.5 ml-1" />
             </Button>

@@ -65,9 +65,9 @@ export default function GlobalErrorPage({
 
           <Link href="/dashboard">
             <Button
-              variant="outline"
+              variant="outline-dark"
               size="md"
-              className="border-slate-800 text-slate-300 hover:text-white text-xs bg-slate-900"
+              className="border-slate-700 text-slate-100 hover:text-white text-xs bg-slate-900/95 font-semibold"
             >
               <Home className="w-3.5 h-3.5 mr-1.5" />
               <span>Return to Dashboard</span>

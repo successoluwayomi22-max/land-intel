@@ -339,7 +339,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </div>
           <button
             onClick={handleLogout}
-            className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-950/50 text-slate-400 hover:text-rose-400 border border-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-950/50 text-slate-200 hover:text-rose-400 border border-slate-700 transition-colors cursor-pointer"
             title="Terminate Admin Session"
           >
             <LogOut className="w-4 h-4" />
@@ -365,9 +365,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 TACTICAL COMMAND DECK
               </span>
               <span>•</span>
-              <span className="text-slate-300">CLUSTER: GRID-01</span>
+              <span className="text-slate-200">CLUSTER: GRID-01</span>
               <span>•</span>
-              <span className="text-emerald-400 font-semibold">DB: SQLITE (HEALTHY)</span>
+              <span className="text-emerald-400 font-semibold">DB: NEON-POSTGRES (ONLINE)</span>
             </div>
           </div>
 
@@ -376,7 +376,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-950/40 hover:bg-blue-900/50 border border-blue-700/50 text-xs font-bold text-blue-300 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-950/60 hover:bg-blue-900/70 border border-blue-600/50 text-xs font-bold text-blue-200 hover:text-white transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Customer View</span>
@@ -384,7 +384,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
             <button
               onClick={handleLogout}
-              className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-950/40 text-slate-400 hover:text-rose-400 border border-slate-800 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-950/40 text-slate-200 hover:text-rose-400 border border-slate-700 transition-colors cursor-pointer"
               title="Sign Out"
             >
               <LogOut className="w-4 h-4" />

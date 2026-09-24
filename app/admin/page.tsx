@@ -368,9 +368,9 @@ export default function AdminProDashboardPage() {
           <button
             onClick={fetchData}
             disabled={refreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-300 transition-colors disabled:opacity-50 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-100 hover:text-white transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin text-amber-400" : ""}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin text-amber-400" : "text-amber-400"}`} />
             <span>{refreshing ? "Syncing..." : "Sync Telemetry"}</span>
           </button>
         </div>

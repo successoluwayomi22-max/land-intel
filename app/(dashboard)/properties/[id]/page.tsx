@@ -983,12 +983,12 @@ export default function PropertyCaseHubPage() {
                 </div>
               )}
               <Button
-                variant="outline"
+                variant="outline-dark"
                 size="sm"
                 onClick={handleClearAssistant}
-                className="text-xs text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white"
+                className="text-xs font-semibold text-slate-100 hover:text-white border-slate-700 hover:border-slate-600 bg-slate-900/90 hover:bg-slate-800 shadow-xs"
               >
-                <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                <Trash2 className="w-3.5 h-3.5 mr-1.5 text-slate-300" />
                 <span>Reset Chat</span>
               </Button>
             </div>
