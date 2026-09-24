@@ -49,16 +49,6 @@ export async function sendWelcomeEmail(user: {
 
     if (error) {
       console.error("[EMAIL] Welcome email error:", error);
-      if (user.email !== BRAND_EMAIL) {
-        console.warn(`[EMAIL] Relaying welcome email copy to brand owner ${BRAND_EMAIL}`);
-        await resend!.emails.send({
-          from: EMAIL_FROM,
-          to: BRAND_EMAIL,
-          replyTo: BRAND_EMAIL,
-          subject: `[Sandbox Relay for ${user.email}] Welcome to LandIntel`,
-          html,
-        }).catch(() => {});
-      }
       return { success: false, error: error.message };
     }
 
@@ -106,16 +96,6 @@ export async function sendOTPEmail(user: {
 
     if (error) {
       console.error("[EMAIL] OTP email error:", error);
-      if (user.email !== BRAND_EMAIL) {
-        console.warn(`[EMAIL] Relaying OTP email copy to brand owner ${BRAND_EMAIL}`);
-        await resend!.emails.send({
-          from: EMAIL_FROM,
-          to: BRAND_EMAIL,
-          replyTo: BRAND_EMAIL,
-          subject: `[Sandbox Relay for ${user.email}] ${user.otpCode} — Your LandIntel Verification Code`,
-          html,
-        }).catch(() => {});
-      }
       return { success: false, error: error.message };
     }
 
@@ -162,16 +142,6 @@ export async function sendPasswordResetEmail(user: {
 
     if (error) {
       console.error("[EMAIL] Password reset email error:", error);
-      if (user.email !== BRAND_EMAIL) {
-        console.warn(`[EMAIL] Relaying Password Reset email copy to brand owner ${BRAND_EMAIL}`);
-        await resend!.emails.send({
-          from: EMAIL_FROM,
-          to: BRAND_EMAIL,
-          replyTo: BRAND_EMAIL,
-          subject: `[Sandbox Relay for ${user.email}] ${user.otpCode} — Reset Your LandIntel Password`,
-          html,
-        }).catch(() => {});
-      }
       return { success: false, error: error.message };
     }
 
