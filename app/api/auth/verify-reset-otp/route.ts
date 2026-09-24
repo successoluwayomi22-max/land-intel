@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     const hashedInput = hashOTP(cleanCode);
     if (user.resetToken !== hashedInput) {
       return NextResponse.json(
-        { error: "Invalid verification code. Please check your email and try again." },
+        { error: "Invalid verification code. If you requested multiple codes, please ensure you are entering the most recent one." },
         { status: 401 }
       );
     }

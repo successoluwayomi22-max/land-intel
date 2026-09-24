@@ -10,7 +10,7 @@ interface PasswordResetEmailProps {
 export function PasswordResetEmail({
   userName,
   otpCode,
-  expiresInMinutes = 10,
+  expiresInMinutes = 5,
 }: PasswordResetEmailProps): string {
   const firstName = userName.split(" ")[0] || userName;
   const spacedCode = otpCode.split("").join(" &nbsp; ");
@@ -66,7 +66,7 @@ export function PasswordResetEmail({
                 <tr>
                   <td style="padding:10px 14px;background-color:#fef3c7;border-radius:8px;border:1px solid #fde68a;">
                     <p style="font-size:12px;color:#92400e;margin:0;font-weight:600;">
-                      ⏱ This verification code expires in ${expiresInMinutes} minutes. If you did not request a password reset, you can safely ignore this email.
+                      ⏱ This verification code expires in ${expiresInMinutes} minutes. If you requested multiple codes, only the most recent code will work.
                     </p>
                   </td>
                 </tr>

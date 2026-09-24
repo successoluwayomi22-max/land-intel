@@ -24,7 +24,7 @@ import { LocaleSelector } from "@/components/ui/LocaleSelector";
 import { PasswordStrengthMeter, getPasswordStrength } from "@/components/ui/PasswordStrengthMeter";
 import { useToast } from "@/components/ui/Toast";
 
-const INITIAL_EXPIRY_SECONDS = 600; // 10 minutes
+const INITIAL_EXPIRY_SECONDS = 300; // 5 minutes
 
 export default function ForgotPasswordPage() {
   const { t } = useLocale();
@@ -244,7 +244,8 @@ export default function ForgotPasswordPage() {
       setExpiryCountdown(INITIAL_EXPIRY_SECONDS);
       setResendCooldown(60);
       setOtpDigits(["", "", "", "", "", ""]);
-      toast("A fresh verification code has been sent!", "success");
+      setTimeout(() => otpInputsRef.current[0]?.focus(), 50);
+      toast("Fresh code sent! Only your latest code is valid.", "success");
     } catch {
       setError("Could not resend code. Please try again.");
     } finally {

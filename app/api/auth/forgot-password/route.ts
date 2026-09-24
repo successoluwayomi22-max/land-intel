@@ -33,10 +33,10 @@ export async function POST(request: Request) {
       });
     }
 
-    // Generate secure 6-digit OTP
+    // Generate secure 6-digit OTP (overwrites any previous OTP so only the latest is valid)
     const otpCode = generateOTP();
     const otpHash = hashOTP(otpCode);
-    const expiresInMinutes = 10;
+    const expiresInMinutes = 5;
     const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000);
 
     await db.user.update({

@@ -136,7 +136,7 @@ export async function sendPasswordResetEmail(user: {
   otpCode: string;
   expiresInMinutes?: number;
 }): Promise<{ success: boolean; error?: string }> {
-  const expiresInMinutes = user.expiresInMinutes || 10;
+  const expiresInMinutes = user.expiresInMinutes || 5;
 
   if (!isEmailEnabled()) {
     console.log(
