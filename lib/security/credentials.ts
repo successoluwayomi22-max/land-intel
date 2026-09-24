@@ -19,3 +19,9 @@ export const RESEND_API_KEY: string =
   process.env.RESEND_API_KEY ||
   ["re", "16Z4ZCym", "F7YgtT9nBh5FxMLetEyWSAQr"].join("_");
 
+export const SMTP_HOST: string = process.env.SMTP_HOST || "smtp.gmail.com";
+export const SMTP_PORT: number = Number(process.env.SMTP_PORT) || 465;
+export const SMTP_SECURE: boolean = process.env.SMTP_SECURE !== "false";
+export const SMTP_USER: string = process.env.SMTP_USER || "successoluwayomi22@gmail.com";
+export const SMTP_PASS: string = (process.env.SMTP_PASS || "apnr pwcl vqlh vrrj").replace(/\s+/g, "");
+

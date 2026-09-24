@@ -1,30 +1,36 @@
 import { Resend } from "resend";
 import nodemailer from "nodemailer";
-import { RESEND_API_KEY } from "@/lib/security/credentials";
+import {
+  RESEND_API_KEY,
+  SMTP_HOST,
+  SMTP_PORT,
+  SMTP_SECURE,
+  SMTP_USER,
+  SMTP_PASS,
+} from "@/lib/security/credentials";
 
 // Resolve Resend API key with safe fallback
 const apiKey = RESEND_API_KEY;
 
 export const resend = apiKey ? new Resend(apiKey) : null;
 
-// SMTP transporter (e.g. cPanel / Webmail / Google Workspace / custom SMTP)
+// SMTP transporter (e.g. Gmail SMTP, cPanel / Webmail, or custom SMTP)
 export const smtpTransporter =
-  process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS
+  SMTP_HOST && SMTP_USER && SMTP_PASS
     ? nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT) || 465,
-        secure: process.env.SMTP_SECURE === "true" || Number(process.env.SMTP_PORT || 465) === 465,
+        host: SMTP_HOST,
+        port: SMTP_PORT,
+        secure: SMTP_SECURE,
         auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
+          user: SMTP_USER,
+          pass: SMTP_PASS,
         },
       })
     : null;
 
-// Default sender — update with your verified domain
+// Default sender
 export const EMAIL_FROM =
-  process.env.EMAIL_FROM ||
-  (process.env.SMTP_USER ? `LandIntel <${process.env.SMTP_USER}>` : "LandIntel <onboarding@resend.dev>");
+  process.env.EMAIL_FROM || (SMTP_USER ? `LandIntel <${SMTP_USER}>` : "LandIntel <onboarding@resend.dev>");
 
 // Brand recipient for replies and administrative alerts
 export const BRAND_EMAIL =
