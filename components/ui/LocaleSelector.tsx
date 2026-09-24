@@ -101,14 +101,33 @@ export const LocaleSelector: React.FC<{
       {/* Modern High-End Trigger Button */}
       <button
         type="button"
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          if (typeof window !== "undefined") {
+            (window as any).__landintel_load_translate?.();
+          }
+          setOpen(!open);
+        }}
+        onMouseEnter={() => {
+          if (typeof window !== "undefined") {
+            (window as any).__landintel_load_translate?.();
+          }
+        }}
+        onFocus={() => {
+          if (typeof window !== "undefined") {
+            (window as any).__landintel_load_translate?.();
+          }
+        }}
         className={`notranslate group relative inline-flex items-center ${compact ? "gap-1.5 px-2.5 py-1 text-[11px]" : "gap-2 px-3 py-1.5 text-xs"} rounded-full font-semibold transition-all duration-200 border shadow-xs cursor-pointer select-none shrink-0 ${
           isDark
             ? "bg-slate-900/90 hover:bg-slate-800 text-slate-100 border-slate-700/80 hover:border-slate-600 focus:ring-2 focus:ring-emerald-500/40"
             : "bg-white hover:bg-slate-50 text-slate-900 border-slate-200 hover:border-slate-300 focus:ring-2 focus:ring-brand-blue/30"
         } ${open ? (isDark ? "ring-2 ring-emerald-500/50 border-emerald-500/60" : "ring-2 ring-blue-500/30 border-blue-400") : ""}`}
         title={`Active: ${currency} (${activeCurrency.symbol}) | Language: ${activeLanguage.nativeName} (${activeLanguage.label})`}
-        aria-label="Currency and Language Selector"
+        aria-label={
+          compact
+            ? `${currency} • ${activeLanguage.code.toUpperCase()}, Currency and Language Selector`
+            : `${currency} (${activeCurrency.symbol}) • ${activeLanguage.code.toUpperCase()}, Currency and Language Selector`
+        }
       >
         {compact ? (
           <>

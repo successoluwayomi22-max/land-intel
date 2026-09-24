@@ -12,7 +12,6 @@ const urbanist = Urbanist({
   subsets: ["latin"],
   variable: "--font-urbanist",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const viewport: Viewport = {
@@ -100,8 +99,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="preconnect" href="https://translate.google.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://translate.googleapis.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://translate.google.com" />
         <link rel="dns-prefetch" href="https://translate.googleapis.com" />
         <script

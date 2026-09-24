@@ -8,6 +8,7 @@ declare global {
     google?: any;
     googleTranslateElementInit?: () => void;
     __landintel_sync_translate?: (lang: string) => void;
+    __landintel_load_translate?: () => void;
   }
 }
 
@@ -20,13 +21,16 @@ declare global {
  * 
  * Key behaviors:
  * 1. Pre-sets the googtrans cookie from localStorage BEFORE the script loads.
- * 2. Initializes the widget into a hidden container.
- * 3. Exposes window.__landintel_sync_translate for the LocaleProvider to call.
- * 4. Uses MutationObserver + polling to ensure the combo select is populated.
- * 5. Aggressively hides all injected Google Translate UI artifacts.
+ * 2. Defers loading for default English visitors until interaction or idle, saving CPU & eliminating cookie warnings.
+ * 3. Initializes the widget into a hidden container.
+ * 4. Ensures all injected form elements have valid id, name, and aria-labels.
+ * 5. Uses MutationObserver + polling to ensure the combo select is populated.
+ * 6. Aggressively hides all injected Google Translate UI artifacts.
  */
 export function GoogleTranslateIntegration() {
-  // Pre-set cookies before the translate script loads
+  const [shouldLoadScript, setShouldLoadScript] = React.useState(false);
+
+  // Check if translation is needed immediately or can be deferred
   useEffect(() => {
     try {
       const savedLang =
@@ -35,6 +39,7 @@ export function GoogleTranslateIntegration() {
         "en";
       
       if (savedLang && savedLang !== "en") {
+        setShouldLoadScript(true);
         // Map our codes to Google's codes
         const GOOGLE_MAP: Record<string, string> = {
           zh: "zh-CN", pcm: "en",
@@ -48,18 +53,33 @@ export function GoogleTranslateIntegration() {
         if (hostname !== "localhost" && hostname !== "127.0.0.1") {
           document.cookie = `googtrans=${transVal}; path=/; domain=.${hostname}; max-age=31536000; SameSite=Lax;`;
         }
+      } else {
+        // For default English users, register prefetch hook and delay load
+        window.__landintel_load_translate = () => setShouldLoadScript(true);
+
+        // Defer until browser is completely idle (4 seconds)
+        const timer = setTimeout(() => {
+          setShouldLoadScript(true);
+        }, 4000);
+
+        return () => clearTimeout(timer);
       }
     } catch {}
   }, []);
 
   useEffect(() => {
+    if (!shouldLoadScript) return;
+
     const initWidget = () => {
       try {
         if (window.google?.translate?.TranslateElement) {
           const container = document.getElementById("google_translate_element");
           if (!container) return;
           // Avoid re-initialization if already mounted
-          if (container.querySelector(".goog-te-combo")) return;
+          if (container.querySelector(".goog-te-combo")) {
+            hideTranslateArtifacts();
+            return;
+          }
 
           new window.google.translate.TranslateElement(
             {
@@ -80,6 +100,7 @@ export function GoogleTranslateIntegration() {
               window.__landintel_sync_translate?.(savedLang);
             }, 300);
           }
+          hideTranslateArtifacts();
         }
       } catch {}
     };
@@ -107,7 +128,7 @@ export function GoogleTranslateIntegration() {
           observer?.disconnect();
         }
 
-        // Also continuously hide injected artifacts
+        // Continuously hide injected artifacts and fix form fields
         hideTranslateArtifacts();
       });
       observer.observe(document.body, { childList: true, subtree: true });
@@ -127,7 +148,7 @@ export function GoogleTranslateIntegration() {
       observer?.disconnect();
       clearInterval(pollInterval);
     };
-  }, []);
+  }, [shouldLoadScript]);
 
   return (
     <>
@@ -135,11 +156,13 @@ export function GoogleTranslateIntegration() {
         id="google_translate_element"
         style={{ display: "none" }}
       />
-      <Script
-        id="google-translate-script"
-        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        strategy="lazyOnload"
-      />
+      {shouldLoadScript && (
+        <Script
+          id="google-translate-script"
+          src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          strategy="lazyOnload"
+        />
+      )}
     </>
   );
 }
@@ -200,6 +223,22 @@ function hideTranslateArtifacts() {
         f.setAttribute("tabindex", "-1");
         f.setAttribute("aria-hidden", "true");
       });
+    });
+
+    // Fix Lighthouse / DevTools: "A form field element should have an id or name attribute"
+    const combos = document.querySelectorAll<HTMLSelectElement>('.goog-te-combo, select:not([id]):not([name])');
+    combos.forEach((el) => {
+      if (!el.id) el.id = 'google-translate-select';
+      if (!el.name) el.name = 'google-translate-select';
+      if (!el.getAttribute('autocomplete')) el.setAttribute('autocomplete', 'off');
+      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', 'Language Selector');
+    });
+
+    document.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+      'input:not([id]):not([name]), textarea:not([id]):not([name])'
+    ).forEach((el, idx) => {
+      if (!el.id) el.id = `form-field-${idx}`;
+      if (!el.name) el.name = `form-field-${idx}`;
     });
   } catch {}
 }

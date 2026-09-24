@@ -475,7 +475,7 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white border border-brand-border rounded-2xl p-6 space-y-4 shadow-subtle hover:border-brand-blue/50 hover:shadow-card transition-all">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center font-black">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-black">
                   01
                 </div>
                 <h3 className="text-base font-bold text-brand-darkNavy font-heading">
@@ -487,7 +487,7 @@ export default function LandingPage() {
               </div>
 
               <div className="bg-white border border-brand-border rounded-2xl p-6 space-y-4 shadow-subtle hover:border-emerald-500/50 hover:shadow-card transition-all">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-black">
                   02
                 </div>
                 <h3 className="text-base font-bold text-brand-darkNavy font-heading">
@@ -499,7 +499,7 @@ export default function LandingPage() {
               </div>
 
               <div className="bg-white border border-brand-border rounded-2xl p-6 space-y-4 shadow-subtle hover:border-cyan-500/50 hover:shadow-card transition-all">
-                <div className="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center font-black">
+                <div className="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-900 flex items-center justify-center font-black">
                   03
                 </div>
                 <h3 className="text-base font-bold text-brand-darkNavy font-heading">
@@ -511,7 +511,7 @@ export default function LandingPage() {
               </div>
 
               <div className="bg-white border border-brand-border rounded-2xl p-6 space-y-4 shadow-subtle hover:border-purple-500/50 hover:shadow-card transition-all">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-black">
+                <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-900 flex items-center justify-center font-black">
                   04
                 </div>
                 <h3 className="text-base font-bold text-brand-darkNavy font-heading">
