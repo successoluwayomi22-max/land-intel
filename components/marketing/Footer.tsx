@@ -42,9 +42,9 @@ export const Footer: React.FC = () => {
 
           {/* Product */}
           <div className="space-y-3">
-            <h4 className="font-bold text-white uppercase tracking-wider text-[11px]">
+            <p className="font-bold text-white uppercase tracking-wider text-[11px]">
               {t("product") || "Product"}
-            </h4>
+            </p>
             <ul className="space-y-2">
               <li>
                 <Link href="/how-it-works" className="hover:text-white transition-colors">
@@ -71,9 +71,9 @@ export const Footer: React.FC = () => {
 
           {/* Company & Account */}
           <div className="space-y-3">
-            <h4 className="font-bold text-white uppercase tracking-wider text-[11px]">
+            <p className="font-bold text-white uppercase tracking-wider text-[11px]">
               {t("contactAndSupport") || "Contact & Support"}
-            </h4>
+            </p>
             <ul className="space-y-2">
               <li>
                 <Link href="/contact" className="hover:text-white transition-colors">
@@ -119,9 +119,9 @@ export const Footer: React.FC = () => {
 
           {/* Legal */}
           <div className="space-y-3">
-            <h4 className="font-bold text-white uppercase tracking-wider text-[11px]">
+            <p className="font-bold text-white uppercase tracking-wider text-[11px]">
               {t("legalAndTrust") || "Legal & Trust"}
-            </h4>
+            </p>
             <ul className="space-y-2">
               <li>
                 <Link href="/privacy" className="hover:text-white transition-colors">

@@ -95,9 +95,9 @@ export default function ContactPage() {
               <div className="w-9 h-9 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700">
                 <Mail className="w-4 h-4" />
               </div>
-              <h4 className="text-xs font-bold text-brand-textPrimary uppercase tracking-wider">
+              <h2 className="text-xs font-bold text-brand-textPrimary uppercase tracking-wider">
                 {t("supportEmailLabel") || "Official Email"}
-              </h4>
+              </h2>
               <p className="text-xs text-brand-textSecondary font-mono break-all">{contact.displayEmail || "support@landintel.ai"}</p>
             </div>
             <a
@@ -115,9 +115,9 @@ export default function ContactPage() {
                 <PhoneCall className="w-4 h-4" />
               </div>
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-brand-textPrimary uppercase tracking-wider">
+                <h2 className="text-xs font-bold text-brand-textPrimary uppercase tracking-wider">
                   {t("primaryWhatsapp") || "WhatsApp Primary"}
-                </h4>
+                </h2>
                 <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
                   {t("available247") || "24/7 Fast"}
                 </span>
@@ -140,9 +140,9 @@ export default function ContactPage() {
               <div className="w-9 h-9 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
                 <MessageSquare className="w-4 h-4" />
               </div>
-              <h4 className="text-xs font-bold text-brand-textPrimary uppercase tracking-wider">
+              <h2 className="text-xs font-bold text-brand-textPrimary uppercase tracking-wider">
                 {t("secondaryWhatsapp") || "WhatsApp Secondary"}
-              </h4>
+              </h2>
               <p className="text-xs text-brand-textSecondary font-mono font-semibold">{contact.secondaryWhatsapp}</p>
             </div>
             <a
@@ -161,9 +161,9 @@ export default function ContactPage() {
               <div className="w-9 h-9 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-700">
                 <HelpCircle className="w-4 h-4" />
               </div>
-              <h4 className="text-xs font-bold text-brand-textPrimary uppercase tracking-wider">
+              <h2 className="text-xs font-bold text-brand-textPrimary uppercase tracking-wider">
                 {t("socialMediaChannels") || "Social Channels"}
-              </h4>
+              </h2>
               <div className="text-xs text-slate-700 space-y-0.5">
                 <p><span className="font-semibold">FB:</span> {contact.facebook}</p>
                 <p><span className="font-semibold">IG:</span> @{contact.instagram}</p>
@@ -181,9 +181,9 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="space-y-5 lg:col-span-1">
             <div className="bg-white p-6 rounded-card border border-brand-border shadow-subtle space-y-4">
-              <h3 className="text-base font-bold text-brand-darkNavy font-heading">
+              <h2 className="text-base font-bold text-brand-darkNavy font-heading">
                 Support & Escalation Protocol
-              </h3>
+              </h2>
               <p className="text-xs text-brand-textSecondary leading-relaxed">
                 {contact.supportMessage}
               </p>
@@ -220,9 +220,9 @@ export default function ContactPage() {
             <Card className="p-6 sm:p-8">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                  <h3 className="text-base font-bold text-brand-darkNavy font-heading">
+                  <h2 className="text-base font-bold text-brand-darkNavy font-heading">
                     {t("submitInquiry") || "Submit Property Support Inquiry"}
-                  </h3>
+                  </h2>
                   <span className="text-[11px] text-slate-500 font-mono">Reference: DL-SUP</span>
                 </div>
 

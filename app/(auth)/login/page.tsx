@@ -177,9 +177,9 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-1.5">
-            <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 tracking-tight">
               Sign in to your account
-            </h2>
+            </h1>
             <p className="text-sm text-slate-600">
               New to LandIntel?{" "}
               <Link href={`/register${email ? `?email=${encodeURIComponent(email)}` : ""}`} className="font-bold text-brand-blue hover:underline">
@@ -225,9 +225,9 @@ export default function LoginPage() {
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 font-heading">
+                  <h2 className="text-sm font-bold text-slate-900 font-heading">
                     Two-Factor Authentication
-                  </h3>
+                  </h2>
                   <p className="text-xs text-slate-500">
                     Signing in as <strong>{email}</strong>
                   </p>

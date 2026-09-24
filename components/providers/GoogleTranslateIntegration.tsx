@@ -133,18 +133,7 @@ export function GoogleTranslateIntegration() {
     <>
       <div
         id="google_translate_element"
-        style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          width: 1,
-          height: 1,
-          overflow: "hidden",
-          opacity: 0,
-          pointerEvents: "none",
-          zIndex: -9999,
-        }}
-        aria-hidden="true"
+        style={{ display: "none" }}
       />
       <Script
         id="google-translate-script"

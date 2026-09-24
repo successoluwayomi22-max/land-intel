@@ -21,7 +21,7 @@ export const PricingCards: React.FC = () => {
     <div className="space-y-8">
       {/* Interactive Currency Selector Pills */}
       <div className="flex flex-wrap items-center justify-center gap-2">
-        <span className="text-xs font-semibold text-slate-400 mr-2">
+        <span className="text-xs font-semibold text-slate-600 mr-2">
           {t("viewPricingIn")}
         </span>
         {(Object.keys(CURRENCIES) as SupportedCurrency[]).map((cKey) => {
@@ -55,9 +55,9 @@ export const PricingCards: React.FC = () => {
               <span className="text-[11px] font-bold text-brand-textMuted uppercase tracking-wider">
                 {t("preliminaryEvaluation") || "Preliminary Evaluation"}
               </span>
-              <h3 className="text-3xl font-extrabold font-heading text-brand-darkNavy mt-1">
+              <h2 className="text-3xl font-extrabold font-heading text-brand-darkNavy mt-1">
                 {formatPrice(0)}
-              </h3>
+              </h2>
               <p className="text-xs text-brand-textSecondary mt-1">
                 {t("freeScreening") || "Explore preliminary risk indicators and document classifications"}
               </p>
@@ -119,9 +119,9 @@ export const PricingCards: React.FC = () => {
                 </span>
               </div>
               <div className="flex items-baseline gap-1 mt-1">
-                <h3 className="text-3xl font-extrabold font-heading text-brand-darkNavy">
+                <h2 className="text-3xl font-extrabold font-heading text-brand-darkNavy">
                   {formatPrice(48375)}
-                </h3>
+                </h2>
                 <span className="text-xs text-brand-textMuted font-medium">{t("perProperty") || "/ property"}</span>
               </div>
               <p className="text-[11px] text-slate-500 mt-0.5 font-mono">
@@ -186,9 +186,9 @@ export const PricingCards: React.FC = () => {
                 </span>
               </div>
               <div className="flex items-baseline gap-1 mt-1.5">
-                <h3 className="text-3xl font-extrabold font-heading text-white tracking-tight">
+                <h2 className="text-3xl font-extrabold font-heading text-white tracking-tight">
                   {formatPrice(134375)}
-                </h3>
+                </h2>
                 <span className="text-xs text-slate-400 font-medium">/ month</span>
               </div>
               <p className="text-[11px] text-slate-400 mt-0.5 font-mono">

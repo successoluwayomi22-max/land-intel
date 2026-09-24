@@ -55,8 +55,8 @@ export default function FAQPage() {
         <div className="space-y-4">
           {faqs.map((faq, idx) => (
             <div key={idx} className="bg-white border border-brand-border rounded-card p-6 shadow-subtle space-y-2">
-              <h3 className="text-sm font-bold text-brand-textPrimary font-heading">{faq.q}</h3>
-              <p className="text-xs text-brand-textSecondary leading-relaxed">{faq.a}</p>
+              <h2 className="text-sm font-bold text-brand-textPrimary font-heading">{faq.q}</h2>
+              <p className="text-xs text-slate-700 leading-relaxed">{faq.a}</p>
             </div>
           ))}
         </div>

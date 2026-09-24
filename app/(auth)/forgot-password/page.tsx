@@ -323,9 +323,9 @@ export default function ForgotPasswordPage() {
 
         {step === 1 && (
           <>
-            <h2 className="text-xl font-bold font-heading text-brand-textPrimary">
+            <h1 className="text-xl font-bold font-heading text-brand-textPrimary">
               {t("resetYourPassword") || "Reset your password"}
-            </h2>
+            </h1>
             <p className="text-xs text-brand-textSecondary max-w-sm mx-auto">
               Enter your account email to receive a secure 6-digit verification code.
             </p>
@@ -334,9 +334,9 @@ export default function ForgotPasswordPage() {
 
         {step === 2 && (
           <>
-            <h2 className="text-xl font-bold font-heading text-brand-textPrimary">
+            <h1 className="text-xl font-bold font-heading text-brand-textPrimary">
               Enter Verification Code
-            </h2>
+            </h1>
             <p className="text-xs text-brand-textSecondary max-w-sm mx-auto">
               We sent a 6-digit security code to <strong className="text-brand-textPrimary">{email}</strong>
             </p>
@@ -345,9 +345,9 @@ export default function ForgotPasswordPage() {
 
         {step === 3 && (
           <>
-            <h2 className="text-xl font-bold font-heading text-brand-textPrimary">
+            <h1 className="text-xl font-bold font-heading text-brand-textPrimary">
               Create New Password
-            </h2>
+            </h1>
             <p className="text-xs text-brand-textSecondary max-w-sm mx-auto">
               Choose a strong, secure password for your LandIntel account.
             </p>
@@ -570,9 +570,9 @@ export default function ForgotPasswordPage() {
               <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-bold text-brand-textPrimary">
+              <h2 className="text-base font-bold text-brand-textPrimary">
                 Password Successfully Reset
-              </h3>
+              </h2>
               <p className="text-xs text-brand-textSecondary leading-relaxed">
                 Your credentials have been updated. Any previously active sessions have been revoked for your security.
               </p>

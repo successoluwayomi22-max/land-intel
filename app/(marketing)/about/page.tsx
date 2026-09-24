@@ -21,7 +21,7 @@ export default function AboutPage() {
           <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
             {t("aboutTitle") || "Global Land Solutions — Securing High-Value Land for Remote & Diaspora Investors"}
           </h1>
-          <p className="text-base text-brand-textSecondary leading-relaxed">
+          <p className="text-base text-slate-700 leading-relaxed">
             {t("aboutSubtitle") ||
               "LandIntel was founded to address the systematic information asymmetry faced by cross-border buyers, remote investors, and families purchasing real estate across complex property jurisdictions."}
           </p>
@@ -30,10 +30,10 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
           <div className="bg-white p-6 rounded-card border border-brand-border shadow-subtle space-y-2">
             <Compass className="w-6 h-6 text-brand-blue" />
-            <h3 className="text-base font-bold text-brand-textPrimary font-heading">
+            <h2 className="text-base font-bold text-brand-textPrimary font-heading">
               {t("evidenceFirstTitle") || "Evidence-First Methodology"}
-            </h3>
-            <p className="text-xs text-brand-textSecondary leading-relaxed">
+            </h2>
+            <p className="text-xs text-slate-700 leading-relaxed">
               {t("evidenceFirstDesc") ||
                 "We do not provide vague impressions. We parse actual cadastral beacon numbers, verify assignor covenants in Deeds of Assignment, and flag discrepancies across documents."}
             </p>
@@ -41,20 +41,20 @@ export default function AboutPage() {
 
           <div className="bg-white p-6 rounded-card border border-brand-border shadow-subtle space-y-2">
             <ShieldCheck className="w-6 h-6 text-emerald-600" />
-            <h3 className="text-base font-bold text-brand-textPrimary font-heading">
+            <h2 className="text-base font-bold text-brand-textPrimary font-heading">
               {t("objectiveRiskTitle") || "Objective Risk Indicators"}
-            </h3>
-            <p className="text-xs text-brand-textSecondary leading-relaxed">
+            </h2>
+            <p className="text-xs text-slate-700 leading-relaxed">
               {t("objectiveRiskDesc") ||
                 "We do not broker real-estate or sell land. Our incentive is 100% aligned with the buyer: transparent risk exposure before capital is committed."}
             </p>
           </div>
         </div>
 
-        <div className="bg-slate-50 border border-slate-200 rounded-card p-6 text-xs text-brand-textSecondary space-y-3 leading-relaxed">
-          <h4 className="text-sm font-bold text-brand-textPrimary font-heading">
+        <div className="bg-slate-50 border border-slate-200 rounded-card p-6 text-xs text-slate-700 space-y-3 leading-relaxed">
+          <h2 className="text-sm font-bold text-brand-textPrimary font-heading">
             {t("ethicalStanceTitle") || "Our Ethical Stance"}
-          </h4>
+          </h2>
           <p>
             {t("ethicalStanceDesc") ||
               "LandIntel operates under clear boundaries: we do not certify legal title, guarantee government approval, or replace registered surveyors or property attorneys. Instead, we empower buyers with structured evidence and specific questions to take to their independent legal and surveying counsel."}

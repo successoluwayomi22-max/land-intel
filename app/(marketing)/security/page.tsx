@@ -30,10 +30,10 @@ export default function SecurityPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-card border border-brand-border shadow-subtle space-y-2">
             <Lock className="w-6 h-6 text-brand-blue" />
-            <h3 className="text-base font-bold text-brand-textPrimary font-heading">
+            <h2 className="text-base font-bold text-brand-textPrimary font-heading">
               {t("privateStorageFeature") || "Private Object Storage"}
-            </h3>
-            <p className="text-xs text-brand-textSecondary leading-relaxed">
+            </h2>
+            <p className="text-xs text-slate-700 leading-relaxed">
               {t("privateStorageFeatureDesc") ||
                 "Documents are never uploaded to public buckets or public CDN links. Files are isolated in private storage accessible only via short-lived cryptographically signed tokens."}
             </p>
@@ -41,10 +41,10 @@ export default function SecurityPage() {
 
           <div className="bg-white p-6 rounded-card border border-brand-border shadow-subtle space-y-2">
             <EyeOff className="w-6 h-6 text-brand-blue" />
-            <h3 className="text-base font-bold text-brand-textPrimary font-heading">
+            <h2 className="text-base font-bold text-brand-textPrimary font-heading">
               {t("zeroTraining") || "Zero Training on User Documents"}
-            </h3>
-            <p className="text-xs text-brand-textSecondary leading-relaxed">
+            </h2>
+            <p className="text-xs text-slate-700 leading-relaxed">
               {t("zeroTrainingDesc") ||
                 "We never use uploaded Survey Plans, Deeds, or customer covenants to train public AI foundation models. Your files remain your confidential property."}
             </p>
@@ -52,10 +52,10 @@ export default function SecurityPage() {
 
           <div className="bg-white p-6 rounded-card border border-brand-border shadow-subtle space-y-2">
             <Key className="w-6 h-6 text-brand-blue" />
-            <h3 className="text-base font-bold text-brand-textPrimary font-heading">
+            <h2 className="text-base font-bold text-brand-textPrimary font-heading">
               {t("strictIdor") || "Strict IDOR Protection"}
-            </h3>
-            <p className="text-xs text-brand-textSecondary leading-relaxed">
+            </h2>
+            <p className="text-xs text-slate-700 leading-relaxed">
               {t("strictIdorDesc") ||
                 "Every API request enforces multi-tenant ownership validation. User A can never access User B's cases, documents, or reports by manipulating identifiers."}
             </p>
@@ -63,10 +63,10 @@ export default function SecurityPage() {
 
           <div className="bg-white p-6 rounded-card border border-brand-border shadow-subtle space-y-2">
             <FileCheck className="w-6 h-6 text-brand-blue" />
-            <h3 className="text-base font-bold text-brand-textPrimary font-heading">
+            <h2 className="text-base font-bold text-brand-textPrimary font-heading">
               {t("serverSideEntitlements") || "Server-Side Entitlement Enforced"}
-            </h3>
-            <p className="text-xs text-brand-textSecondary leading-relaxed">
+            </h2>
+            <p className="text-xs text-slate-700 leading-relaxed">
               {t("serverSideEntitlementsDesc") ||
                 "All payment and premium feature gating is evaluated server-side. Unlocked data is redacted from the API response for free users, preventing client-side inspection leaks."}
             </p>

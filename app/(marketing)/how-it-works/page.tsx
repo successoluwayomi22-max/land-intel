@@ -68,8 +68,8 @@ export default function HowItWorksPage() {
                 {step.num}
               </span>
               <div className="space-y-1.5">
-                <h3 className="text-base font-bold text-brand-textPrimary font-heading">{step.title}</h3>
-                <p className="text-xs text-brand-textSecondary leading-relaxed">{step.desc}</p>
+                <h2 className="text-base font-bold text-brand-textPrimary font-heading">{step.title}</h2>
+                <p className="text-xs text-slate-700 leading-relaxed">{step.desc}</p>
               </div>
             </div>
           ))}

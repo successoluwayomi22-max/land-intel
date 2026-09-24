@@ -220,9 +220,9 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-1.5">
-            <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 tracking-tight">
               Create your investor account
-            </h2>
+            </h1>
             <p className="text-sm text-slate-600">
               Already have an account?{" "}
               <Link href={`/login${email ? `?email=${encodeURIComponent(email)}` : ""}`} className="font-bold text-brand-blue hover:underline">
@@ -255,7 +255,7 @@ export default function RegisterPage() {
 
             <div className="relative flex items-center justify-center">
               <div className="border-t border-slate-200 w-full" />
-              <span className="bg-white px-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider shrink-0">
+              <span className="bg-white px-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider shrink-0">
                 Or register with email
               </span>
               <div className="border-t border-slate-200 w-full" />
