@@ -138,6 +138,25 @@ export default function ForgotPasswordPage() {
     const clean = val.replace(/\D/g, "");
     if (!clean && val !== "") return;
 
+    // Handle mobile keyboard autofill (e.g. iOS/Android one-time-code suggestion) or multi-digit paste
+    if (clean.length > 1) {
+      const pasted = clean.slice(0, 6);
+      const newDigits = [...otpDigits];
+      for (let i = 0; i < 6; i++) {
+        newDigits[i] = pasted[i] || "";
+      }
+      setOtpDigits(newDigits);
+      setError("");
+
+      const nextIndex = Math.min(pasted.length, 5);
+      otpInputsRef.current[nextIndex]?.focus();
+
+      if (pasted.length === 6) {
+        handleVerifyOtp(pasted);
+      }
+      return;
+    }
+
     const newDigits = [...otpDigits];
     newDigits[index] = clean.slice(-1);
     setOtpDigits(newDigits);
@@ -360,7 +379,7 @@ export default function ForgotPasswordPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <Card className="p-8 shadow-card space-y-5">
+        <Card className="p-5 sm:p-8 shadow-card space-y-5">
           {error && (
             <ErrorAlert
               title="Notice"
@@ -416,8 +435,8 @@ export default function ForgotPasswordPage() {
                 <ShieldCheck className="w-6 h-6" />
               </div>
 
-              {/* 6 Input Boxes */}
-              <div className="flex justify-center gap-2 sm:gap-2.5">
+              {/* 6 Input Boxes - responsive across all devices (phones down to 320px, tablets, laptops) */}
+              <div className="flex justify-center gap-1.5 sm:gap-2.5 max-w-full">
                 {otpDigits.map((digit, index) => (
                   <input
                     key={index}
@@ -426,13 +445,14 @@ export default function ForgotPasswordPage() {
                     }}
                     type="text"
                     inputMode="numeric"
+                    autoComplete={index === 0 ? "one-time-code" : "off"}
                     pattern="[0-9]*"
-                    maxLength={1}
+                    maxLength={index === 0 ? 6 : 1}
                     value={digit}
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(index, e)}
                     onPaste={handleOtpPaste}
-                    className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-black rounded-lg border-2 border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all text-brand-darkNavy bg-white shadow-xs"
+                    className="w-10 h-12 sm:w-12 sm:h-14 text-center text-lg sm:text-2xl font-black rounded-lg border-2 border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all text-brand-darkNavy bg-white shadow-xs"
                     aria-label={`Digit ${index + 1}`}
                   />
                 ))}
