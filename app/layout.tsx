@@ -96,9 +96,9 @@ export const metadata: Metadata = {
     ],
   },
   verification: {
-    google: "googled610769079a4ec09",
+    google: "googlef8411a63fb4c6533",
     other: {
-      "msvalidate.01": "D610769079A4EC09",
+      "msvalidate.01": "E22B9F42F613757DAE52A7F1DC618D30",
     },
   },
 };
@@ -168,9 +168,11 @@ export default function RootLayout({
       <head>
         <link rel="dns-prefetch" href="https://translate.google.com" />
         <link rel="dns-prefetch" href="https://translate.googleapis.com" />
+        <meta name="google-site-verification" content="googlef8411a63fb4c6533" />
+        <meta name="google-site-verification" content="googlef8411a63fb4c6533.html" />
         <meta name="google-site-verification" content="googled610769079a4ec09" />
         <meta name="google-site-verification" content="googled610769079a4ec09.html" />
-        <meta name="msvalidate.01" content="D610769079A4EC09" />
+        <meta name="msvalidate.01" content="E22B9F42F613757DAE52A7F1DC618D30" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
