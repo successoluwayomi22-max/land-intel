@@ -124,6 +124,17 @@ export default function BillingPage() {
         });
         await fetchBillingData(true);
       } else {
+        // Check if the payment was marked as FAILED by the gateway
+        const isFailed = (data.message || "").toLowerCase().includes("abandoned") || (data.message || "").toLowerCase().includes("failed");
+        if (isFailed) {
+          setSelectedReceipt((prev: any) => {
+            if (prev && prev.reference === reference) {
+              return { ...prev, status: "FAILED" };
+            }
+            return prev;
+          });
+          await fetchBillingData(true);
+        }
         setFeedback({
           type: "error",
           message: data.message || "Payment verification could not be completed. The transaction may still be processing with the bank.",

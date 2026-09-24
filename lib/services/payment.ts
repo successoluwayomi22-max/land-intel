@@ -169,7 +169,9 @@ export async function initializeReportPayment(params: InitializePaymentParams): 
 }
 
 /**
- * Verifies payment server-side and unlocks the case report
+ * Verifies payment server-side and unlocks the case report.
+ * For PAYSTACK payments, actually queries Paystack's verification API first.
+ * Only marks as SUCCESSFUL if the gateway confirms the charge.
  */
 export async function verifyAndUnlockPayment(reference: string): Promise<{ success: boolean; message: string }> {
   const payment = await db.payment.findUnique({
@@ -183,6 +185,62 @@ export async function verifyAndUnlockPayment(reference: string): Promise<{ succe
 
   if (payment.status === "SUCCESSFUL") {
     return { success: true, message: "Payment already verified and report unlocked." };
+  }
+
+  // For PAYSTACK payments, verify with the actual Paystack API first
+  if (payment.provider === "PAYSTACK" && PAYSTACK_SECRET && !PAYSTACK_SECRET.includes("mock_secret")) {
+    try {
+      const verifyRes = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${PAYSTACK_SECRET}`,
+        },
+      });
+
+      const verifyData = await verifyRes.json();
+
+      if (!verifyData.status || !verifyData.data) {
+        return { success: false, message: "Unable to verify payment status with Paystack. Please try again later." };
+      }
+
+      const gatewayStatus = verifyData.data.status; // "success" | "abandoned" | "failed" | "pending"
+
+      if (gatewayStatus === "abandoned" || gatewayStatus === "failed") {
+        // Mark as FAILED in our database
+        await db.payment.update({
+          where: { reference },
+          data: { status: "FAILED", verifiedAt: new Date() },
+        });
+        return {
+          success: false,
+          message: gatewayStatus === "abandoned"
+            ? "This payment was abandoned and not completed. Please initiate a new payment."
+            : "This payment failed at the bank or card issuer. Please retry with a different payment method.",
+        };
+      }
+
+      if (gatewayStatus === "pending") {
+        return {
+          success: false,
+          message: "Payment is still being processed by your bank. Please wait a few minutes and try verifying again.",
+        };
+      }
+
+      if (gatewayStatus !== "success") {
+        return {
+          success: false,
+          message: `Payment status is "${gatewayStatus}". Please contact support if you believe this is an error.`,
+        };
+      }
+
+      // gatewayStatus === "success" — proceed to unlock below
+    } catch (apiErr: any) {
+      console.error("[PAYSTACK_VERIFY_API_ERROR]", apiErr?.message || apiErr);
+      return {
+        success: false,
+        message: "Could not reach Paystack verification servers. Please check your connection and try again.",
+      };
+    }
   }
 
   // Idempotently mark payment as SUCCESSFUL and unlock report

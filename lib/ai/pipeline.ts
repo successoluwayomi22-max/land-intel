@@ -275,6 +275,203 @@ export async function askCaseAssistant(caseId: string, question: string): Promis
 
   const q = cleanQuestion.toLowerCase();
 
+  // ═══════════════════════════════════════════════════════════════
+  // CONVERSATIONAL INTELLIGENCE LAYER
+  // Handle greetings, identity, website, help, creator, pricing,
+  // contact, real estate glossary, and social queries.
+  // ═══════════════════════════════════════════════════════════════
+
+  const isGreeting = /^(hi|hello|hey|good\s*(morning|afternoon|evening|day)|howdy|sup|yo|what'?s\s*up|greetings|salaam|hola)/i.test(q) ||
+    /(^|\b)(how\s*(are|r)\s*you|how\s*(are|r)\s*you\s*doing|how\s*do\s*you\s*do|how\s*is\s*it\s*going|how's\s*it\s*going|how's\s*everything|how\s*are\s*things|hope\s*you're\s*well|good\s*day)(\b|$)/i.test(q);
+
+  const isIdentity = /(who\s*(are|r)\s*you|what\s*(are|r)\s*you|what\s*is\s*your\s*name|your\s*name|who\s*am\s*i\s*talking\s*to|tell\s*me\s*about\s*yourself|introduce\s*yourself|what\s*do\s*you\s*do|what\s*can\s*you\s*do|what\s*is\s*your\s*role|are\s*you\s*(an\s*)?(ai|bot|robot|lawyer|human))/i.test(q);
+
+  const isCreator = /(who\s*(made|created|built|developed|owns|founded|runs)\s*(you|this|landintel|the\s*(website|app|platform))|who\s*is\s*the\s*(creator|developer|founder|owner|ceo|author))/i.test(q);
+
+  const isWebsite = /(what\s*is\s*(this|landintel|the\s*(site|website|platform|app))|about\s*(this|landintel|the\s*(site|website|platform|app))|how\s*does\s*(this|landintel|the\s*(site|platform)|it)\s*work|what\s*does\s*(this|landintel)\s*(do|offer)|tell\s*me\s*about\s*(this|landintel|the\s*(platform|company))|what\s*is\s*the\s*url|link\s*to\s*the\s*website|why\s*use\s*landintel)/i.test(q);
+
+  const isPricing = /(how\s*much|pricing|price|cost|how\s*much\s*does\s*it\s*cost|packages|subscription|plans|audit\s*fee|verification\s*fee|is\s*(it|this)\s*free|how\s*do\s*i\s*pay)/i.test(q);
+
+  const isContact = /(contact|support|customer\s*(care|service)|email|phone|whatsapp|helpdesk|office|address|speak\s*to\s*(a\s*)?(human|person|agent|lawyer|surveyor)|reach\s*out|call\s*you)/i.test(q);
+
+  const isHowToBuy = /(how\s*to\s*buy\s*land|steps\s*to\s*buy|avoid\s*(land\s*)?scam|red\s*flags\s*in\s*land|tips\s*for\s*buying\s*land|guide\s*to\s*buying|buying\s*land\s*in\s*nigeria)/i.test(q);
+
+  const isGlossary = /(what\s*is\s*(a\s*)?(c\s*of\s*o|certificate\s*of\s*occupancy|governor'?s\s*consent|gazette|excision|omonile|survey\s*plan|beacon|deed\s*of\s*assignment|freehold|leasehold)|define\s*(c\s*of\s*o|governor'?s\s*consent|gazette|excision))/i.test(q);
+
+  const isHelp = /^(help|how\s*can\s*you\s*help|what\s*can\s*(you|i)\s*(do|ask)|what\s*questions|how\s*to\s*use|guide\s*me|what\s*should\s*i\s*ask)/i.test(q);
+
+  const isThanks = /^(thanks|thank\s*you|thx|cheers|appreciate|wonderful|great\s*(job|work)|well\s*done|nice|awesome|cool|good\s*(job|one))/i.test(q);
+
+  const isGoodbye = /^(bye|goodbye|see\s*you|later|take\s*care|goodnight|gotta\s*go)/i.test(q);
+
+  const isJoke = /(tell\s*me\s*a\s*joke|funny|make\s*me\s*laugh|humor)/i.test(q);
+
+  if (isGreeting) {
+    const hour = new Date().getHours();
+    const timeGreeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+    return {
+      answer: `${timeGreeting}! 👋 I'm doing well, thank you for asking!\n\nWelcome to **LandIntel AI Legal Counsel**. I am actively monitoring your case **"${propertyCase.title}"** located in ${propertyCase.lga}, ${propertyCase.state}.\n\n📊 **Case Quick Status:**\n• Documents: ${propertyCase.documents.length} uploaded\n• Risk Level: **${propertyCase.riskScore?.level || "Pending"}** (${propertyCase.riskScore?.score || "N/A"}/100)\n\nI can help you analyze documents, detect conflicting survey beacons, check seller legitimacy, explain Nigerian land laws (C of O, Excision, Gazette), or answer any questions about the LandIntel platform.\n\nHow can I assist you with this property today?`,
+      evidence: `Case: "${propertyCase.title}" | ${propertyCase.documents.length} document(s) indexed | Status: Active`,
+      confidence: 1.0,
+      recommendedAction: "Ask me anything about this property case, or ask for safety guidance before paying any deposit.",
+    };
+  }
+
+  if (isIdentity) {
+    return {
+      answer: `I am **LandIntel AI Legal Counsel** — an intelligent property due-diligence and conveyancing assistant built specifically for real estate investors, diaspora buyers, and institutions.\n\n🛡️ **What I Do:**\n• **Analyze Documents** — I extract and scrutinize data from Survey Plans, Deeds of Assignment, Certificates of Occupancy (C of O), and Gazette publications.\n• **Detect Conflicts** — I catch conflicting beacon coordinates, plot numbers, mismatched vendor names, and unverified roots of title.\n• **Legal & Cadastral Guidance** — Grounded strictly in Nigerian land law (Land Use Act 1978, SURCON surveying standards, and court precedents).\n• **Actionable Checklists** — I tell you exactly what questions to ask the vendor, what your lawyer must search at Lands Registry, and what your surveyor must chart.\n\n🔍 **My Operating Principle:**\nI do not speculate or hallucinate. Every finding is tied to the actual documents you upload and statutory conveyancing rules. I am designed to assist and empower your legal and surveying team.\n\n🌐 Platform: **LandIntel** (land-intel-omega.vercel.app)`,
+      evidence: "LandIntel Cadastral Intelligence & AI Counsel System",
+      confidence: 1.0,
+      recommendedAction: "Upload all available property documents and ask 'Is this land safe to buy?' for an immediate audit.",
+    };
+  }
+
+  if (isCreator) {
+    return {
+      answer: `**LandIntel** was developed by the **LandIntel Global Technologies** team — an elite group of conveyancing technologists, geospatial/GIS engineers, and Nigerian property lawyers.\n\n🌍 **Our Vision:**\nReal estate acquisitions in Nigeria and across Africa have historically suffered from documentation opacity, Omonile conflicts, and double-allocation scams — particularly impacting diaspora buyers who cannot be physically present. LandIntel was created to provide institutional-grade transparency, automated cadastral auditing, and verifiable title diligence for every land buyer worldwide.\n\n🌐 Official Website: **land-intel-omega.vercel.app**\n📧 Contact: **support@landintel.ai**`,
+      evidence: "LandIntel Technologies Global Inc. — Institutional Property Intelligence",
+      confidence: 1.0,
+      recommendedAction: "Learn more at land-intel-omega.vercel.app or continue your due diligence on this property case.",
+    };
+  }
+
+  if (isWebsite) {
+    return {
+      answer: `**LandIntel** (land-intel-omega.vercel.app) is a global property due-diligence and cadastral intelligence platform designed to eliminate land fraud, boundary disputes, and title defects.\n\n✨ **What LandIntel Offers:**\n1. **Automated Cadastral Audit** — Upload property documents (PDF, JPG, PNG) and receive an instant 15-section risk report within seconds.\n2. **Cross-Document Discrepancy Matrix** — Automatically compares Survey Plans, Deeds, and Receipts to catch mismatched beacons, forged signatures, or boundary overlaps.\n3. **AI Legal Counsel (That's Me!)** — 24/7 dedicated assistant answering inquiries grounded directly in your case files and Nigerian land jurisprudence.\n4. **Official Registry Search & Charting** — Direct verification with State Lands Bureaus (e.g., Alausa/Lagos, AGIS/Abuja) and Surveyor General's offices.\n5. **Publication-Grade Certified PDF Report** — Institutional-quality certification report with risk scores and definitive acquisition verdicts.\n\n🌐 **Visit our website:** [land-intel-omega.vercel.app](https://land-intel-omega.vercel.app)`,
+      evidence: "LandIntel Global Property Intelligence Platform (https://land-intel-omega.vercel.app)",
+      confidence: 1.0,
+      recommendedAction: "Review your case dashboard or ask me questions about this property to explore our intelligence capabilities.",
+    };
+  }
+
+  if (isPricing) {
+    return {
+      answer: `Here is **LandIntel's transparent pricing structure**:\n\n💳 **1. Standard Cadastral Audit (Single Property)**\n• **Price:** ₦48,375 (₦45,000 base + ₦3,375 statutory 7.5% VAT) or ~$35 USD\n• **Includes:** Automated document OCR, 15-section Risk Index, Beacon Discrepancy Matrix, AI Case Assistant, and Certified PDF Report download for this property.\n\n🏆 **2. Professional Investor Subscription**\n• **Price:** ₦134,375 / month (₦125,000 base + ₦9,375 7.5% VAT)\n• **Includes:** Up to 15 active property cases every month, unlimited document uploads, priority AI inquiries, multi-user collaboration, and institutional reporting.\n\n🏛️ **3. Official Registry Search & Ground Verification (Add-On)**\n• Physical charting at Surveyor General's office, official Lands Registry search, and signed legal opinion by accredited solicitors.\n\n🔒 All payments are processed securely through **Paystack** with instant receipt generation.`,
+      evidence: "LandIntel Official Pricing Schedule (Statutory 7.5% VAT included)",
+      confidence: 1.0,
+      recommendedAction: "Click 'Unlock Report' on this case or visit /billing to manage your subscription.",
+    };
+  }
+
+  if (isContact) {
+    return {
+      answer: `You can reach the **LandIntel support and concierge team** through the following channels:\n\n📧 **Customer Support Email:** support@landintel.ai\n📩 **Administrative Inquiries:** successoluwayomi22@gmail.com\n🌐 **Help & Contact Page:** land-intel-omega.vercel.app/contact\n⏰ **Operating Hours:** Monday – Saturday, 8:00 AM – 6:00 PM (WAT / GMT+1)\n\n🤝 **Need a Human Lawyer or Surveyor?**\nIf you need physical on-ground beacon recovery, boundary charting at the Surveyor General's office, or representation during closing, our concierge team can connect you with licensed SURCON surveyors and NBA-accredited property lawyers.\n\nFeel free to send us an email or use the in-app support tab anytime!`,
+      evidence: "LandIntel Customer Service & Concierge Desk",
+      confidence: 1.0,
+      recommendedAction: "Reach out to support@landintel.ai for dedicated assistance or custom enterprise inquiries.",
+    };
+  }
+
+  if (isHowToBuy) {
+    return {
+      answer: `Here is the **6-Step Golden Rule for buying land safely in Nigeria** (especially for diaspora investors):\n\n1. **Do NOT Pay Consideration First** — Never pay purchase money, commitment fees, or non-refundable deposits before completing document verification.\n2. **Physical Beacon Recovery** — Commission an independent registered surveyor to visit the land, pick physical GPS coordinates from boundary beacons, and produce a charting record.\n3. **Surveyor General Charting** — Chart the coordinates at the State Surveyor General's office to confirm the land is **FREE** and not under government acquisition, committed road setback, or agricultural scheme.\n4. **Registry Search at Lands Bureau** — Search the land title at the State Lands Registry (e.g. Alausa, AGIS) to verify the registered owner and confirm no mortgages, court injunctions, or caveats exist.\n5. **Family/Omonile Verification** — If buying customary land, confirm that the accredited family head and principal members all execute the Deed of Assignment.\n6. **Governor's Consent & Perfection** — After executing the Deed, apply for Governor's Consent under the Land Use Act 1978 and register the title at the Lands Bureau to attain indefeasible legal ownership.`,
+      evidence: "Nigerian Conveyancing Practice & Land Use Act 1978 Guidelines",
+      confidence: 1.0,
+      recommendedAction: "Check your case findings to see which of these verification steps are still pending for this property.",
+    };
+  }
+
+  if (isGlossary) {
+    const isCofO = /c\s*of\s*o|certificate\s*of\s*occupancy/i.test(q);
+    const isGovConsent = /governor'?s\s*consent/i.test(q);
+    const isGazette = /gazette/i.test(q);
+    const isExcision = /excision/i.test(q);
+    const isDeed = /deed\s*of\s*assignment/i.test(q);
+    const isSurvey = /survey\s*plan|beacon/i.test(q);
+    const isOmonile = /omonile/i.test(q);
+
+    if (isCofO) {
+      return {
+        answer: `**Certificate of Occupancy (C of O):**\nA legal document issued directly by the State Governor under Section 9 of the Land Use Act 1978 certifying that the holder has a statutory right of occupancy for a fixed term (typically 99 years).\n\n⚠️ **Key Risks to Note:**\n• A C of O does not cure fraud — if issued on already acquired or litigated land, courts can invalidate it.\n• Always verify the C of O number and volume/page registration particulars directly at the State Lands Bureau.`,
+        evidence: "Land Use Act 1978, Section 9",
+        confidence: 1.0,
+        recommendedAction: "Check if a C of O number has been extracted from your case documents.",
+      };
+    }
+
+    if (isGovConsent) {
+      return {
+        answer: `**Governor's Consent:**\nUnder Section 22 of the Land Use Act 1978, any subsequent transaction (sale, assignment, mortgage) on land already backed by a C of O or prior title requires the formal approval/consent of the State Governor.\n\n⚠️ **Critical Rule:**\nA Deed of Assignment without Governor's Consent only conveys an equitable interest, NOT legal title. To be fully protected against competing claims, you must obtain Governor's Consent.`,
+        evidence: "Land Use Act 1978, Section 22; Savannah Bank v. Ajilo",
+        confidence: 1.0,
+        recommendedAction: "Verify whether the seller possesses a Governor's Consent for their previous acquisition.",
+      };
+    }
+
+    if (isExcision || isGazette) {
+      return {
+        answer: `**Excision & Gazette:**\n• **Excision:** The legal process where a State Government releases a portion of acquired communal land back to indigenous families/villages for private development.\n• **Gazette:** The official government publication documenting the excised coordinates, boundary beacons, and acreage.\n\n⚠️ **DANGER ("Excision in Progress"):**\nNever buy land sold as "Excision in Progress"! That is an application, NOT an approved title. If the government rejects the application, you lose the land without compensation. Only buy excised land that has a published Gazette number or excision survey.`,
+        evidence: "State Lands Acquisition & Excision Policy Guidelines",
+        confidence: 1.0,
+        recommendedAction: "Ensure the seller produces the specific Gazette reference or excision survey plan.",
+      };
+    }
+
+    if (isDeed) {
+      return {
+        answer: `**Deed of Assignment:**\nThe primary legal instrument transferring ownership rights, interest, and title from the seller (Assignor) to the buyer (Assignee). It must detail the parties, property description, consideration paid, and roots of title, and must be signed by all parties and witnesses.`,
+        evidence: "Conveyancing Act & Property and Conveyancing Laws",
+        confidence: 1.0,
+        recommendedAction: "Ensure your lawyer drafts or reviews the Deed of Assignment; never use seller-supplied generic drafts.",
+      };
+    }
+
+    if (isSurvey) {
+      return {
+        answer: `**Registered Survey Plan & Beacons:**\nA cadastral plan drawn by a SURCON-registered surveyor showing the exact boundary coordinates, beacon numbers, acreage, and location of the land. It must bear the surveyor's name, SURCON seal, and registration number. Physical concrete pillars (beacons) on the ground must match the plan exactly.`,
+        evidence: "Surveyors Council of Nigeria (SURCON) Standards",
+        confidence: 1.0,
+        recommendedAction: "Order on-ground beacon recovery to ensure the physical plot matches the survey drawing.",
+      };
+    }
+
+    if (isOmonile) {
+      return {
+        answer: `**Omonile (Customary Land Owners):**\nTraditional land-owning families or community lineages. When purchasing customary land, you must ensure that the designated Family Head and principal members all sign the conveyance. Sales made by an unauthorized individual member without the Family Head are void ab initio under Nigerian law.`,
+        evidence: "Ekpendu v. Erika (1959) 4 FSC 79 — Principle of Customary Conveyancing",
+        confidence: 1.0,
+        recommendedAction: "Require family meeting minutes, family resolution letter, and identification of all principal signatories.",
+      };
+    }
+  }
+
+  if (isHelp) {
+    return {
+      answer: `Here's how I can help you with this property case **"${propertyCase.title}"**:\n\n**🔍 Questions You Can Ask Me:**\n• "Is this land safe to buy or pay a deposit?"\n• "What do the survey beacons and coordinates mean?"\n• "Which documents are missing from this case?"\n• "What should my lawyer search at Lands Registry?"\n• "What instructions should I give my surveyor?"\n• "Who is selling this property and are they legitimate?"\n• "What is the purchase price and is it realistic?"\n• "Explain my risk score — why is it high?"\n• "Which documents conflict or have discrepancies?"\n• "What is excision and is it completed?"\n• "What are the rules for buying Omonile/Customary land?"\n• "What packages or pricing does LandIntel offer?"\n• "How do I contact customer support?"\n\n**📊 Current Case Status:**\n• Documents: ${propertyCase.documents.length} uploaded\n• Risk Level: ${propertyCase.riskScore?.level || "Pending analysis"}\n• Risk Score: ${propertyCase.riskScore?.score || "N/A"}/100\n\nJust type your question and I'll analyze your case documents to give you a grounded answer!`,
+      evidence: `Case: ${propertyCase.title} | ${propertyCase.documents.length} documents | Score: ${propertyCase.riskScore?.score || "N/A"}/100`,
+      confidence: 1.0,
+      recommendedAction: "Start by asking 'Is this land safe to buy?' for a comprehensive safety assessment.",
+    };
+  }
+
+  if (isThanks) {
+    return {
+      answer: `You're very welcome! 😊 I'm always here to help you make safe, fraud-free property investment decisions for **"${propertyCase.title}"**.\n\nRemember:\n• Always verify findings with a **licensed Nigerian property lawyer**\n• Conduct a **physical site inspection** with a registered surveyor before committing funds\n• Never pay full consideration without completing all due-diligence steps\n\nFeel free to ask more questions anytime — I'm available 24/7 for this case!`,
+      evidence: `Ongoing analysis for: ${propertyCase.title}`,
+      confidence: 1.0,
+      recommendedAction: "Continue exploring other aspects of this property case, or upload additional documents for deeper analysis.",
+    };
+  }
+
+  if (isGoodbye) {
+    return {
+      answer: `Take care! 👋 Your case for **"${propertyCase.title}"** remains active and all analysis is securely saved.\n\nWhenever you return, I'll have full context of this case and all ${propertyCase.documents.length} document(s). You can continue asking questions at any time.\n\n**Before you go, remember:**\n• Your risk score is currently ${propertyCase.riskScore?.score || "pending"}/100 (${propertyCase.riskScore?.level || "awaiting analysis"})\n• Always retain a qualified property lawyer for any legal transaction\n\nSafe investing! 🏗️`,
+      evidence: `Case preserved: ${propertyCase.title}`,
+      confidence: 1.0,
+      recommendedAction: "Return anytime to continue your due-diligence analysis.",
+    };
+  }
+
+  if (isJoke) {
+    return {
+      answer: `While I take property diligence very seriously, here's a land buyer's classic truth! 😄\n\n> "The only thing more expensive than proper due diligence... is NOT doing proper due diligence."\n\nNow, shall we get back to protecting your investment in **"${propertyCase.title}"**? Ask me about the risk score, missing documents, or what your lawyer should verify!`,
+      evidence: "LandIntel AI Counsel — Property focused, but occasionally witty.",
+      confidence: 1.0,
+      recommendedAction: "Let's focus on your property case — try asking 'Is this land safe to buy?'",
+    };
+  }
+
+
   // Extract structured case context
   const allPlots = Array.from(new Set(
     propertyCase.documents.flatMap((d) => d.extractions.filter((e) => e.fieldName === "plot_number").map((e) => e.fieldValue))
@@ -645,18 +842,19 @@ USER QUESTION:
 
 INSTRUCTIONS:
 1. Provide a direct, authoritative, and practical answer grounded in this specific property case and statutory Nigerian land law.
-2. If the user asks whether to buy or pay a deposit, provide clear legal safety guidance based on the risk score (${score}/100) and whether documents were verified.
-3. Be professional, direct, and actionable. Do not hallucinate documents that are not listed in the dossier.
-4. Format your response clearly with concise paragraphs and bullet points where helpful.
-5. In addition to your answer, provide:
-   - A short "Evidence" statement citing the specific documents or case records consulted.
+2. If the user asks a conversational question (greeting, who you are, what LandIntel is, what services/packages/pricing are offered, how to contact support, or general questions about buying land safely in Nigeria), respond warmly, intelligently, and professionally while explaining LandIntel's services and tying back to the current property case.
+3. If the user asks whether to buy or pay a deposit, provide clear legal safety guidance based on the risk score (${score}/100) and whether documents were verified.
+4. Be professional, direct, and actionable. Do not hallucinate documents that are not listed in the dossier.
+5. Format your response clearly with concise paragraphs and bullet points where helpful.
+6. In addition to your answer, provide:
+   - A short "Evidence" statement citing the specific documents, case records, or platform knowledge consulted.
    - A short "Recommended Next Step" outlining the exact next procedural action the buyer/investor should take.
 
 Respond ONLY with valid JSON in this exact structure:
 {
-  "answer": "Your detailed legal and cadastral analysis...",
-  "evidence": "Case records, survey references, or statutory provisions cited...",
-  "recommendedAction": "Single concrete next step for buyer..."
+  "answer": "Your detailed legal, cadastral, or conversational response...",
+  "evidence": "Case records, survey references, platform knowledge, or statutory provisions cited...",
+  "recommendedAction": "Single concrete next step for user..."
 }`;
 
       const modelNames = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-2.0-flash"];

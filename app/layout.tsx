@@ -22,33 +22,69 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "LandIntel | Global Property Due-Diligence & Cadastral Intelligence",
+  title: {
+    default: "LandIntel | Global Property Due-Diligence & Cadastral Intelligence",
+    template: "%s | LandIntel",
+  },
   description:
-    "Institutional property due-diligence, cadastral boundary verification, and title search certification for global real-estate investors, diaspora buyers, and institutions.",
+    "Institutional property due-diligence, cadastral boundary verification, survey plan charting, and land title certification for global real estate investors, diaspora buyers, and financial institutions.",
+  keywords: [
+    "land verification nigeria",
+    "property due diligence",
+    "cadastral intelligence",
+    "lagos land title search",
+    "certificate of occupancy verification",
+    "nigeria real estate due diligence",
+    "diaspora land purchase",
+    "survey plan verification",
+    "omonile fraud prevention",
+    "governor consent verification",
+    "land registry search abuja",
+    "property scam check nigeria",
+    "gis land charting",
+    "title verification platform",
+    "landintel",
+  ],
+  authors: [{ name: "LandIntel Global Intelligence Team", url: "https://land-intel-omega.vercel.app" }],
+  creator: "LandIntel Technologies",
+  publisher: "LandIntel Technologies",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://land-intel-omega.vercel.app"),
+  alternates: {
+    canonical: "https://land-intel-omega.vercel.app",
+  },
   openGraph: {
-    title: "LandIntel — Global Property Intelligence",
+    title: "LandIntel — Global Property Intelligence & Due-Diligence",
     description:
-      "Institutional property due-diligence and cadastral risk intelligence.",
+      "Institutional property due-diligence, cadastral boundary verification, and title search certification for global real-estate investors and diaspora buyers.",
     url: "https://land-intel-omega.vercel.app",
     siteName: "LandIntel",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "https://land-intel-omega.vercel.app/icon",
+        width: 512,
+        height: 512,
+        alt: "LandIntel Cadastral Intelligence",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "LandIntel | Global Property Due-Diligence",
-    description: "Institutional property due-diligence and cadastral verification.",
+    description: "Institutional property due-diligence, cadastral verification, and title certification.",
+    images: ["https://land-intel-omega.vercel.app/icon"],
   },
   robots: {
     index: true,
     follow: true,
-  },
-  verification: {
-    google: "d610769079a4ec09",
-  },
-  other: {
-    "google-site-verification": "googled610769079a4ec09.html",
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: [
@@ -58,6 +94,12 @@ export const metadata: Metadata = {
     apple: [
       { url: "/apple-icon", sizes: "180x180", type: "image/png" },
     ],
+  },
+  verification: {
+    google: "googled610769079a4ec09",
+    other: {
+      "msvalidate.01": "D610769079A4EC09",
+    },
   },
 };
 
@@ -71,6 +113,20 @@ const jsonLd = {
       url: "https://land-intel-omega.vercel.app",
       logo: "https://land-intel-omega.vercel.app/icon",
       description: "Institutional property due-diligence, cadastral boundary verification, and title search certification.",
+      email: "support@landintel.ai",
+      contactPoint: [
+        {
+          "@type": "ContactPoint",
+          email: "support@landintel.ai",
+          contactType: "customer service",
+          areaServed: ["NG", "US", "GB", "CA", "Worldwide"],
+          availableLanguage: ["en"],
+        },
+      ],
+      sameAs: [
+        "https://twitter.com/LandIntelGlobal",
+        "https://www.linkedin.com/company/landintel",
+      ],
     },
     {
       "@type": "WebSite",
@@ -81,6 +137,11 @@ const jsonLd = {
       publisher: {
         "@id": "https://land-intel-omega.vercel.app/#organization",
       },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://land-intel-omega.vercel.app/properties?q={search_term_string}",
+        "query-input": "required name=search_term_string",
+      },
     },
     {
       "@type": "WebApplication",
@@ -90,8 +151,8 @@ const jsonLd = {
       operatingSystem: "All",
       offers: {
         "@type": "Offer",
-        price: "50.00",
-        priceCurrency: "USD",
+        price: "48375.00",
+        priceCurrency: "NGN",
       },
     },
   ],
@@ -107,6 +168,9 @@ export default function RootLayout({
       <head>
         <link rel="dns-prefetch" href="https://translate.google.com" />
         <link rel="dns-prefetch" href="https://translate.googleapis.com" />
+        <meta name="google-site-verification" content="googled610769079a4ec09" />
+        <meta name="google-site-verification" content="googled610769079a4ec09.html" />
+        <meta name="msvalidate.01" content="D610769079A4EC09" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
