@@ -3,9 +3,9 @@
 import React, { useEffect } from "react";
 import Script from "next/script";
 
-// Configurable GA4 Measurement ID (fallback to G-LANDINTEL2026 or environment)
+// Configurable GA4 Measurement ID
 export const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-LANDINTEL2026";
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-RZ0EZ94GXP";
 
 /**
  * Global helper to track custom events in Google Analytics 4 (GA4)
