@@ -52,37 +52,35 @@ export async function processDocumentPipeline(documentId: string): Promise<void>
   // Step 3: Extract structured cadastral entities
   const entities = adapter.extractEntities(textContent, classification.category);
 
-  // Step 4: Persist updates in database
-  await db.$transaction(async (tx) => {
-    await tx.propertyDocument.update({
-      where: { id: documentId },
-      data: {
-        category: classification.category,
-        processingStatus: "COMPLETED",
-        extractedSummary: classification.summary,
-      },
-    });
-
-    // Clear any previous extractions for this doc
-    await tx.documentExtraction.deleteMany({
-      where: { documentId },
-    });
-
-    // Save extractions
-    for (const ent of entities) {
-      await tx.documentExtraction.create({
-        data: {
-          documentId,
-          caseId: doc.caseId,
-          fieldName: ent.fieldName,
-          fieldValue: ent.fieldValue,
-          pageNumber: ent.pageNumber,
-          confidence: ent.confidence,
-          sourceSnippet: ent.sourceSnippet,
-        },
-      });
-    }
+  // Step 4: Persist updates in database (direct batch operations to prevent Neon pooler timeouts)
+  await db.propertyDocument.update({
+    where: { id: documentId },
+    data: {
+      category: classification.category,
+      processingStatus: "COMPLETED",
+      extractedSummary: classification.summary,
+    },
   });
+
+  // Clear any previous extractions for this doc
+  await db.documentExtraction.deleteMany({
+    where: { documentId },
+  });
+
+  // Save extractions in batch
+  if (entities.length > 0) {
+    await db.documentExtraction.createMany({
+      data: entities.map((ent) => ({
+        documentId,
+        caseId: doc.caseId,
+        fieldName: ent.fieldName,
+        fieldValue: ent.fieldValue,
+        pageNumber: ent.pageNumber,
+        confidence: ent.confidence,
+        sourceSnippet: ent.sourceSnippet,
+      })),
+    });
+  }
 
   // Step 5: Trigger overall case analysis refresh
   await runCaseIntelligencePipeline(doc.caseId);

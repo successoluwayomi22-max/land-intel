@@ -244,10 +244,9 @@ export class BillingService {
     let activatedSubId: string | undefined;
     let finalOrgId: string | undefined;
 
-    // Transactional Atomic Update
-    await db.$transaction(async (tx) => {
+    const executeActivation = async (client: any) => {
       // 1. Mark Payment SUCCESSFUL
-      await tx.payment.update({
+      await client.payment.update({
         where: { id: payment.id },
         data: {
           status: "SUCCESSFUL",
@@ -257,17 +256,17 @@ export class BillingService {
 
       // 2. If Single Case Report purchase, unlock report
       if (payment.caseId) {
-        const existingReport = await tx.propertyReport.findFirst({
+        const existingReport = await client.propertyReport.findFirst({
           where: { caseId: payment.caseId },
         });
 
         if (existingReport) {
-          await tx.propertyReport.update({
+          await client.propertyReport.update({
             where: { id: existingReport.id },
             data: { isPaidUnlocked: true },
           });
         } else {
-          await tx.propertyReport.create({
+          await client.propertyReport.create({
             data: {
               caseId: payment.caseId,
               userId: payment.userId,
@@ -279,7 +278,7 @@ export class BillingService {
           });
         }
 
-        await tx.propertyCase.update({
+        await client.propertyCase.update({
           where: { id: payment.caseId },
           data: { status: "REPORT_GENERATED" },
         });
@@ -288,7 +287,7 @@ export class BillingService {
       // 3. Subscription Activation for Organization
       let organizationId = metadata.organizationId;
       if (!organizationId) {
-        const mem = await tx.membership.findFirst({
+        const mem = await client.membership.findFirst({
           where: { userId: payment.userId },
         });
         organizationId = mem?.organizationId;
@@ -296,7 +295,7 @@ export class BillingService {
 
       // If user has no organization yet, create personal workspace
       if (!organizationId) {
-        const org = await tx.organization.create({
+        const org = await client.organization.create({
           data: {
             name: `${payment.user.name}'s Portfolio`,
             slug: `user-${payment.userId.slice(-6)}-${Date.now().toString(36)}`,
@@ -304,7 +303,7 @@ export class BillingService {
             defaultCurrency: payment.currency,
           },
         });
-        await tx.membership.create({
+        await client.membership.create({
           data: {
             userId: payment.userId,
             organizationId: org.id,
@@ -315,13 +314,13 @@ export class BillingService {
       }
 
       // Resolve Plan record
-      let planRecord = await tx.plan.findFirst({
+      let planRecord = await client.plan.findFirst({
         where: { name: planKey },
       });
 
       if (!planRecord) {
         const planDef = PLANS[planKey] || PLANS.PROFESSIONAL;
-        planRecord = await tx.plan.create({
+        planRecord = await client.plan.create({
           data: {
             key: planKey,
             name: planKey,
@@ -339,13 +338,13 @@ export class BillingService {
       const periodEnd = new Date();
       periodEnd.setDate(periodEnd.getDate() + 30); // 30-day billing cycle
 
-      const existingSub = await tx.subscription.findFirst({
+      const existingSub = await client.subscription.findFirst({
         where: { organizationId },
         orderBy: { createdAt: "desc" },
       });
 
       if (existingSub) {
-        const updated = await tx.subscription.update({
+        const updated = await client.subscription.update({
           where: { id: existingSub.id },
           data: {
             planId: planRecord.id,
@@ -358,7 +357,7 @@ export class BillingService {
         });
         activatedSubId = updated.id;
       } else {
-        const created = await tx.subscription.create({
+        const created = await client.subscription.create({
           data: {
             organizationId,
             planId: planRecord.id,
@@ -374,14 +373,22 @@ export class BillingService {
 
       // 5. Update user role to PAID (if not already admin)
       if (payment.user.role === "FREE") {
-        await tx.user.update({
+        await client.user.update({
           where: { id: payment.userId },
           data: { role: "PAID" },
         });
       }
 
       finalOrgId = organizationId;
-    });
+    };
+
+    // Try transaction first; fallback directly to db to ensure resilience against Neon pooler timeouts
+    try {
+      await db.$transaction(executeActivation);
+    } catch (txErr: any) {
+      console.warn("[BILLING_TRANSACTION_FALLBACK_DIRECT]", txErr?.message || txErr);
+      await executeActivation(db);
+    }
 
     // 6. Initialize / reset usage record for new cycle outside transaction
     if (finalOrgId) {

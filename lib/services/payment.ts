@@ -186,8 +186,8 @@ export async function verifyAndUnlockPayment(reference: string): Promise<{ succe
   }
 
   // Idempotently mark payment as SUCCESSFUL and unlock report
-  await db.$transaction(async (tx) => {
-    await tx.payment.update({
+  const executeUnlock = async (client: any) => {
+    await client.payment.update({
       where: { reference },
       data: {
         status: "SUCCESSFUL",
@@ -197,17 +197,17 @@ export async function verifyAndUnlockPayment(reference: string): Promise<{ succe
 
     if (payment.caseId) {
       // Find or create report for this case
-      const existingReport = await tx.propertyReport.findFirst({
+      const existingReport = await client.propertyReport.findFirst({
         where: { caseId: payment.caseId },
       });
 
       if (existingReport) {
-        await tx.propertyReport.update({
+        await client.propertyReport.update({
           where: { id: existingReport.id },
           data: { isPaidUnlocked: true },
         });
       } else {
-        await tx.propertyReport.create({
+        await client.propertyReport.create({
           data: {
             caseId: payment.caseId,
             userId: payment.userId,
@@ -220,12 +220,37 @@ export async function verifyAndUnlockPayment(reference: string): Promise<{ succe
       }
 
       // Update case status to REPORT_GENERATED
-      await tx.propertyCase.update({
+      await client.propertyCase.update({
         where: { id: payment.caseId },
         data: { status: "REPORT_GENERATED" },
       });
     }
-  });
+  };
+
+  try {
+    await db.$transaction(executeUnlock);
+  } catch (txErr: any) {
+    console.warn("[PAYMENT_TRANSACTION_FALLBACK_DIRECT]", txErr?.message || txErr);
+    await executeUnlock(db);
+  }
+
+  // If this payment was for a recurring subscription plan, trigger subscription activation
+  try {
+    const meta = payment.metadata ? JSON.parse(payment.metadata) : {};
+    if (meta.planKey && meta.planKey !== "FREE") {
+      const { BillingService } = await import("@/lib/services/billing");
+      await BillingService.activatePaymentAndSubscription({
+        provider: (payment.provider as any) || "PAYSTACK",
+        event: "charge.success",
+        reference,
+        amount: payment.amount,
+        currency: payment.currency,
+        metadata: meta,
+      });
+    }
+  } catch (subErr) {
+    console.error("[SUBSCRIPTION_AUTO_ACTIVATE_ERROR]", subErr);
+  }
 
   await logAudit({
     userId: payment.userId,

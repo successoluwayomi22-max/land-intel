@@ -26,9 +26,20 @@ export async function POST(request: Request) {
     const normalizedEmail = email.toLowerCase().trim();
     const cleanCode = code.trim();
 
-    const user = await db.user.findUnique({
+    let user = await db.user.findUnique({
       where: { email: normalizedEmail },
     });
+
+    if (!user) {
+      user = await db.user.findFirst({
+        where: {
+          email: {
+            equals: normalizedEmail,
+            mode: "insensitive",
+          },
+        },
+      });
+    }
 
     if (!user || !user.resetToken || !user.resetExpires) {
       return NextResponse.json(

@@ -56,9 +56,20 @@ export async function POST(request: NextRequest) {
     const email = parsed.data.email.trim().toLowerCase();
     const password = parsed.data.password;
 
-    const user = await db.user.findUnique({
+    let user = await db.user.findUnique({
       where: { email },
     });
+
+    if (!user) {
+      user = await db.user.findFirst({
+        where: {
+          email: {
+            equals: email,
+            mode: "insensitive",
+          },
+        },
+      });
+    }
 
     if (!user) {
       // Report failed authentication attempt

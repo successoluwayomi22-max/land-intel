@@ -86,7 +86,7 @@ export class PaymentService {
           },
           body: JSON.stringify({
             email: params.userEmail,
-            amount: params.amount * 100, // Paystack kobo
+            amount: Math.round(params.amount * 100), // Paystack kobo
             reference,
             callback_url: `${baseUrl}/properties/${params.caseId || ""}?payment=verify&ref=${reference}`,
             metadata: {
@@ -138,8 +138,7 @@ export class PaymentService {
       return { success: true, message: "Payment already processed and verified (Idempotent OK)" };
     }
 
-    // Execute transactional update
-    await db.$transaction(async (tx) => {
+    const executeWebhook = async (tx: any) => {
       // 1. Mark payment SUCCESSFUL
       await tx.payment.update({
         where: { reference: payload.reference },
@@ -215,7 +214,14 @@ export class PaymentService {
           }
         }
       }
-    });
+    };
+
+    try {
+      await db.$transaction(executeWebhook);
+    } catch (txErr: any) {
+      console.warn("[PAYMENT_WEBHOOK_FALLBACK_DIRECT]", txErr?.message || txErr);
+      await executeWebhook(db);
+    }
 
     await logAudit({
       userId: payment.userId,
