@@ -72,11 +72,8 @@
 
   <!-- TYPOGRAPHY -->
   <g transform="translate(68, 0)">
-    <text x="0" y="34" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="25" font-weight="900" fill="#0F172A" letter-spacing="-0.5">
+    <text x="0" y="38" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="26" font-weight="900" fill="#0F172A" letter-spacing="-0.5">
       LAND <tspan fill="#059669">INTEL</tspan>
-    </text>
-    <text x="1" y="49" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" fill="#64748B" letter-spacing="2.8">
-      PROPERTY INTELLIGENCE
     </text>
   </g>
 </svg>

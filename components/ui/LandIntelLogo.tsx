@@ -123,22 +123,13 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
         </svg>
       </div>
 
-      {/* ── Brand Typography (Concept 5) ── */}
+      {/* ── Brand Typography ── */}
       {showText && !iconOnly && (
-        <div className="flex flex-col leading-tight">
-          <span
-            className={`font-heading font-black tracking-tight ${currentSize.text} ${mainTextColor} transition-colors group-hover:text-emerald-600`}
-          >
-            LAND <span className={accentTextColor}>INTEL</span>
-          </span>
-          {size !== "sm" && (
-            <span
-              className={`font-sans uppercase tracking-[0.22em] font-bold ${currentSize.subText} ${subTextColor}`}
-            >
-              Property Intelligence
-            </span>
-          )}
-        </div>
+        <span
+          className={`font-heading font-black tracking-tight ${currentSize.text} ${mainTextColor} transition-colors group-hover:text-emerald-600`}
+        >
+          LAND <span className={accentTextColor}>INTEL</span>
+        </span>
       )}
     </div>
   );
