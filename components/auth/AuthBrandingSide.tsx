@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ShieldCheck, MapPin, Users, TrendingUp } from "lucide-react";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 
 interface AuthBrandingSideProps {
   quote?: {
@@ -40,19 +41,7 @@ export const AuthBrandingSide: React.FC<AuthBrandingSideProps> = ({
       <div className="relative z-10 flex flex-col justify-between w-full p-8 xl:p-12">
         {/* ── Top: Logo + Tagline ── */}
         <div className="space-y-8">
-          <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center font-black text-white text-lg shadow-lg">
-              L
-            </div>
-            <div>
-              <span className="font-heading font-extrabold text-xl tracking-tight text-white block drop-shadow-sm">
-                LandIntel
-              </span>
-              <span className="text-[11px] text-white/60 font-medium block">
-                Title Verification &amp; Due Diligence
-              </span>
-            </div>
-          </Link>
+          <LandIntelLogo href="/" size="lg" variant="dark" />
 
           <div className="space-y-3 max-w-sm">
             <h1 className="text-[28px] xl:text-[32px] font-extrabold font-heading text-white leading-[1.15] tracking-tight drop-shadow-md">

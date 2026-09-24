@@ -6,6 +6,7 @@ import { ShieldCheck } from "lucide-react";
 import { APP_CONFIG } from "@/lib/config";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { usePlatformContact } from "@/components/providers/PlatformContactProvider";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 
 export const Footer: React.FC = () => {
   const { t } = useLocale();
@@ -22,14 +23,7 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-12 border-b border-slate-800 text-xs">
           {/* Brand col */}
           <div className="col-span-2 space-y-4">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white">
-                L
-              </div>
-              <span className="font-heading font-extrabold text-base tracking-tight text-white">
-                LandIntel
-              </span>
-            </Link>
+            <LandIntelLogo href="/" size="md" variant="dark" />
             <p className="text-slate-300 text-xs leading-relaxed max-w-sm">
               {t("footerTagline") ||
                 "Global Land Solutions — Securing High-Value Real Estate for Remote & Diaspora Investors. Independent cadastral verification, document provenance analysis, and title intelligence."}

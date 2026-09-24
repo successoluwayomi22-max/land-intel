@@ -6,6 +6,7 @@ import { Menu, X, ArrowRight, LayoutDashboard, LogOut, PlusCircle, UserCheck, Ch
 import { Button } from "@/components/ui/Button";
 import { LocaleSelector } from "@/components/ui/LocaleSelector";
 import { useLocale } from "@/components/providers/LocaleProvider";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 
 interface UserProfile {
   id: string;
@@ -97,16 +98,7 @@ export const Navbar: React.FC = () => {
     <header dir="ltr" className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-border shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 min-h-[64px] max-h-[64px] flex items-center justify-between flex-nowrap min-w-0">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 shrink-0 mr-3 lg:mr-6 group notranslate">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center font-black text-white shadow-sm ring-1 ring-emerald-500/20 group-hover:scale-105 transition-transform">
-            L
-          </div>
-          <div>
-            <span className="font-heading font-extrabold text-lg tracking-tight text-brand-darkNavy group-hover:text-emerald-700 transition-colors">
-              LandIntel
-            </span>
-          </div>
-        </Link>
+        <LandIntelLogo href="/" size="md" variant="light" className="mr-3 lg:mr-6 notranslate" />
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs xl:text-[13px] font-semibold text-slate-700 shrink-0">
