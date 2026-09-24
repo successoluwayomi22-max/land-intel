@@ -1,9 +1,19 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Map, Marker, useMap } from "@vis.gl/react-google-maps";
 import { MapProvider } from "./MapProvider";
-import { MapPin, AlertCircle, CheckCircle2, Building, Trees, Lock, ArrowRight, Sparkles } from "lucide-react";
+import {
+  MapPin,
+  AlertCircle,
+  CheckCircle2,
+  Building,
+  Trees,
+  Lock,
+  ArrowRight,
+  Sparkles,
+  Layers,
+} from "lucide-react";
 import Link from "next/link";
 
 interface Coordinate {
@@ -30,6 +40,7 @@ export interface PropertyMapProps {
  * Interactive property cadastral map with boundary polygon overlay and ground reconnaissance status.
  * Renders beacon markers and boundary polygon when coordinates are provided.
  * Provides paid-only locked barrier for free users and displays accurate "Location Not Found" when unverified.
+ * Eliminates overlapping native controls and provides seamless custom Satellite/Roadmap toggling.
  */
 export const PropertyMap: React.FC<PropertyMapProps> = ({
   center,
@@ -44,6 +55,7 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
   isLocked = false,
   onUnlock,
 }) => {
+  const [mapType, setMapType] = useState<"hybrid" | "roadmap">(showSatellite ? "hybrid" : "roadmap");
   const isLocated = Boolean(center && locationFound !== false);
 
   // Calculate center from coordinates or default to Nigerian Cadastral Region overview
@@ -68,7 +80,7 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
           <div className="absolute top-2.5 left-2.5 right-2.5 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
             {/* Location Verification Tag */}
             {isLocated ? (
-              <div className="pointer-events-auto bg-slate-900/85 backdrop-blur-md text-white text-[11px] font-medium px-3 py-1.5 rounded-lg shadow-md border border-slate-700/50 flex items-center gap-1.5 max-w-sm sm:max-w-md truncate">
+              <div className="pointer-events-auto bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-medium px-3 py-1.5 rounded-lg shadow-md border border-slate-700/60 flex items-center gap-1.5 max-w-sm sm:max-w-md truncate">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span className="truncate">
                   {center ? `📍 Coordinated (${center.lat.toFixed(4)}, ${center.lng.toFixed(4)})` : "Location Verified"}
@@ -76,47 +88,61 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
                 </span>
               </div>
             ) : (
-              <div className="pointer-events-auto bg-rose-950/90 backdrop-blur-md text-rose-200 text-[11px] font-medium px-3 py-1.5 rounded-lg shadow-md border border-rose-800/60 flex items-center gap-1.5 max-w-md">
+              <div className="pointer-events-auto bg-rose-950/90 backdrop-blur-md text-rose-200 text-[11px] font-medium px-3 py-1.5 rounded-lg shadow-md border border-rose-800/60 flex items-center gap-1.5 max-w-md truncate">
                 <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                <span>
+                <span className="truncate">
                   Location Not Found • Coordinates Unverified ({address || "Address not found"})
                 </span>
               </div>
             )}
 
-            {/* Ground Occupancy Status Badge */}
-            <div className="pointer-events-auto bg-white/90 backdrop-blur-md text-slate-900 text-[11px] font-bold px-3 py-1.5 rounded-lg shadow-md border border-slate-200/80 flex items-center gap-1.5 ml-auto">
-              {occupancyStatus === "OCCUPIED" ? (
-                <>
-                  <Building className="w-3.5 h-3.5 text-blue-600" />
-                  <span className="text-blue-900">Ground: Structure / Occupied</span>
-                </>
-              ) : occupancyStatus === "BARE" || occupancyStatus === "EMPTY" ? (
-                <>
-                  <Trees className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="text-emerald-900">Ground: Bare / Undeveloped Land</span>
-                </>
-              ) : (
-                <>
-                  <MapPin className="w-3.5 h-3.5 text-amber-600" />
-                  <span className="text-amber-900">Ground: Verification Pending</span>
-                </>
-              )}
+            {/* Right Action Bar: Satellite Toggle + Ground Occupancy Status Badge */}
+            <div className="flex items-center gap-2 ml-auto pointer-events-auto">
+              {/* Satellite / Street Map Toggle Pill */}
+              <button
+                type="button"
+                onClick={() => setMapType((prev) => (prev === "hybrid" ? "roadmap" : "hybrid"))}
+                className="bg-slate-900/90 hover:bg-slate-900 text-white backdrop-blur-md text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-md border border-slate-700/60 flex items-center gap-1.5 transition-all cursor-pointer"
+                title="Toggle Satellite Imagery / Roadmap"
+              >
+                <Layers className="w-3.5 h-3.5 text-brand-blue shrink-0" />
+                <span className="text-[11px]">{mapType === "hybrid" ? "Satellite" : "Roadmap"}</span>
+              </button>
+
+              {/* Ground Occupancy Status Badge */}
+              <div className="bg-white/95 backdrop-blur-md text-slate-900 text-[11px] font-bold px-3 py-1.5 rounded-lg shadow-md border border-slate-200/90 flex items-center gap-1.5">
+                {occupancyStatus === "OCCUPIED" ? (
+                  <>
+                    <Building className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                    <span className="text-blue-900">Ground: Structure / Occupied</span>
+                  </>
+                ) : occupancyStatus === "BARE" || occupancyStatus === "EMPTY" ? (
+                  <>
+                    <Trees className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span className="text-emerald-900">Ground: Bare / Undeveloped Land</span>
+                  </>
+                ) : (
+                  <>
+                    <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span className="text-amber-900">Ground: Verification Pending</span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         )}
 
-        {/* The Google Map Container */}
+        {/* The Google Map Container (Native controls disabled at top to prevent collision glitches) */}
         <div className={`w-full h-full ${isLocked ? "filter blur-[2px] opacity-40 pointer-events-none select-none" : ""}`}>
           <Map
             defaultZoom={isLocated ? Math.min(zoom, 16) : 10}
             maxZoom={18}
             minZoom={3}
             defaultCenter={mapCenter}
-            mapTypeId={showSatellite ? "hybrid" : "roadmap"}
-            mapTypeControl={!isLocked}
+            mapTypeId={mapType}
+            mapTypeControl={false}
+            fullscreenControl={false}
             streetViewControl={false}
-            fullscreenControl={!isLocked}
             zoomControl={!isLocked}
             gestureHandling={isLocked ? "none" : "cooperative"}
             style={{ width: "100%", height: "100%" }}
@@ -148,7 +174,7 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
 
         {/* ─── Paid-Only Locked Overlay Barrier ─── */}
         {isLocked && (
-          <div className="absolute inset-0 z-20 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center text-white">
+          <div className="absolute inset-0 z-20 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center text-white">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/30 flex items-center justify-center mb-3 shadow-lg shadow-amber-950/40">
               <Lock className="w-7 h-7 text-amber-400" />
             </div>
@@ -172,15 +198,15 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
                 <button
                   type="button"
                   onClick={onUnlock}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Unlock Single Case Audit ($50.00 / ₦72,500)
+                  Unlock Single Case Audit ($50.00 / ₦75,000)
                   <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
                 <Link
                   href={`/properties`}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   Unlock Cadastral Audit Report
                   <ArrowRight className="w-4 h-4" />

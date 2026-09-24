@@ -125,7 +125,7 @@ export const PricingCards: React.FC = () => {
                 <span className="text-xs text-slate-600 font-medium">{t("perProperty") || "/ property"}</span>
               </div>
               <p className="text-[11px] text-slate-600 mt-0.5 font-mono">
-                Base: {formatPrice(46.50)} &bull; 7.5% Statutory VAT: {formatPrice(3.50)}
+                Base: {formatPrice(46.51)} &bull; 7.5% Statutory VAT: {formatPrice(3.49)}
               </p>
               <p className="text-xs text-slate-700 mt-1">
                 {t("reportPriceTitle") || "Instant 15-section risk audit & boundary cross-examination"}
@@ -192,7 +192,7 @@ export const PricingCards: React.FC = () => {
                 <span className="text-xs text-slate-300 font-medium">/ month</span>
               </div>
               <p className="text-[11px] text-slate-300 mt-0.5 font-mono">
-                Base: {formatPrice(139.50)} &bull; 7.5% Statutory VAT: {formatPrice(10.50)}
+                Base: {formatPrice(139.53)} &bull; 7.5% Statutory VAT: {formatPrice(10.47)}
               </p>
               <p className="text-xs text-slate-200 mt-1.5 leading-relaxed">
                 Full-featured portfolio due-diligence for diaspora investors &amp; real-estate developers.

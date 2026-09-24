@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 // Fallback baseline market rates (Units of foreign currency per 1 USD)
 const BASELINE_RATES_FROM_USD: Record<string, number> = {
   USD: 1,
-  NGN: 1450,
+  NGN: 1500,
   GBP: 0.76,
   EUR: 0.88,
   CAD: 1.40,
@@ -43,7 +43,9 @@ export async function GET() {
     if (res.ok) {
       const data = await res.json();
       if (data && data.rates && data.rates.NGN) {
-        const usdToNgn = Number(data.rates.NGN) || 1450;
+        // Enforce Nigerian real-market exchange floor (never lower than 1,500 NGN per USD)
+        const rawUsdToNgn = Number(data.rates.NGN) || 1500;
+        const usdToNgn = Math.max(rawUsdToNgn, 1500);
 
         const liveRatesFromUsd: Record<string, number> = {
           USD: 1,
@@ -98,7 +100,7 @@ export async function GET() {
         ratesFromUsd: BASELINE_RATES_FROM_USD,
         rates: {
           NGN: 1,
-          USD: 1450,
+          USD: 1500,
           GBP: 1950,
           EUR: 1650,
           CAD: 1100,
@@ -115,7 +117,7 @@ export async function GET() {
     base: "USD",
     ratesFromUsd: fallbackRates.ratesFromUsd,
     rates: fallbackRates.rates,
-    source: cachedData ? "stale_cache" : "baseline_fallback",
-    updatedAt: new Date().toISOString(),
+    source: "fallback",
+    updatedAt: new Date(now).toISOString(),
   });
 }

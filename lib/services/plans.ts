@@ -44,11 +44,11 @@ export const ONE_OFF_PACKAGES: Record<OneOffPackageKey, OneOffPackageDefinition>
     key: "STANDARD_AUDIT",
     badge: "INSTANT AUTOMATED AUDIT",
     name: "Instant Cadastral Audit",
-    priceNgn: 67440,
+    priceNgn: 69767,
     priceUsd: 46.51,
     vatRate: STATUTORY_VAT_RATE,
-    vatAmountNgn: 5060,
-    totalPriceNgn: 72500,
+    vatAmountNgn: 5233,
+    totalPriceNgn: 75000, // ₦75,000 clean Naira total ($50.00 USD)
     totalPriceUsd: 50.00, // $50 USD clean base
     subtitle: "Single property automated deep-scan & risk scorecard",
     deliverableTimeframe: "Instant Access",
@@ -65,11 +65,11 @@ export const ONE_OFF_PACKAGES: Record<OneOffPackageKey, OneOffPackageDefinition>
     key: "FULL_TITLE_VERIFICATION",
     badge: "FULL LEGAL SEARCH",
     name: "Full Title Verification Package",
-    priceNgn: 270000,
+    priceNgn: 279070,
     priceUsd: 186.05,
     vatRate: STATUTORY_VAT_RATE,
-    vatAmountNgn: 20000,
-    totalPriceNgn: 290000,
+    vatAmountNgn: 20930,
+    totalPriceNgn: 300000, // ₦300,000 clean Naira total ($200.00 USD)
     totalPriceUsd: 200.00, // $200 USD clean base
     subtitle: "Official Ministry registry search, Surveyor General charting & written legal opinion",
     deliverableTimeframe: "Priority 48–72 Hour Express Deliverable",
@@ -163,10 +163,10 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
   STARTER: {
     key: "STARTER",
     name: "Starter Investor",
-    priceNgn: 67440,
+    priceNgn: 69767,
     priceUsd: 46.51,
     vatRate: STATUTORY_VAT_RATE,
-    totalPriceNgn: 72500, // ₦67,440 + 7.5% VAT (₦5,060)
+    totalPriceNgn: 75000, // ₦69,767 + 7.5% VAT (₦5,233)
     totalPriceUsd: 50.00, // $50 USD clean base
     maxActiveCases: 5,
     maxDocumentsPerCase: 15,
@@ -192,10 +192,10 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
   PROFESSIONAL: {
     key: "PROFESSIONAL",
     name: "Professional Portfolio",
-    priceNgn: 202325,
+    priceNgn: 209302,
     priceUsd: 139.53,
     vatRate: STATUTORY_VAT_RATE,
-    totalPriceNgn: 217500, // ₦202,325 + 7.5% VAT (₦15,175)
+    totalPriceNgn: 225000, // ₦209,302 + 7.5% VAT (₦15,698)
     totalPriceUsd: 150.00, // $150 USD clean base
     maxActiveCases: 25,
     maxDocumentsPerCase: 50,
