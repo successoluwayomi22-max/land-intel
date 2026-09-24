@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Urbanist } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/Toast";
@@ -14,6 +14,13 @@ const urbanist = Urbanist({
   display: "swap",
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
+
+export const viewport: Viewport = {
+  themeColor: "#0B1220",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   title: "LandIntel | Global Property Due-Diligence & Cadastral Intelligence",
@@ -49,6 +56,42 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://land-intel-omega.vercel.app/#organization",
+      name: "LandIntel",
+      url: "https://land-intel-omega.vercel.app",
+      logo: "https://land-intel-omega.vercel.app/icon",
+      description: "Institutional property due-diligence, cadastral boundary verification, and title search certification.",
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://land-intel-omega.vercel.app/#website",
+      url: "https://land-intel-omega.vercel.app",
+      name: "LandIntel",
+      description: "Global Land Intelligence & Cadastral Verification Platform",
+      publisher: {
+        "@id": "https://land-intel-omega.vercel.app/#organization",
+      },
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://land-intel-omega.vercel.app/#webapp",
+      name: "LandIntel Cadastral Risk Engine",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "All",
+      offers: {
+        "@type": "Offer",
+        price: "50.00",
+        priceCurrency: "USD",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -61,6 +104,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://translate.googleapis.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://translate.google.com" />
         <link rel="dns-prefetch" href="https://translate.googleapis.com" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className={`${urbanist.variable} font-urbanist min-h-screen bg-brand-background text-brand-textPrimary antialiased selection:bg-blue-100 selection:text-blue-900`}>
         <LocaleProvider>

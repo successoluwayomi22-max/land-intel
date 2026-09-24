@@ -95,6 +95,8 @@ export const CookieConsent: React.FC = () => {
                     <p className="text-[11px] text-slate-400">Helps us monitor document OCR latency and telemetry</p>
                   </div>
                   <input
+                    id="analytics-cookies"
+                    aria-label="Analytics & Cadastral Performance telemetry"
                     type="checkbox"
                     checked={preferences.analytics}
                     onChange={(e) => setPreferences({ ...preferences, analytics: e.target.checked })}

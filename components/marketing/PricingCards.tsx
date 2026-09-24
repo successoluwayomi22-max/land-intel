@@ -32,6 +32,8 @@ export const PricingCards: React.FC = () => {
               key={cKey}
               type="button"
               onClick={() => setCurrency(cKey)}
+              aria-label={`View pricing in ${c.name} (${c.code})`}
+              aria-pressed={isSelected}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 isSelected
                   ? "bg-brand-blue text-white shadow-sm scale-105"

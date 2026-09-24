@@ -85,6 +85,7 @@ export const Footer: React.FC = () => {
                   href={`https://wa.me/${(contact.primaryWhatsapp || "").replace(/[^0-9]/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`Chat with support on WhatsApp: ${contact.primaryWhatsapp}`}
                   className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors flex items-center gap-1"
                 >
                   WhatsApp: {contact.primaryWhatsapp}
@@ -95,6 +96,7 @@ export const Footer: React.FC = () => {
                   href={contact.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`Follow LandIntel on Facebook: ${contact.facebook}`}
                   className="hover:text-white transition-colors flex items-center gap-1 text-blue-400 hover:text-blue-300"
                 >
                   Facebook: {contact.facebook}
@@ -103,6 +105,7 @@ export const Footer: React.FC = () => {
               <li>
                 <a
                   href={`mailto:${contact.email || "successoluwayomi22@gmail.com"}`}
+                  aria-label={`Email Support: ${contact.displayEmail || "support@landintel.ai"}`}
                   className="hover:text-white transition-colors break-all"
                   title="Contact Support"
                 >

@@ -296,15 +296,20 @@ export default function LandingPage() {
             {/* Interactive Case Study Tabs & Cards */}
             <div className="max-w-5xl mx-auto">
               {/* Tab Selector */}
-              <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+              <div role="tablist" aria-label="Case Studies" className="flex flex-wrap items-center justify-center gap-2 mb-8">
                 {caseStudies.map((cs, idx) => (
                   <button
                     key={cs.id}
+                    type="button"
+                    role="tab"
+                    id={`tab-${cs.id}`}
+                    aria-selected={activeCaseTab === idx}
+                    aria-controls={cs.id}
                     onClick={() => setActiveCaseTab(idx)}
                     className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
                       activeCaseTab === idx
                         ? "bg-brand-blue text-white shadow-md ring-1 ring-blue-500"
-                        : "bg-white text-slate-600 hover:text-brand-darkNavy hover:bg-slate-50 border border-brand-border shadow-2xs"
+                        : "bg-white text-slate-700 hover:text-brand-darkNavy hover:bg-slate-50 border border-brand-border shadow-2xs"
                     }`}
                   >
                     <span>{cs.tag.split(":")[0]}</span>
@@ -317,7 +322,12 @@ export default function LandingPage() {
               {(() => {
                 const cs = caseStudies[activeCaseTab];
                 return (
-                  <div className="bg-white border border-brand-border rounded-2xl p-6 sm:p-9 shadow-card space-y-6 relative overflow-hidden">
+                  <div
+                    id={cs.id}
+                    role="tabpanel"
+                    aria-labelledby={`tab-${cs.id}`}
+                    className="bg-white border border-brand-border rounded-2xl p-6 sm:p-9 shadow-card space-y-6 relative overflow-hidden"
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-border pb-4">
                       <span className={`text-[11px] font-mono font-bold px-3 py-1 rounded-md border ${cs.badgeColor}`}>
                         {cs.tag}
@@ -332,11 +342,11 @@ export default function LandingPage() {
                       <h3 className="text-xl sm:text-2xl font-black font-heading text-brand-darkNavy tracking-tight">
                         {cs.title}
                       </h3>
-                      <p className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
+                      <p className="text-xs font-medium text-slate-600 flex items-center gap-1.5">
                         <Users className="w-3.5 h-3.5 text-brand-blue" />
                         <span>Investor Profile: {cs.investor}</span>
-                        <span className="text-slate-300">|</span>
-                        <span className="text-amber-700 font-semibold">{cs.riskType}</span>
+                        <span className="text-slate-400" aria-hidden="true">|</span>
+                        <span className="text-amber-800 font-semibold">{cs.riskType}</span>
                       </p>
                     </div>
 
@@ -642,6 +652,44 @@ export default function LandingPage() {
               </p>
             </div>
 
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "FAQPage",
+                  mainEntity: [
+                    {
+                      q: "Does LandIntel replace a licensed surveyor or property lawyer?",
+                      a: "No. LandIntel is an automated algorithmic intelligence engine. We cross-examine coordinates against official acquisition boundaries, extract beacon lines, and detect deed discrepancies. We recommend taking your 15-section report directly to your licensed surveyor and attorney to conduct physical beacon verification and official ministry registry searches.",
+                    },
+                    {
+                      q: "How does the platform detect 'Ghost Beacons' and layout shifts?",
+                      a: "Our Cadastral Engine parses the Easting and Northing coordinates on your uploaded survey plan, converts them to standard WGS-84 GPS coordinates, and overlays them directly against government gazettes, drainage channels, and arterial road reservation buffers.",
+                    },
+                    {
+                      q: "Are my uploaded property documents private and secure?",
+                      a: "Yes. All uploaded files are stored in private isolated storage and are never exposed publicly. Access is strictly authenticated and validated through short-lived cryptographically signed tokens. We do not use your private deeds to train public AI models.",
+                    },
+                    {
+                      q: "Can I pay in foreign currency like USD, GBP, or CAD from abroad?",
+                      a: "Yes. We support multi-currency payment options including international cards, Apple Pay, global debit/credit cards, as well as bank transfers and secure digital payment gateways.",
+                    },
+                    {
+                      q: "What should I do if LandIntel reports a High Risk score on a parcel?",
+                      a: "Do not wire purchase funds. Review the page-linked evidence checklist in your report. Hand the PDF directly to your property attorney or request that the vendor provide official land registry regularisation documents that resolve the specific coordinate overlap or missing consent.",
+                    },
+                  ].map((item) => ({
+                    "@type": "Question",
+                    name: item.q,
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: item.a,
+                    },
+                  })),
+                }),
+              }}
+            />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
                 {
@@ -688,7 +736,7 @@ export default function LandingPage() {
               Before You Wire Purchase Funds, Confirm Your Title.
             </h2>
 
-            <p className="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-normal">
+            <p className="text-slate-700 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-normal">
               Upload your survey plan or deed. We verify boundary coordinates against state acquisition zones, review statutory documents, and deliver an actionable due diligence report before you sign.
             </p>
 
@@ -714,7 +762,7 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500">
+            <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-700 font-medium">
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>Free Initial Coordinate Scan</span>

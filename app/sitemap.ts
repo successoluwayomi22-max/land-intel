@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://landintel.ng";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://land-intel-omega.vercel.app";
   const now = new Date();
 
   const publicRoutes = [
