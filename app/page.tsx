@@ -313,7 +313,7 @@ export default function LandingPage() {
                     }`}
                   >
                     <span>{cs.tag.split(":")[0]}</span>
-                    <span className="hidden sm:inline opacity-75">— {cs.lossPrevented}</span>
+                    <span className={`hidden sm:inline ${activeCaseTab === idx ? "text-blue-100 font-semibold" : "text-slate-600"}`}>— {cs.lossPrevented}</span>
                   </button>
                 ))}
               </div>

@@ -123,11 +123,6 @@ export const LocaleSelector: React.FC<{
             : "bg-white hover:bg-slate-50 text-slate-900 border-slate-200 hover:border-slate-300 focus:ring-2 focus:ring-brand-blue/30"
         } ${open ? (isDark ? "ring-2 ring-emerald-500/50 border-emerald-500/60" : "ring-2 ring-blue-500/30 border-blue-400") : ""}`}
         title={`Active: ${currency} (${activeCurrency.symbol}) | Language: ${activeLanguage.nativeName} (${activeLanguage.label})`}
-        aria-label={
-          compact
-            ? `${currency} • ${activeLanguage.code.toUpperCase()}, Currency and Language Selector`
-            : `${currency} (${activeCurrency.symbol}) • ${activeLanguage.code.toUpperCase()}, Currency and Language Selector`
-        }
       >
         {compact ? (
           <>
