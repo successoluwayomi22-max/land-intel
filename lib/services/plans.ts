@@ -44,12 +44,12 @@ export const ONE_OFF_PACKAGES: Record<OneOffPackageKey, OneOffPackageDefinition>
     key: "STANDARD_AUDIT",
     badge: "INSTANT AUTOMATED AUDIT",
     name: "Instant Cadastral Audit",
-    priceNgn: 45000,
-    priceUsd: 30,
+    priceNgn: 67440,
+    priceUsd: 46.51,
     vatRate: STATUTORY_VAT_RATE,
-    vatAmountNgn: 3375,
-    totalPriceNgn: 48375, // ₦45,000 + 7.5% VAT
-    totalPriceUsd: 32.25, // $30 + 7.5% VAT
+    vatAmountNgn: 5060,
+    totalPriceNgn: 72500,
+    totalPriceUsd: 50.00, // $50 USD clean base
     subtitle: "Single property automated deep-scan & risk scorecard",
     deliverableTimeframe: "Instant Access",
     features: [
@@ -65,12 +65,12 @@ export const ONE_OFF_PACKAGES: Record<OneOffPackageKey, OneOffPackageDefinition>
     key: "FULL_TITLE_VERIFICATION",
     badge: "FULL LEGAL SEARCH",
     name: "Full Title Verification Package",
-    priceNgn: 175000,
-    priceUsd: 118,
+    priceNgn: 270000,
+    priceUsd: 186.05,
     vatRate: STATUTORY_VAT_RATE,
-    vatAmountNgn: 13125,
-    totalPriceNgn: 188125, // ₦175,000 + 7.5% VAT
-    totalPriceUsd: 126.85, // $118 + 7.5% VAT
+    vatAmountNgn: 20000,
+    totalPriceNgn: 290000,
+    totalPriceUsd: 200.00, // $200 USD clean base
     subtitle: "Official Ministry registry search, Surveyor General charting & written legal opinion",
     deliverableTimeframe: "Priority 48–72 Hour Express Deliverable",
     features: [
@@ -163,11 +163,11 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
   STARTER: {
     key: "STARTER",
     name: "Starter Investor",
-    priceNgn: 45000,
-    priceUsd: 30,
+    priceNgn: 67440,
+    priceUsd: 46.51,
     vatRate: STATUTORY_VAT_RATE,
-    totalPriceNgn: 48375, // ₦45,000 + 7.5% VAT (₦3,375)
-    totalPriceUsd: 32.25, // $30 + 7.5% VAT ($2.25)
+    totalPriceNgn: 72500, // ₦67,440 + 7.5% VAT (₦5,060)
+    totalPriceUsd: 50.00, // $50 USD clean base
     maxActiveCases: 5,
     maxDocumentsPerCase: 15,
     maxFileSizeBytes: 25 * 1024 * 1024, // 25MB
@@ -192,11 +192,11 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
   PROFESSIONAL: {
     key: "PROFESSIONAL",
     name: "Professional Portfolio",
-    priceNgn: 125000,
-    priceUsd: 85,
+    priceNgn: 202325,
+    priceUsd: 139.53,
     vatRate: STATUTORY_VAT_RATE,
-    totalPriceNgn: 134375, // ₦125,000 + 7.5% VAT (₦9,375)
-    totalPriceUsd: 91.38, // $85 + 7.5% VAT ($6.38)
+    totalPriceNgn: 217500, // ₦202,325 + 7.5% VAT (₦15,175)
+    totalPriceUsd: 150.00, // $150 USD clean base
     maxActiveCases: 25,
     maxDocumentsPerCase: 50,
     maxFileSizeBytes: 50 * 1024 * 1024, // 50MB

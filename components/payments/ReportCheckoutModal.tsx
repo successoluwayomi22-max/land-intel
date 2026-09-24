@@ -71,7 +71,8 @@ export const ReportCheckoutModal: React.FC<ReportCheckoutModalProps> = ({
   if (!isOpen) return null;
 
   const currentPkg = ONE_OFF_PACKAGES[selectedPackage] || ONE_OFF_PACKAGES.STANDARD_AUDIT;
-  const taxBreakdown = calculatePriceTaxBreakdown(currentPkg.priceNgn);
+  const isUsdMode = currency === "USD";
+  const taxBreakdown = calculatePriceTaxBreakdown(isUsdMode ? currentPkg.priceUsd : currentPkg.priceNgn);
   const formattedSubtotal = formatPrice(taxBreakdown.subtotal);
   const formattedVat = formatPrice(taxBreakdown.vatAmount);
   const formattedTotal = formatPrice(taxBreakdown.total, { showCode: true });

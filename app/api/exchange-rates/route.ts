@@ -1,31 +1,41 @@
 import { NextResponse } from "next/server";
 
-// Fallback baseline market rates (NGN per 1 unit of foreign currency)
-const BASELINE_RATES: Record<string, number> = {
-  NGN: 1,
-  USD: 1500,
-  GBP: 1950,
-  EUR: 1650,
-  CAD: 1100,
-  AUD: 1000,
+// Fallback baseline market rates (Units of foreign currency per 1 USD)
+const BASELINE_RATES_FROM_USD: Record<string, number> = {
+  USD: 1,
+  NGN: 1450,
+  GBP: 0.76,
+  EUR: 0.88,
+  CAD: 1.40,
+  AUD: 1.45,
+  GHS: 12.0,
+  KES: 130.0,
+  ZAR: 16.5,
+  AED: 3.67,
 };
 
-let cachedRates: { rates: Record<string, number>; timestamp: number } | null = null;
+let cachedData: {
+  ratesFromUsd: Record<string, number>;
+  rates: Record<string, number>;
+  timestamp: number;
+} | null = null;
 const CACHE_TTL_MS = 1000 * 60 * 30; // 30 minutes cache
 
 export async function GET() {
   const now = Date.now();
 
-  if (cachedRates && now - cachedRates.timestamp < CACHE_TTL_MS) {
+  if (cachedData && now - cachedData.timestamp < CACHE_TTL_MS) {
     return NextResponse.json({
-      rates: cachedRates.rates,
+      base: "USD",
+      ratesFromUsd: cachedData.ratesFromUsd,
+      rates: cachedData.rates,
       source: "cache",
-      updatedAt: new Date(cachedRates.timestamp).toISOString(),
+      updatedAt: new Date(cachedData.timestamp).toISOString(),
     });
   }
 
   try {
-    // Free open exchange rates API without API key requirement
+    // Open reliable forex rates API without API key requirement
     const res = await fetch("https://open.er-api.com/v6/latest/USD", {
       next: { revalidate: 1800 },
     });
@@ -33,23 +43,45 @@ export async function GET() {
     if (res.ok) {
       const data = await res.json();
       if (data && data.rates && data.rates.NGN) {
-        const usdToNgn = data.rates.NGN; // e.g. ~1350 - 1550 NGN per USD
-        
-        // Compute NGN per 1 unit of each currency:
-        // rateToNgn = usdToNgn / usdToForeignRate
-        const liveRates: Record<string, number> = {
-          NGN: 1,
-          USD: Math.round(usdToNgn),
-          GBP: Math.round(usdToNgn / (data.rates.GBP || 0.75)),
-          EUR: Math.round(usdToNgn / (data.rates.EUR || 0.90)),
-          CAD: Math.round(usdToNgn / (data.rates.CAD || 1.38)),
-          AUD: Math.round(usdToNgn / (data.rates.AUD || 1.50)),
+        const usdToNgn = Number(data.rates.NGN) || 1450;
+
+        const liveRatesFromUsd: Record<string, number> = {
+          USD: 1,
+          NGN: Math.round(usdToNgn),
+          GBP: Number((data.rates.GBP || 0.76).toFixed(4)),
+          EUR: Number((data.rates.EUR || 0.88).toFixed(4)),
+          CAD: Number((data.rates.CAD || 1.40).toFixed(4)),
+          AUD: Number((data.rates.AUD || 1.45).toFixed(4)),
+          GHS: Number((data.rates.GHS || 12.0).toFixed(2)),
+          KES: Number((data.rates.KES || 130.0).toFixed(2)),
+          ZAR: Number((data.rates.ZAR || 16.5).toFixed(2)),
+          AED: Number((data.rates.AED || 3.67).toFixed(2)),
         };
 
-        cachedRates = { rates: liveRates, timestamp: now };
+        // Also compute NGN-per-unit for legacy compatibility
+        const legacyRatesToNgn: Record<string, number> = {
+          NGN: 1,
+          USD: Math.round(usdToNgn),
+          GBP: Math.round(usdToNgn / (data.rates.GBP || 0.76)),
+          EUR: Math.round(usdToNgn / (data.rates.EUR || 0.88)),
+          CAD: Math.round(usdToNgn / (data.rates.CAD || 1.40)),
+          AUD: Math.round(usdToNgn / (data.rates.AUD || 1.45)),
+          GHS: Math.round(usdToNgn / (data.rates.GHS || 12.0)),
+          KES: Math.round(usdToNgn / (data.rates.KES || 130.0)),
+          ZAR: Math.round(usdToNgn / (data.rates.ZAR || 16.5)),
+          AED: Math.round(usdToNgn / (data.rates.AED || 3.67)),
+        };
+
+        cachedData = {
+          ratesFromUsd: liveRatesFromUsd,
+          rates: legacyRatesToNgn,
+          timestamp: now,
+        };
 
         return NextResponse.json({
-          rates: liveRates,
+          base: "USD",
+          ratesFromUsd: liveRatesFromUsd,
+          rates: legacyRatesToNgn,
           source: "live_forex",
           updatedAt: new Date(now).toISOString(),
         });
@@ -60,9 +92,30 @@ export async function GET() {
   }
 
   // Fallback to baseline calibrated rates if external forex fetch fails
+  const fallbackRates = cachedData
+    ? cachedData
+    : {
+        ratesFromUsd: BASELINE_RATES_FROM_USD,
+        rates: {
+          NGN: 1,
+          USD: 1450,
+          GBP: 1950,
+          EUR: 1650,
+          CAD: 1100,
+          AUD: 1000,
+          GHS: 120,
+          KES: 11.5,
+          ZAR: 88,
+          AED: 395,
+        },
+        timestamp: now,
+      };
+
   return NextResponse.json({
-    rates: cachedRates ? cachedRates.rates : BASELINE_RATES,
-    source: cachedRates ? "stale_cache" : "baseline_fallback",
+    base: "USD",
+    ratesFromUsd: fallbackRates.ratesFromUsd,
+    rates: fallbackRates.rates,
+    source: cachedData ? "stale_cache" : "baseline_fallback",
     updatedAt: new Date().toISOString(),
   });
 }
