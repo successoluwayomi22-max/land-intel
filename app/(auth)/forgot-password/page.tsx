@@ -42,6 +42,7 @@ export default function ForgotPasswordPage() {
   // Step 2: OTP
   const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
   const [devOtpCode, setDevOtpCode] = useState<string | null>(null);
+  const [deliveryNotice, setDeliveryNotice] = useState<string | null>(null);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [expiryCountdown, setExpiryCountdown] = useState(INITIAL_EXPIRY_SECONDS);
   const [resending, setResending] = useState(false);
@@ -115,10 +116,13 @@ export default function ForgotPasswordPage() {
       if (data.devOtpCode) {
         setDevOtpCode(data.devOtpCode);
       }
+      if (data.deliveryNotice) {
+        setDeliveryNotice(data.deliveryNotice);
+      }
       setExpiryCountdown(INITIAL_EXPIRY_SECONDS);
       setResendCooldown(60);
       setStep(2);
-      toast("Verification code dispatched to your email!", "success");
+      toast(data.message || "Verification code dispatched!", "success");
     } catch {
       setError("Network error. Please check your connection and try again.");
     } finally {
@@ -240,6 +244,9 @@ export default function ForgotPasswordPage() {
 
       if (data.devOtpCode) {
         setDevOtpCode(data.devOtpCode);
+      }
+      if (data.deliveryNotice) {
+        setDeliveryNotice(data.deliveryNotice);
       }
       setExpiryCountdown(INITIAL_EXPIRY_SECONDS);
       setResendCooldown(60);
@@ -459,6 +466,11 @@ export default function ForgotPasswordPage() {
                   >
                     Click to auto-fill sandbox code &rarr;
                   </button>
+                  {deliveryNotice && (
+                    <p className="text-[10px] text-blue-900/80 pt-1 border-t border-blue-200/60 leading-tight">
+                      <strong>Delivery Notice:</strong> Resend is using test domain (<code>onboarding@resend.dev</code>), which restricts live dispatch to non-owner inboxes until custom domain is verified. Use the code above to test.
+                    </p>
+                  )}
                 </div>
               )}
 

@@ -49,23 +49,27 @@ export async function POST(request: Request) {
 
     console.log(`[AUTH] Password reset OTP requested for ${normalizedEmail}. OTP: ${otpCode} (expires in ${expiresInMinutes}m)`);
 
-    // Non-blocking email dispatch
-    sendPasswordResetEmail({
+    // Await email dispatch to verify delivery
+    const emailResult = await sendPasswordResetEmail({
       email: user.email,
       name: user.name,
       otpCode,
       expiresInMinutes,
-    }).catch((err) => {
-      console.error("[AUTH] Password reset email dispatch failed:", err);
     });
 
-    // In sandbox or when email provider is disabled, return devOtpCode to ease local verification
-    const showDevCode = !isEmailEnabled() || process.env.NODE_ENV !== "production";
+    const isDeliveryBlocked = !emailResult.success;
+    // Always provide devOtpCode if delivery was blocked by provider or in dev mode
+    const showDevCode = isDeliveryBlocked || !isEmailEnabled() || process.env.NODE_ENV !== "production";
 
     return NextResponse.json({
       success: true,
-      message: "A 6-digit verification code has been dispatched to your email address.",
+      message: emailResult.success
+        ? "A 6-digit verification code has been dispatched to your email address."
+        : "Email delivery restricted by provider sandbox. Testing code provided below.",
       devOtpCode: showDevCode ? otpCode : undefined,
+      deliveryNotice: isDeliveryBlocked
+        ? "Resend is currently using onboarding@resend.dev, which only delivers to the Resend account owner. To send to any recipient, verify your domain in Resend."
+        : undefined,
       expiresInMinutes,
     });
   } catch (error: any) {
