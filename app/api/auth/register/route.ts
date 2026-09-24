@@ -93,13 +93,17 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await logAudit({
-      userId: user.id,
-      action: "USER_REGISTER",
-      resourceType: "User",
-      resourceId: user.id,
-      details: { email: user.email },
-    });
+    try {
+      await logAudit({
+        userId: user.id,
+        action: "USER_REGISTER",
+        resourceType: "User",
+        resourceId: user.id,
+        details: { email: user.email },
+      });
+    } catch (auditErr) {
+      console.warn("[REGISTER_AUDIT_WARN]", auditErr);
+    }
 
     // Create immediate in-app Welcome Notification
     await db.notification.create({

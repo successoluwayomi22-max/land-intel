@@ -40,8 +40,8 @@ export interface CurrencyConfig {
 }
 
 export const CURRENCIES: Record<SupportedCurrency, CurrencyConfig> = {
-  USD: { code: "USD", symbol: "$", name: "US Dollar", countryCode: "US", rateFromUsd: 1, rateToNgn: 1450 },
-  NGN: { code: "NGN", symbol: "₦", name: "Nigerian Naira", countryCode: "NG", rateFromUsd: 1450, rateToNgn: 1 },
+  USD: { code: "USD", symbol: "$", name: "US Dollar", countryCode: "US", rateFromUsd: 1, rateToNgn: 1500 },
+  NGN: { code: "NGN", symbol: "₦", name: "Nigerian Naira", countryCode: "NG", rateFromUsd: 1500, rateToNgn: 1 },
   GBP: { code: "GBP", symbol: "£", name: "British Pound", countryCode: "GB", rateFromUsd: 0.76, rateToNgn: 1950 },
   EUR: { code: "EUR", symbol: "€", name: "Euro", countryCode: "EU", rateFromUsd: 0.88, rateToNgn: 1650 },
   CAD: { code: "CAD", symbol: "CA$", name: "Canadian Dollar", countryCode: "CA", rateFromUsd: 1.40, rateToNgn: 1100 },
@@ -2838,7 +2838,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [detectedCountry, setDetectedCountry] = useState<string>("US");
   const [ratesFromUsd, setRatesFromUsd] = useState<Record<string, number>>({
     USD: 1,
-    NGN: 1450,
+    NGN: 1500,
     GBP: 0.76,
     EUR: 0.88,
     CAD: 1.40,
@@ -2850,7 +2850,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
   const [liveRates, setLiveRates] = useState<Record<string, number>>({
     NGN: 1,
-    USD: 1450,
+    USD: 1500,
     GBP: 1950,
     EUR: 1650,
     CAD: 1100,
@@ -3090,7 +3090,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Special deterministic formatting for NGN to ensure exact statutory pricing & 7.5% VAT parity
     if (currency === "NGN") {
       // 1. Single Cadastral Audit ($50 USD = ₦75,000 NGN)
-      if (amount === 50 || (amount >= 70000 && amount <= 76000) || (amount >= 40000 && amount <= 55000)) {
+      if (amount === 50 || (amount >= 70000 && amount <= 76000)) {
         return `₦75,000${options?.showCode ? " NGN" : ""}`;
       }
       if (Math.abs(amount - 46.51) < 0.05 || Math.abs(amount - 46.5) < 0.05 || (amount >= 67000 && amount < 71000)) {
@@ -3101,7 +3101,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
 
       // 2. Professional Portfolio Plan ($150 USD = ₦225,000 NGN)
-      if (amount === 150 || (amount >= 215000 && amount <= 230000) || (amount >= 120000 && amount <= 145000)) {
+      if (amount === 150 || (amount >= 215000 && amount <= 230000)) {
         return `₦225,000${options?.showCode ? " NGN" : ""}`;
       }
       if (Math.abs(amount - 139.53) < 0.05 || Math.abs(amount - 139.5) < 0.05 || (amount >= 200000 && amount < 212000)) {
@@ -3112,7 +3112,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
 
       // 3. Full Title Verification Package ($200 USD = ₦300,000 NGN)
-      if (amount === 200 || (amount >= 285000 && amount <= 310000) || (amount >= 170000 && amount <= 200000)) {
+      if (amount === 200 || (amount >= 285000 && amount <= 310000)) {
         return `₦300,000${options?.showCode ? " NGN" : ""}`;
       }
       if (Math.abs(amount - 186.05) < 0.05 || (amount >= 270000 && amount < 285000)) {
@@ -3131,10 +3131,22 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     let usdAmount = amount;
     if (amount >= 285000 && amount <= 310000) {
       usdAmount = 200;
+    } else if (amount >= 270000 && amount < 285000) {
+      usdAmount = 186.05;
+    } else if (amount >= 19000 && amount <= 22000) {
+      usdAmount = 13.95;
     } else if (amount >= 215000 && amount <= 230000) {
       usdAmount = 150;
+    } else if (amount >= 200000 && amount < 212000) {
+      usdAmount = 139.53;
+    } else if (amount >= 14000 && amount <= 17000) {
+      usdAmount = 10.47;
     } else if (amount >= 70000 && amount <= 76000) {
       usdAmount = 50;
+    } else if (amount >= 67000 && amount < 71000) {
+      usdAmount = 46.51;
+    } else if (amount >= 5000 && amount <= 5500) {
+      usdAmount = 3.49;
     } else if (amount >= 1000) {
       const ngnRate = ratesFromUsd["NGN"] || 1500;
       usdAmount = amount / ngnRate;

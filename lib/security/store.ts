@@ -25,7 +25,9 @@ interface SecurityStoreData {
   reports: SecurityReport[];
 }
 
-const STORAGE_FILE = path.join(process.cwd(), "storage", "security_data.json");
+const STORAGE_FILE = process.env.VERCEL
+  ? path.join("/tmp", "security_data.json")
+  : path.join(process.cwd(), "storage", "security_data.json");
 
 // Default predefined production rules
 const DEFAULT_RULES: SecurityRule[] = [
@@ -138,14 +140,14 @@ class SecurityStore {
     try {
       await fs.mkdir(path.dirname(STORAGE_FILE), { recursive: true });
     } catch {
-      // Ignored if directory exists
+      // Ignored if directory exists or running on read-only filesystem
     }
   }
 
   public async load(): Promise<void> {
     if (this.isLoaded) return;
-    await this.ensureDir();
     try {
+      await this.ensureDir();
       const raw = await fs.readFile(STORAGE_FILE, "utf-8");
       const parsed = JSON.parse(raw);
       this.data = {
@@ -158,9 +160,13 @@ class SecurityStore {
         reports: Array.isArray(parsed.reports) ? parsed.reports : [],
       };
     } catch {
-      // If file doesn't exist yet, bootstrap initial operational baseline
+      // If file doesn't exist yet or read fails, bootstrap initial operational baseline
       this.bootstrapInitialData();
-      await this.persistImmediate();
+      try {
+        await this.persistImmediate();
+      } catch {
+        // Safe to ignore in read-only / ephemeral environments
+      }
     }
     this.isLoaded = true;
   }
@@ -298,11 +304,11 @@ class SecurityStore {
   }
 
   public async persistImmediate(): Promise<void> {
-    await this.ensureDir();
     try {
+      await this.ensureDir();
       await fs.writeFile(STORAGE_FILE, JSON.stringify(this.data, null, 2), "utf-8");
     } catch (err) {
-      console.error("[SECURITY_STORE_PERSIST_ERROR]", err);
+      console.warn("[SECURITY_STORE_PERSIST_WARN]", (err as Error)?.message || err);
     }
   }
 

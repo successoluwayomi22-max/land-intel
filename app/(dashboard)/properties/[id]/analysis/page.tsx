@@ -202,7 +202,7 @@ export default function PropertyAnalysisPage() {
                 className="text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs cursor-pointer"
               >
                 <Lock className="w-3.5 h-3.5 mr-1.5" />
-                Unlock Full Scam & Title Report ({formatPrice(48375)})
+                Unlock Full Scam & Title Report ({formatPrice(75000)})
               </Button>
             )}
           </div>
@@ -534,7 +534,7 @@ export default function PropertyAnalysisPage() {
                     className="font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-md cursor-pointer"
                   >
                     <Lock className="w-4 h-4 mr-2" />
-                    <span>Unlock Full Fraud Audit ({formatPrice(48375)})</span>
+                    <span>Unlock Full Fraud Audit ({formatPrice(75000)})</span>
                   </Button>
                 </div>
               </div>

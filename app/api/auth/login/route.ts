@@ -155,20 +155,28 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Record successful login in IP tracking
-    await securityStore.recordIPActivity({
-      ip,
-      successfulAuth: true,
-      accountEmail: user.email,
-    });
+    // Record successful login in IP tracking (non-blocking)
+    try {
+      await securityStore.recordIPActivity({
+        ip,
+        successfulAuth: true,
+        accountEmail: user.email,
+      });
+    } catch (e) {
+      console.warn("[LOGIN_IP_ACTIVITY_WARN]", e);
+    }
 
-    await logAudit({
-      userId: user.id,
-      action: "USER_LOGIN",
-      resourceType: "User",
-      resourceId: user.id,
-      ipAddress: ip,
-    });
+    try {
+      await logAudit({
+        userId: user.id,
+        action: "USER_LOGIN",
+        resourceType: "User",
+        resourceId: user.id,
+        ipAddress: ip,
+      });
+    } catch (e) {
+      console.warn("[LOGIN_AUDIT_WARN]", e);
+    }
 
     const token = await createSessionToken({
       userId: user.id,

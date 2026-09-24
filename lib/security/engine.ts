@@ -77,52 +77,57 @@ export class ThreatDetectionEngine {
     reason?: string;
     blockExpiresAt?: string;
   }> {
-    // 1. Check if IP is localhost/loopback
-    if (ip === "127.0.0.1" || ip === "::1" || ip === "localhost") {
-      // Loopback is monitored but protected from accidental lockout
-      return { allowed: true, state: "ALLOW" };
-    }
+    try {
+      // 1. Check if IP is localhost/loopback
+      if (!ip || ip === "127.0.0.1" || ip === "::1" || ip === "localhost") {
+        // Loopback is monitored but protected from accidental lockout
+        return { allowed: true, state: "ALLOW" };
+      }
 
-    const record = await securityStore.getIPRecord(ip);
-    if (!record) {
-      return { allowed: true, state: "MONITOR" };
-    }
+      const record = await securityStore.getIPRecord(ip);
+      if (!record) {
+        return { allowed: true, state: "MONITOR" };
+      }
 
-    // 2. Check Allowlist
-    if (record.isAllowlisted || record.status === "ALLOW") {
-      return { allowed: true, state: "ALLOW", reason: record.allowlistReason };
-    }
+      // 2. Check Allowlist
+      if (record.isAllowlisted || record.status === "ALLOW") {
+        return { allowed: true, state: "ALLOW", reason: record.allowlistReason };
+      }
 
-    // 3. Check Permanent Denylist
-    if (record.isDenylisted || record.status === "PERMANENTLY_BLOCKED") {
-      return {
-        allowed: false,
-        state: "PERMANENTLY_BLOCKED",
-        reason: record.blockReason || "IP permanently blocked due to security violations",
-      };
-    }
-
-    // 4. Check Temporary Block
-    if (record.status === "TEMPORARILY_BLOCKED") {
-      if (record.expiresAt && new Date(record.expiresAt).getTime() > Date.now()) {
+      // 3. Check Permanent Denylist
+      if (record.isDenylisted || record.status === "PERMANENTLY_BLOCKED") {
         return {
           allowed: false,
-          state: "TEMPORARILY_BLOCKED",
-          reason: record.blockReason || "IP is temporarily restricted due to suspicious behavior",
-          blockExpiresAt: record.expiresAt,
+          state: "PERMANENTLY_BLOCKED",
+          reason: record.blockReason || "IP permanently blocked due to security violations",
         };
-      } else {
-        // Expired
-        record.status = "MONITOR";
       }
-    }
 
-    // 5. Rate limit state
-    if (record.status === "RATE_LIMIT") {
-      return { allowed: true, state: "RATE_LIMIT", reason: record.blockReason };
-    }
+      // 4. Check Temporary Block
+      if (record.status === "TEMPORARILY_BLOCKED") {
+        if (record.expiresAt && new Date(record.expiresAt).getTime() > Date.now()) {
+          return {
+            allowed: false,
+            state: "TEMPORARILY_BLOCKED",
+            reason: record.blockReason || "IP is temporarily restricted due to suspicious behavior",
+            blockExpiresAt: record.expiresAt,
+          };
+        } else {
+          // Expired
+          record.status = "MONITOR";
+        }
+      }
 
-    return { allowed: true, state: record.status };
+      // 5. Rate limit state
+      if (record.status === "RATE_LIMIT") {
+        return { allowed: true, state: "RATE_LIMIT", reason: record.blockReason };
+      }
+
+      return { allowed: true, state: record.status };
+    } catch (err) {
+      console.warn("[THREAT_ENGINE_EVAL_WARN]", (err as Error)?.message || err);
+      return { allowed: true, state: "ALLOW" };
+    }
   }
 
   /**
@@ -135,114 +140,119 @@ export class ThreatDetectionEngine {
   ): Promise<{
     actionTaken: string;
     isBlocked: boolean;
-    event: SecurityEvent;
+    event?: SecurityEvent;
   }> {
-    const rules = await securityStore.getRules();
-    const matchingRule = rules.find((r) => r.enabled && r.eventType === eventType);
+    try {
+      const rules = await securityStore.getRules();
+      const matchingRule = rules.find((r) => r.enabled && r.eventType === eventType);
 
-    const now = Date.now();
-    const windowSec = matchingRule ? matchingRule.timeWindowSeconds : 300;
-    const threshold = matchingRule ? matchingRule.threshold : 5;
-    const severity = matchingRule ? matchingRule.severity : "HIGH";
+      const now = Date.now();
+      const windowSec = matchingRule ? matchingRule.timeWindowSeconds : 300;
+      const threshold = matchingRule ? matchingRule.threshold : 5;
+      const severity = matchingRule ? matchingRule.severity : "HIGH";
 
-    // Update sliding counter
-    const counterKey = `${eventType}:${ctx.ip}`;
-    let counter = eventCounters.get(counterKey);
-    if (!counter || counter.resetAt <= now) {
-      counter = { count: 1, resetAt: now + windowSec * 1000, accounts: new Set() };
-    } else {
-      counter.count += 1;
-    }
-    if (ctx.actorEmail) counter.accounts.add(ctx.actorEmail);
-    eventCounters.set(counterKey, counter);
+      // Update sliding counter
+      const counterKey = `${eventType}:${ctx.ip}`;
+      let counter = eventCounters.get(counterKey);
+      if (!counter || counter.resetAt <= now) {
+        counter = { count: 1, resetAt: now + windowSec * 1000, accounts: new Set() };
+      } else {
+        counter.count += 1;
+      }
+      if (ctx.actorEmail) counter.accounts.add(ctx.actorEmail);
+      eventCounters.set(counterKey, counter);
 
-    // Record activity in IP store
-    await securityStore.recordIPActivity({
-      ip: ctx.ip,
-      failedAuth: eventType === "BRUTE_FORCE" || eventType === "CREDENTIAL_STUFFING",
-      failedRequest: true,
-      accountEmail: ctx.actorEmail,
-      organizationId: ctx.organizationId,
-      threatDelta: severity === "CRITICAL" ? 25 : severity === "HIGH" ? 15 : 5,
-    });
+      // Record activity in IP store
+      await securityStore.recordIPActivity({
+        ip: ctx.ip,
+        failedAuth: eventType === "BRUTE_FORCE" || eventType === "CREDENTIAL_STUFFING",
+        failedRequest: true,
+        accountEmail: ctx.actorEmail,
+        organizationId: ctx.organizationId,
+        threatDelta: severity === "CRITICAL" ? 25 : severity === "HIGH" ? 15 : 5,
+      });
 
-    let actionTaken = "LOGGED";
-    let isBlocked = false;
+      let actionTaken = "LOGGED";
+      let isBlocked = false;
 
-    // Check if threshold exceeded
-    if (counter.count >= threshold) {
-      const targetAction = matchingRule ? matchingRule.action : "TEMP_BLOCK";
+      // Check if threshold exceeded
+      if (counter.count >= threshold) {
+        const targetAction = matchingRule ? matchingRule.action : "TEMP_BLOCK";
 
-      if (targetAction === "TEMP_BLOCK" || targetAction === "RATE_LIMIT") {
-        // Protect loopback from permanent damage
-        if (ctx.ip !== "127.0.0.1" && ctx.ip !== "::1") {
-          const durationMinutes = severity === "CRITICAL" ? 60 : 30;
-          const expiresAt = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString();
-          const reason = `Automated enforcement: ${matchingRule?.name || eventType} triggered (${counter.count} occurrences in ${windowSec}s)`;
+        if (targetAction === "TEMP_BLOCK" || targetAction === "RATE_LIMIT") {
+          // Protect loopback from permanent damage
+          if (ctx.ip !== "127.0.0.1" && ctx.ip !== "::1") {
+            const durationMinutes = severity === "CRITICAL" ? 60 : 30;
+            const expiresAt = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString();
+            const reason = `Automated enforcement: ${matchingRule?.name || eventType} triggered (${counter.count} occurrences in ${windowSec}s)`;
 
-          await securityStore.setIPStatus(
-            ctx.ip,
-            "TEMPORARILY_BLOCKED",
-            reason,
-            expiresAt,
-            "SECURITY_ENGINE"
-          );
+            await securityStore.setIPStatus(
+              ctx.ip,
+              "TEMPORARILY_BLOCKED",
+              reason,
+              expiresAt,
+              "SECURITY_ENGINE"
+            );
 
-          actionTaken = `TEMPORARY_BLOCK_${durationMinutes}M`;
-          isBlocked = true;
+            actionTaken = `TEMPORARY_BLOCK_${durationMinutes}M`;
+            isBlocked = true;
 
-          // Open incident if high or critical
-          if (severity === "HIGH" || severity === "CRITICAL") {
-            await securityStore.createIncident({
-              title: `${eventType.replace(/_/g, " ")} detected from ${ctx.ip}`,
-              description: `Automated detection triggered by ${matchingRule?.name || eventType}. Affected accounts: ${Array.from(counter.accounts).join(", ") || "N/A"}.`,
-              severity,
-              status: "OPEN",
-              affectedUsers: Array.from(counter.accounts),
-              affectedOrganizations: ctx.organizationId ? [ctx.organizationId] : [],
-              affectedIps: [ctx.ip],
-              affectedResources: ctx.endpoint ? [ctx.endpoint] : [],
-              detectionSource: matchingRule?.id || "SECURITY_ENGINE",
-              timeline: [
-                {
-                  timestamp: new Date().toISOString(),
-                  description: `Threshold exceeded: ${counter.count}/${threshold} events. Applied temporary block for ${durationMinutes}m.`,
-                  actor: "SECURITY_ENGINE",
-                },
-              ],
-              actionsTaken: [actionTaken],
-            });
+            // Open incident if high or critical
+            if (severity === "HIGH" || severity === "CRITICAL") {
+              await securityStore.createIncident({
+                title: `${eventType.replace(/_/g, " ")} detected from ${ctx.ip}`,
+                description: `Automated detection triggered by ${matchingRule?.name || eventType}. Affected accounts: ${Array.from(counter.accounts).join(", ") || "N/A"}.`,
+                severity,
+                status: "OPEN",
+                affectedUsers: Array.from(counter.accounts),
+                affectedOrganizations: ctx.organizationId ? [ctx.organizationId] : [],
+                affectedIps: [ctx.ip],
+                affectedResources: ctx.endpoint ? [ctx.endpoint] : [],
+                detectionSource: matchingRule?.id || "SECURITY_ENGINE",
+                timeline: [
+                  {
+                    timestamp: new Date().toISOString(),
+                    description: `Threshold exceeded: ${counter.count}/${threshold} events. Applied temporary block for ${durationMinutes}m.`,
+                    actor: "SECURITY_ENGINE",
+                  },
+                ],
+                actionsTaken: [actionTaken],
+              });
+            }
+          } else {
+            actionTaken = "DEV_LOOPBACK_BYPASS_LOGGED";
           }
         } else {
-          actionTaken = "DEV_LOOPBACK_BYPASS_LOGGED";
+          actionTaken = `${targetAction}_APPLIED`;
         }
-      } else {
-        actionTaken = `${targetAction}_APPLIED`;
       }
+
+      // Persist security event
+      const event = await securityStore.addEvent({
+        eventType,
+        severity,
+        ip: ctx.ip,
+        userAgent: ctx.userAgent,
+        endpoint: ctx.endpoint,
+        method: ctx.method,
+        actorEmail: ctx.actorEmail,
+        actorId: ctx.actorId,
+        organizationId: ctx.organizationId,
+        detectionRule: matchingRule?.id || "DEFAULT_DETECTION_POLICY",
+        actionTaken,
+        metadata: {
+          ...meta,
+          counterCount: counter.count,
+          threshold,
+          windowSeconds: windowSec,
+        },
+      });
+
+      return { actionTaken, isBlocked, event };
+    } catch (err) {
+      console.warn("[THREAT_ENGINE_REPORT_WARN]", (err as Error)?.message || err);
+      return { actionTaken: "LOGGED_SAFE", isBlocked: false };
     }
-
-    // Persist security event
-    const event = await securityStore.addEvent({
-      eventType,
-      severity,
-      ip: ctx.ip,
-      userAgent: ctx.userAgent,
-      endpoint: ctx.endpoint,
-      method: ctx.method,
-      actorEmail: ctx.actorEmail,
-      actorId: ctx.actorId,
-      organizationId: ctx.organizationId,
-      detectionRule: matchingRule?.id || "DEFAULT_DETECTION_POLICY",
-      actionTaken,
-      metadata: {
-        ...meta,
-        counterCount: counter.count,
-        threshold,
-        windowSeconds: windowSec,
-      },
-    });
-
-    return { actionTaken, isBlocked, event };
   }
 
   /**

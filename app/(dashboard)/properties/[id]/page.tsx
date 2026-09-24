@@ -310,7 +310,7 @@ export default function PropertyCaseHubPage() {
                 className="text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs cursor-pointer"
               >
                 <Lock className="w-3.5 h-3.5 mr-1.5" />
-                <span>Unlock Certified Report ({formatPrice(48375)})</span>
+                <span>Unlock Certified Report ({formatPrice(75000)})</span>
               </Button>
               <Link
                 href="/billing"
@@ -661,7 +661,7 @@ export default function PropertyCaseHubPage() {
                 </p>
               </div>
               <Button variant="secondary" size="sm" onClick={handleUnlockReport} isLoading={unlockingPayment} className="shrink-0">
-                Unlock Full Report ({formatPrice(48375)} incl. VAT)
+                Unlock Full Report ({formatPrice(75000)} incl. VAT)
               </Button>
             </div>
           )}
@@ -796,7 +796,7 @@ export default function PropertyCaseHubPage() {
                         className="text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs cursor-pointer"
                       >
                         <Lock className="w-3.5 h-3.5 mr-1.5" />
-                        <span>Unlock Certified Report ({formatPrice(48375)})</span>
+                        <span>Unlock Certified Report ({formatPrice(75000)})</span>
                       </Button>
                       <Link
                         href="/billing"
@@ -906,11 +906,11 @@ export default function PropertyCaseHubPage() {
                           </div>
                           <div>
                             <div className="flex items-baseline gap-1">
-                              <h4 className="text-2xl font-black font-heading text-slate-900">{formatPrice(48375)}</h4>
+                              <h4 className="text-2xl font-black font-heading text-slate-900">{formatPrice(75000)}</h4>
                               <span className="text-xs text-slate-500">/ property</span>
                             </div>
                             <p className="text-[11px] text-slate-500 mt-0.5">
-                              Base: {formatPrice(45000)} &bull; 7.5% Statutory VAT: {formatPrice(3375)}
+                              Base: {formatPrice(69767)} &bull; 7.5% Statutory VAT: {formatPrice(5233)}
                             </p>
                             <p className="text-xs text-slate-600 mt-1">
                               Automated 15-section audit, beacon matrix, boundary conflict check &amp; publication-grade PDF
@@ -950,7 +950,7 @@ export default function PropertyCaseHubPage() {
                           isLoading={unlockingPayment}
                           className="w-full font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs cursor-pointer"
                         >
-                          <span>Unlock Report for this Property ({formatPrice(48375)})</span>
+                          <span>Unlock Report for this Property ({formatPrice(75000)})</span>
                           <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                         </Button>
                       </div>
