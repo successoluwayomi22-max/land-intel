@@ -308,12 +308,12 @@ export default function LandingPage() {
                     onClick={() => setActiveCaseTab(idx)}
                     className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
                       activeCaseTab === idx
-                        ? "bg-brand-blue text-white shadow-md ring-1 ring-blue-500"
+                        ? "bg-blue-700 text-white shadow-md ring-1 ring-blue-700"
                         : "bg-white text-slate-700 hover:text-brand-darkNavy hover:bg-slate-50 border border-brand-border shadow-2xs"
                     }`}
                   >
                     <span>{cs.tag.split(":")[0]}</span>
-                    <span className={`hidden sm:inline ${activeCaseTab === idx ? "text-blue-100 font-semibold" : "text-slate-600"}`}>— {cs.lossPrevented}</span>
+                    <span className={`hidden sm:inline ${activeCaseTab === idx ? "text-white font-bold" : "text-slate-600"}`}>— {cs.lossPrevented}</span>
                   </button>
                 ))}
               </div>
