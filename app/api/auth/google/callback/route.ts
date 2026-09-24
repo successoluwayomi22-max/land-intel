@@ -95,10 +95,18 @@ export async function GET(request: NextRequest) {
         details: { email, method: "Google_OAuth_Redirect" },
       });
 
-      // Send welcome email (non-blocking)
-      sendWelcomeEmail({ email: user.email, name: user.name }).catch((err) => {
-        console.error("[GOOGLE_CALLBACK] Welcome email error:", err);
-      });
+      // Send welcome email for newly registered user
+      try {
+        console.log(`[GOOGLE_CALLBACK] Dispatching welcome email to new Google user: ${user.email}`);
+        const emailResult = await sendWelcomeEmail({ email: user.email, name: user.name });
+        if (!emailResult.success) {
+          console.warn("[GOOGLE_CALLBACK] Welcome email delivery warning:", emailResult.error);
+        } else {
+          console.log(`[GOOGLE_CALLBACK] Welcome email successfully sent to ${user.email}`);
+        }
+      } catch (err) {
+        console.error("[GOOGLE_CALLBACK] Welcome email exception:", err);
+      }
     } else if (!user.googleId) {
       // Link Google account to existing user
       user = await db.user.update({

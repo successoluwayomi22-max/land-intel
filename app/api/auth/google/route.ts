@@ -229,10 +229,18 @@ export async function POST(request: NextRequest) {
         details: { email, method: "Google_OAuth" },
       });
 
-      // Send welcome email (non-blocking)
-      sendWelcomeEmail({ email: user.email, name: user.name }).catch((err) => {
-        console.error("[GOOGLE_AUTH] Welcome email error:", err);
-      });
+      // Send welcome email for newly registered user
+      try {
+        console.log(`[GOOGLE_AUTH] Dispatching welcome email to new Google user: ${user.email}`);
+        const emailResult = await sendWelcomeEmail({ email: user.email, name: user.name });
+        if (!emailResult.success) {
+          console.warn("[GOOGLE_AUTH] Welcome email delivery warning:", emailResult.error);
+        } else {
+          console.log(`[GOOGLE_AUTH] Welcome email successfully sent to ${user.email}`);
+        }
+      } catch (err) {
+        console.error("[GOOGLE_AUTH] Welcome email exception:", err);
+      }
     } else if (googleId && !user.googleId) {
       // Link Google account to existing email-based account
       await db.user.update({

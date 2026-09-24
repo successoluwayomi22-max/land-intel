@@ -1,4 +1,11 @@
-import { resend, smtpTransporter, EMAIL_FROM, BRAND_EMAIL, isEmailEnabled } from "./client";
+import {
+  resend,
+  smtpTransporter,
+  SMTP_FROM,
+  RESEND_FROM,
+  BRAND_EMAIL,
+  isEmailEnabled,
+} from "./client";
 import { WelcomeEmail } from "./templates/welcome";
 import { OTPEmail } from "./templates/otp";
 import { PasswordResetEmail } from "./templates/password-reset";
@@ -8,7 +15,6 @@ import crypto from "crypto";
  * Generate a cryptographically secure 6-digit OTP code.
  */
 export function generateOTP(): string {
-  // Use crypto for secure random numbers
   const bytes = crypto.randomBytes(3); // 3 bytes = 24 bits = 0–16777215
   const num = (bytes[0] * 65536 + bytes[1] * 256 + bytes[2]) % 1000000;
   return num.toString().padStart(6, "0");
@@ -21,6 +27,88 @@ export function hashOTP(code: string): string {
   return crypto.createHash("sha256").update(code).digest("hex");
 }
 
+interface DispatchEmailOptions {
+  to: string;
+  subject: string;
+  html: string;
+  label: string;
+}
+
+/**
+ * Resilient multi-provider email dispatcher:
+ * 1. Tries SMTP first (e.g. Gmail App Password).
+ * 2. If SMTP fails or times out, immediately falls back to Resend API.
+ * 3. If only Resend is configured, sends directly via Resend.
+ */
+async function dispatchEmail({
+  to,
+  subject,
+  html,
+  label,
+}: DispatchEmailOptions): Promise<{ success: boolean; error?: string }> {
+  if (!isEmailEnabled()) {
+    console.log(`[EMAIL] Skipped ${label} to ${to} — email provider not configured`);
+    return { success: true };
+  }
+
+  let smtpError: string | null = null;
+
+  // 1. Try SMTP if transporter is initialized
+  if (smtpTransporter) {
+    try {
+      await smtpTransporter.sendMail({
+        from: SMTP_FROM,
+        to,
+        replyTo: BRAND_EMAIL,
+        subject,
+        html,
+      });
+      console.log(`[EMAIL] ${label} sent successfully via SMTP to ${to}`);
+      return { success: true };
+    } catch (err: any) {
+      smtpError = err?.message || String(err);
+      console.warn(
+        `[EMAIL] SMTP failed for ${label} to ${to} (${smtpError}). Attempting Resend fallback...`
+      );
+    }
+  }
+
+  // 2. Fallback to Resend (HTTP REST API — works reliably on cloud / serverless)
+  if (resend) {
+    try {
+      const { data, error } = await resend.emails.send({
+        from: RESEND_FROM,
+        to,
+        replyTo: BRAND_EMAIL,
+        subject,
+        html,
+      });
+
+      if (error) {
+        console.error(`[EMAIL] Resend ${label} error to ${to}:`, error);
+        return {
+          success: false,
+          error: error.message || (smtpError ? `SMTP: ${smtpError}; Resend: ${error.message}` : "Resend delivery error"),
+        };
+      }
+
+      console.log(`[EMAIL] ${label} sent successfully via Resend to ${to} (id: ${data?.id})`);
+      return { success: true };
+    } catch (resendErr: any) {
+      console.error(`[EMAIL] Resend ${label} exception to ${to}:`, resendErr);
+      return {
+        success: false,
+        error: resendErr?.message || smtpError || "Email dispatch failed across all providers",
+      };
+    }
+  }
+
+  return {
+    success: false,
+    error: smtpError || "No functional email dispatch service available",
+  };
+}
+
 /**
  * Send a welcome email to a newly registered user.
  */
@@ -28,51 +116,21 @@ export async function sendWelcomeEmail(user: {
   email: string;
   name: string;
 }): Promise<{ success: boolean; error?: string }> {
-  if (!isEmailEnabled()) {
-    console.log(`[EMAIL] Skipped welcome email to ${user.email} — email provider not configured`);
-    return { success: true };
-  }
-
   try {
     const html = WelcomeEmail({
-      userName: user.name,
+      userName: user.name || "Investor",
       loginUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://land-intel-omega.vercel.app"}/login`,
     });
 
-    if (smtpTransporter) {
-      await smtpTransporter.sendMail({
-        from: EMAIL_FROM,
-        to: user.email,
-        replyTo: BRAND_EMAIL,
-        subject: "Welcome to LandIntel — Your Account is Ready",
-        html,
-      });
-      console.log(`[EMAIL] Welcome email sent via SMTP to ${user.email}`);
-      return { success: true };
-    }
-
-    if (resend) {
-      const { error } = await resend.emails.send({
-        from: EMAIL_FROM,
-        to: user.email,
-        replyTo: BRAND_EMAIL,
-        subject: "Welcome to LandIntel — Your Account is Ready",
-        html,
-      });
-
-      if (error) {
-        console.error("[EMAIL] Welcome email error:", error);
-        return { success: false, error: error.message };
-      }
-
-      console.log(`[EMAIL] Welcome email sent to ${user.email}`);
-      return { success: true };
-    }
-
-    return { success: false, error: "No email transporter available" };
+    return await dispatchEmail({
+      to: user.email,
+      subject: "Welcome to LandIntel — Your Account is Ready",
+      html,
+      label: "Welcome email",
+    });
   } catch (err: any) {
-    console.error("[EMAIL] Welcome email exception:", err);
-    return { success: false, error: err.message };
+    console.error("[EMAIL] sendWelcomeEmail unexpected error:", err);
+    return { success: false, error: err?.message };
   }
 }
 
@@ -87,54 +145,22 @@ export async function sendOTPEmail(user: {
 }): Promise<{ success: boolean; error?: string }> {
   const expiresInMinutes = user.expiresInMinutes || 10;
 
-  if (!isEmailEnabled()) {
-    console.log(
-      `[EMAIL] Skipped OTP email to ${user.email} — email provider not configured. OTP: ${user.otpCode}`
-    );
-    return { success: true };
-  }
-
   try {
     const html = OTPEmail({
-      userName: user.name,
+      userName: user.name || "User",
       otpCode: user.otpCode,
       expiresInMinutes,
     });
 
-    if (smtpTransporter) {
-      await smtpTransporter.sendMail({
-        from: EMAIL_FROM,
-        to: user.email,
-        replyTo: BRAND_EMAIL,
-        subject: `${user.otpCode} — Your LandIntel Verification Code`,
-        html,
-      });
-      console.log(`[EMAIL] OTP email sent via SMTP to ${user.email}`);
-      return { success: true };
-    }
-
-    if (resend) {
-      const { error } = await resend.emails.send({
-        from: EMAIL_FROM,
-        to: user.email,
-        replyTo: BRAND_EMAIL,
-        subject: `${user.otpCode} — Your LandIntel Verification Code`,
-        html,
-      });
-
-      if (error) {
-        console.error("[EMAIL] OTP email error:", error);
-        return { success: false, error: error.message };
-      }
-
-      console.log(`[EMAIL] OTP email sent to ${user.email}`);
-      return { success: true };
-    }
-
-    return { success: false, error: "No email transporter available" };
+    return await dispatchEmail({
+      to: user.email,
+      subject: `${user.otpCode} — Your LandIntel Verification Code`,
+      html,
+      label: "OTP verification email",
+    });
   } catch (err: any) {
-    console.error("[EMAIL] OTP email exception:", err);
-    return { success: false, error: err.message };
+    console.error("[EMAIL] sendOTPEmail unexpected error:", err);
+    return { success: false, error: err?.message };
   }
 }
 
@@ -149,53 +175,21 @@ export async function sendPasswordResetEmail(user: {
 }): Promise<{ success: boolean; error?: string }> {
   const expiresInMinutes = user.expiresInMinutes || 5;
 
-  if (!isEmailEnabled()) {
-    console.log(
-      `[EMAIL] Skipped password reset email to ${user.email} — email provider not configured. OTP: ${user.otpCode} (expires in ${expiresInMinutes}m)`
-    );
-    return { success: false, error: "Email delivery system is not configured." };
-  }
-
   try {
     const html = PasswordResetEmail({
-      userName: user.name,
+      userName: user.name || "User",
       otpCode: user.otpCode,
       expiresInMinutes,
     });
 
-    if (smtpTransporter) {
-      await smtpTransporter.sendMail({
-        from: EMAIL_FROM,
-        to: user.email,
-        replyTo: BRAND_EMAIL,
-        subject: `${user.otpCode} — Reset Your LandIntel Password`,
-        html,
-      });
-      console.log(`[EMAIL] Password reset email sent via SMTP directly to user ${user.email}`);
-      return { success: true };
-    }
-
-    if (resend) {
-      const { error } = await resend.emails.send({
-        from: EMAIL_FROM,
-        to: user.email,
-        replyTo: BRAND_EMAIL,
-        subject: `${user.otpCode} — Reset Your LandIntel Password`,
-        html,
-      });
-
-      if (error) {
-        console.error("[EMAIL] Password reset email error:", error);
-        return { success: false, error: error.message };
-      }
-
-      console.log(`[EMAIL] Password reset email sent directly to user ${user.email}`);
-      return { success: true };
-    }
-
-    return { success: false, error: "No email dispatch service is available." };
+    return await dispatchEmail({
+      to: user.email,
+      subject: `${user.otpCode} — Reset Your LandIntel Password`,
+      html,
+      label: "Password reset email",
+    });
   } catch (err: any) {
-    console.error("[EMAIL] Password reset email exception:", err);
-    return { success: false, error: err.message };
+    console.error("[EMAIL] sendPasswordResetEmail unexpected error:", err);
+    return { success: false, error: err?.message };
   }
 }

@@ -44,7 +44,7 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
 
       toast(
         data.isNewUser
-          ? "Google account registered successfully!"
+          ? "Welcome to LandIntel! Your account has been created and a welcome email has been sent."
           : `Signed in as ${data.user?.email || "Google user"}.`,
         "success"
       );
