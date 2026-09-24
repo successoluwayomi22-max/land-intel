@@ -89,11 +89,56 @@ export default function BillingPage() {
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [includeVat, setIncludeVat] = useState(true);
   const [selectedReceipt, setSelectedReceipt] = useState<any | null>(null);
+  const [verifyingReceiptId, setVerifyingReceiptId] = useState<string | null>(null);
   const [properties, setProperties] = useState<any[]>([]);
   const [selectedPropertyForCheckout, setSelectedPropertyForCheckout] = useState<any | null>(null);
   const [checkoutPackageType, setCheckoutPackageType] = useState<OneOffPackageKey>("STANDARD_AUDIT");
   const [propertySelectModalOpen, setPropertySelectModalOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
+
+  const handleVerifyPaymentReference = async (reference: string) => {
+    if (!reference) return;
+    setVerifyingReceiptId(reference);
+    try {
+      const res = await fetch("/api/payments/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setFeedback({
+          type: "success",
+          message: "Payment verified successfully! Your account and receipts have been updated to Paid in Full.",
+        });
+        // Update selected receipt in place if it is currently open
+        setSelectedReceipt((prev: any) => {
+          if (prev && prev.reference === reference) {
+            return {
+              ...prev,
+              status: "SUCCESSFUL",
+              verifiedAt: new Date().toISOString(),
+            };
+          }
+          return prev;
+        });
+        await fetchBillingData(true);
+      } else {
+        setFeedback({
+          type: "error",
+          message: data.message || "Payment verification could not be completed. The transaction may still be processing with the bank.",
+        });
+      }
+    } catch (err: any) {
+      console.error("[VERIFY_PAYMENT_ERROR]", err);
+      setFeedback({
+        type: "error",
+        message: "Failed to communicate with verification gateway. Please check your network.",
+      });
+    } finally {
+      setVerifyingReceiptId(null);
+    }
+  };
 
   const fetchBillingData = async (silent = false) => {
     if (!silent) setLoading(true);
@@ -158,6 +203,25 @@ export default function BillingPage() {
   useEffect(() => {
     // Instant fetch in background without blocking initial render
     fetchBillingData(true);
+
+    // Check URL parameters for payment verification callbacks (e.g. ?status=verify&ref=...)
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const statusParam = urlParams.get("status");
+      const refParam = urlParams.get("ref");
+
+      if (statusParam === "verify" && refParam) {
+        handleVerifyPaymentReference(refParam);
+        window.history.replaceState({}, "", "/billing");
+      } else if (statusParam === "success") {
+        setFeedback({
+          type: "success",
+          message: "Payment completed successfully! All entitlements and receipts are updated.",
+        });
+        fetchBillingData(true);
+        window.history.replaceState({}, "", "/billing");
+      }
+    }
   }, []);
 
   // Lock body scroll when receipt modal is open
@@ -725,29 +789,50 @@ export default function BillingPage() {
                       <td className="py-2.5 px-3 text-slate-500">{p.provider}</td>
                       <td className="py-2.5 px-3">
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full border ${
                             p.status === "SUCCESSFUL"
-                              ? "bg-emerald-100 text-emerald-800"
+                              ? "bg-emerald-100 text-emerald-800 border-emerald-300"
                               : p.status === "PENDING"
-                              ? "bg-amber-100 text-amber-800"
-                              : "bg-rose-100 text-rose-800"
+                              ? "bg-amber-100 text-amber-900 border-amber-300"
+                              : "bg-rose-100 text-rose-800 border-rose-300"
                           }`}
                         >
-                          {p.status}
+                          {p.status === "SUCCESSFUL" && <CheckCircle2 className="w-3 h-3 text-emerald-600" />}
+                          {p.status === "PENDING" && <Clock className="w-3 h-3 text-amber-600 animate-pulse" />}
+                          {p.status === "FAILED" && <AlertTriangle className="w-3 h-3 text-rose-600" />}
+                          <span>{p.status === "SUCCESSFUL" ? "Paid (Settled)" : p.status === "PENDING" ? "Pending" : "Failed"}</span>
                         </span>
                       </td>
                       <td className="py-2.5 px-3 text-slate-400 text-[11px]">
                         {new Date(p.createdAt).toLocaleDateString()}
                       </td>
                       <td className="py-2.5 px-3 text-right">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedReceipt({ ...p, subtotal, vatAmount, total, currencySymbol: sym, resolvedCurrency: currCode })}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 text-[11px] font-bold transition-all border border-slate-200 hover:border-emerald-300"
-                        >
-                          <Receipt className="w-3 h-3" />
-                          <span>View Receipt</span>
-                        </button>
+                        <div className="inline-flex items-center justify-end gap-1.5">
+                          {p.status === "PENDING" && (
+                            <button
+                              type="button"
+                              title="Verify payment with gateway"
+                              onClick={() => handleVerifyPaymentReference(p.reference)}
+                              disabled={verifyingReceiptId === p.reference}
+                              className="inline-flex items-center gap-1 px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-900 text-[11px] font-bold transition-all border border-amber-300 cursor-pointer disabled:opacity-50"
+                            >
+                              <RefreshCw className={`w-3 h-3 ${verifyingReceiptId === p.reference ? "animate-spin text-amber-700" : "text-amber-600"}`} />
+                              <span className="hidden sm:inline">Verify</span>
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setSelectedReceipt({ ...p, subtotal, vatAmount, total, currencySymbol: sym, resolvedCurrency: currCode })}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-bold transition-all border cursor-pointer ${
+                              p.status === "SUCCESSFUL"
+                                ? "bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border-slate-200 hover:border-emerald-300"
+                                : "bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300 hover:border-amber-400"
+                            }`}
+                          >
+                            <Receipt className="w-3 h-3" />
+                            <span>{p.status === "SUCCESSFUL" ? "View Receipt" : "View Invoice"}</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -758,266 +843,442 @@ export default function BillingPage() {
         )}
       </div>
 
-      {/* Tax Receipt & Invoice Modal with Professional Print Engine */}
-      {selectedReceipt && (
-        <>
-          <style jsx global>{`
-            @media print {
-              @page {
-                size: A4 portrait;
-                margin: 10mm 12mm;
-              }
-              body {
-                background: #ffffff !important;
-                color: #0f172a !important;
-                margin: 0 !important;
-                padding: 0 !important;
-              }
-              body * {
-                visibility: hidden !important;
-              }
-              #printable-vat-receipt,
-              #printable-vat-receipt * {
-                visibility: visible !important;
-              }
-              #printable-vat-receipt {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                max-height: none !important;
-                overflow: visible !important;
-                margin: 0 !important;
-                padding: 24px !important;
-                background: #ffffff !important;
-                color: #0f172a !important;
-                border: 1.5px solid #0f172a !important;
-                border-radius: 8px !important;
-                box-shadow: none !important;
-                z-index: 999999 !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-              }
-              .no-print {
-                display: none !important;
-              }
-            }
-          `}</style>
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-sm overflow-y-auto animate-in fade-in">
-            <div
-              id="printable-vat-receipt"
-              className="bg-white w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto"
-            >
-              {/* Modal Top Bar (Hidden in Print) */}
-              <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between no-print shrink-0">
-                <div className="flex items-center gap-2.5">
-                  <Receipt className="w-5 h-5 text-emerald-400" />
-                  <div>
-                    <h3 className="font-heading font-extrabold text-base">Official Statutory VAT Invoice</h3>
-                    <p className="text-[11px] text-slate-400 font-mono">{selectedReceipt.reference}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setSelectedReceipt(null)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                  aria-label="Close Receipt"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+      {/* Tax Receipt & Invoice Modal with Dynamic Status Awareness and Professional Print Engine */}
+      {selectedReceipt && (() => {
+        const isPaid = selectedReceipt.status === "SUCCESSFUL";
+        const isPending = selectedReceipt.status === "PENDING";
+        const isFailed = selectedReceipt.status === "FAILED";
 
-              {/* Scrollable Receipt Body */}
-              <div className="p-5 sm:p-8 space-y-5 overflow-y-auto flex-1">
-                {/* Corporate Header */}
-                <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-slate-200 pb-5">
-                  <div>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-emerald-400 font-black text-sm shrink-0">
-                        LI
-                      </div>
-                      <div>
-                        <h4 className="font-extrabold text-slate-900 text-base sm:text-lg font-heading leading-tight">
-                          LandIntel Cadastral Intelligence Ltd.
-                        </h4>
-                        <p className="text-xs text-slate-500">Statutory Land Due-Diligence & Boundary Verification</p>
-                      </div>
-                    </div>
-                    <div className="text-[11px] text-slate-500 mt-2.5 space-y-0.5 font-sans">
-                      <p><span className="font-semibold text-slate-700">TIN / FIRS VAT Reg:</span> 24198273-0001 (FIRS Tax Compliant)</p>
-                      <p><span className="font-semibold text-slate-700">RC Number:</span> RC 1984291 • Corporate Affairs Commission</p>
-                      <p className="text-slate-400">Global Operations Center • International Due-Diligence Desk</p>
+        const docTitle = isPaid
+          ? "Official Statutory VAT Clearance Receipt"
+          : isPending
+          ? "Statutory Pro-Forma Tax Invoice"
+          : "Void / Unsettled Transaction Record";
+
+        return (
+          <>
+            <style jsx global>{`
+              @media print {
+                @page {
+                  size: A4 portrait;
+                  margin: 10mm 12mm;
+                }
+                body {
+                  background: #ffffff !important;
+                  color: #0f172a !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                }
+                body * {
+                  visibility: hidden !important;
+                }
+                #printable-vat-receipt,
+                #printable-vat-receipt * {
+                  visibility: visible !important;
+                }
+                #printable-vat-receipt {
+                  position: absolute !important;
+                  left: 0 !important;
+                  top: 0 !important;
+                  width: 100% !important;
+                  max-width: 100% !important;
+                  max-height: none !important;
+                  overflow: visible !important;
+                  margin: 0 !important;
+                  padding: 24px !important;
+                  background: #ffffff !important;
+                  color: #0f172a !important;
+                  border: 1.5px solid #0f172a !important;
+                  border-radius: 8px !important;
+                  box-shadow: none !important;
+                  z-index: 999999 !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .no-print {
+                  display: none !important;
+                }
+              }
+            `}</style>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-sm overflow-y-auto animate-in fade-in">
+              <div
+                id="printable-vat-receipt"
+                className="bg-white w-full max-w-2xl max-h-[92vh] flex flex-col rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto relative"
+              >
+                {/* Modal Top Bar (Hidden in Print) */}
+                <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between no-print shrink-0 border-b border-slate-800">
+                  <div className="flex items-center gap-2.5">
+                    {isPaid ? (
+                      <Receipt className="w-5 h-5 text-emerald-400" />
+                    ) : isPending ? (
+                      <Clock className="w-5 h-5 text-amber-400 animate-pulse" />
+                    ) : (
+                      <AlertTriangle className="w-5 h-5 text-rose-400" />
+                    )}
+                    <div>
+                      <h3 className="font-heading font-extrabold text-base tracking-tight">{docTitle}</h3>
+                      <p className="text-[11px] text-slate-400 font-mono">
+                        Ref: {selectedReceipt.reference} &bull;{" "}
+                        <span className={`font-bold ${isPaid ? "text-emerald-400" : isPending ? "text-amber-400" : "text-rose-400"}`}>
+                          {isPaid ? "PAID IN FULL" : isPending ? "PAYMENT PENDING" : "FAILED"}
+                        </span>
+                      </p>
                     </div>
                   </div>
-                  <div className="text-left sm:text-right shrink-0">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-extrabold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-300 shadow-xs">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      PAID IN FULL
-                    </span>
-                    <p className="text-[10px] text-slate-400 mt-1 font-mono uppercase">STATUTORY TAX INVOICE</p>
-                    <p className="text-[10px] text-slate-400 font-mono">
-                      Ref: {selectedReceipt.reference?.slice(0, 16)}
-                    </p>
-                  </div>
+                  <button
+                    onClick={() => setSelectedReceipt(null)}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                    aria-label="Close Receipt"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
 
-                {/* Billed To & Property Assignment Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">
-                      Billed To (Investor / Client)
-                    </span>
-                    <p className="font-bold text-slate-900 text-sm">{selectedReceipt.customerName || "Valued Diaspora Investor"}</p>
-                    <p className="text-slate-600 font-mono text-[11px] mt-0.5">{selectedReceipt.customerEmail || "N/A"}</p>
-                    <p className="text-slate-400 text-[10px] mt-1">
-                      Tax Jurisdiction: {selectedReceipt.resolvedCurrency === "USD" ? "International Investor (Cross-Border)" : "Primary Statutory Jurisdiction"}
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">
-                      Property Subject Matter
-                    </span>
-                    <p className="font-bold text-slate-900 text-sm truncate" title={selectedReceipt.caseTitle}>
-                      {selectedReceipt.caseTitle || "LandIntel Cadastral Due-Diligence Case"}
-                    </p>
-                    <p className="text-slate-600 text-[11px] mt-0.5 truncate" title={selectedReceipt.caseLocation || selectedReceipt.caseAddress}>
-                      {selectedReceipt.caseLocation || selectedReceipt.caseAddress || "Official Cadastral Survey Zone"}
-                    </p>
-                    <p className="text-slate-400 text-[10px] mt-1 font-mono">
-                      Case Identifier: {selectedReceipt.caseId ? `CASE-${selectedReceipt.caseId.slice(-8).toUpperCase()}` : "N/A"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Metadata Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs bg-slate-50 p-3 rounded-xl border border-slate-200">
-                  <div>
-                    <span className="text-slate-400 text-[10px] uppercase font-bold block">Issue Date</span>
-                    <span className="font-bold text-slate-800">
-                      {new Date(selectedReceipt.createdAt).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 text-[10px] uppercase font-bold block">Payment Gateway</span>
-                    <span className="font-bold text-slate-800 font-mono uppercase">{selectedReceipt.provider || "PAYSTACK"}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 text-[10px] uppercase font-bold block">Transaction Ref</span>
-                    <span className="font-mono text-slate-800 truncate block text-[11px] font-medium" title={selectedReceipt.reference}>
-                      {selectedReceipt.reference}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 text-[10px] uppercase font-bold block">Statutory VAT</span>
-                    <span className="font-semibold text-emerald-800">Standard 7.5%</span>
-                  </div>
-                </div>
-
-                {/* Line Items Table */}
-                <div className="border border-slate-200 rounded-xl overflow-hidden text-xs">
-                  <table className="w-full text-left">
-                    <thead className="bg-slate-100 text-slate-600 text-[10px] uppercase font-mono border-b border-slate-200">
-                      <tr>
-                        <th className="p-3">Service Deliverable &amp; Cadastral Investigation</th>
-                        <th className="p-3 text-right">VAT Rate</th>
-                        <th className="p-3 text-right">Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      <tr>
-                        <td className="p-3 text-slate-800">
-                          <span className="font-bold block text-xs">
-                            {selectedReceipt.caseTitle || selectedReceipt.metadata?.description || selectedReceipt.metadata?.packageName || "Instant Cadastral Audit Report"}
-                          </span>
-                          <span className="text-[11px] text-slate-500 block mt-0.5 leading-relaxed">
-                            &bull; 15-Section Cadastral &amp; Title Verification Deep-Scan<br />
-                            &bull; Boundary Coordinates &amp; Beacon Overlap Analysis Matrix<br />
-                            &bull; Cross-Document Contradiction Check (Deed, Survey Plan &amp; Gazette)<br />
-                            &bull; Surveyor &amp; Lawyer Inquiry Checklists with Certified PDF
-                          </span>
-                        </td>
-                        <td className="p-3 text-right font-mono text-slate-500 align-top">
-                          Excl. VAT
-                        </td>
-                        <td className="p-3 text-right font-mono font-bold text-slate-900 align-top">
-                          {selectedReceipt.currencySymbol || "₦"}{selectedReceipt.subtotal?.toLocaleString()}
-                        </td>
-                      </tr>
-                      <tr className="bg-emerald-50/50">
-                        <td className="p-3 text-emerald-900 font-medium">
-                          Statutory Value Added Tax (VAT 7.5%)
-                          <span className="text-[10px] text-emerald-700 block font-normal">
-                            Federal Inland Revenue Service (FIRS) Value Added Tax Act Section 34
-                          </span>
-                        </td>
-                        <td className="p-3 text-right font-mono font-semibold text-emerald-800">
-                          7.5%
-                        </td>
-                        <td className="p-3 text-right font-mono font-bold text-emerald-800">
-                          +{selectedReceipt.currencySymbol || "₦"}{selectedReceipt.vatAmount?.toLocaleString()}
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot className="bg-slate-900 text-white font-bold">
-                      <tr>
-                        <td className="p-3 text-xs" colSpan={2}>
-                          Total Amount Paid In Full ({selectedReceipt.resolvedCurrency || "NGN"})
-                        </td>
-                        <td className="p-3 text-right font-mono text-base text-emerald-400">
-                          {selectedReceipt.currencySymbol || "₦"}{selectedReceipt.total?.toLocaleString()}
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-
-                {/* Statutory Compliance Footer & Tax Clearance Stamp */}
-                <div className="pt-2 border-t border-slate-100 space-y-3">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[11px] text-slate-500">
-                    <span className="flex items-center gap-1.5">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span>Authenticated Statutory Electronic VAT Invoice &amp; Tax Clearance Record</span>
-                    </span>
-                    <span className="font-mono text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                      Auth Code: LDI-SEC-{selectedReceipt.reference?.slice(-8).toUpperCase()}
-                    </span>
-                  </div>
-
-                  <p className="text-[10px] text-slate-400 leading-normal">
-                    This electronic statutory receipt is generated in compliance with applicable cross-border tax administration standards. Retain this invoice as proof of statutory payment for due-diligence expenditure.
-                  </p>
-
-                  {/* Action Buttons (Hidden during print) */}
-                  <div className="flex justify-end items-center gap-2 pt-3 no-print border-t border-slate-100">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedReceipt(null)}
-                      className="font-medium text-xs px-4"
+                {/* Scrollable Receipt Body */}
+                <div className="p-5 sm:p-8 space-y-5 overflow-y-auto flex-1 relative">
+                  {/* Subtle Authentic Background Watermark Stamp */}
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden z-0">
+                    <div
+                      className={`font-black text-4xl sm:text-6xl uppercase tracking-widest rotate-[-22deg] border-4 rounded-3xl p-6 sm:p-8 select-none ${
+                        isPaid
+                          ? "text-emerald-600/10 border-emerald-600/20"
+                          : isPending
+                          ? "text-amber-600/10 border-amber-600/20"
+                          : "text-rose-600/10 border-rose-600/20"
+                      }`}
                     >
-                      Close
-                    </Button>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => window.print()}
-                      className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm px-4"
-                    >
-                      <Printer className="w-3.5 h-3.5" />
-                      <span>Print Official Receipt</span>
-                    </Button>
+                      {isPaid ? "PAID • SETTLED" : isPending ? "PRO-FORMA • UNPAID" : "FAILED • VOID"}
+                    </div>
+                  </div>
+
+                  {/* Corporate Header */}
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-slate-200 pb-5 relative z-10">
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-emerald-400 font-black text-sm shrink-0 shadow-sm">
+                          LI
+                        </div>
+                        <div>
+                          <h4 className="font-extrabold text-slate-900 text-base sm:text-lg font-heading leading-tight">
+                            LandIntel Cadastral Intelligence Ltd.
+                          </h4>
+                          <p className="text-xs text-slate-500">Statutory Land Due-Diligence &amp; Boundary Verification</p>
+                        </div>
+                      </div>
+                      <div className="text-[11px] text-slate-500 mt-2.5 space-y-0.5 font-sans">
+                        <p><span className="font-semibold text-slate-700">TIN / FIRS VAT Reg:</span> 24198273-0001 (FIRS Tax Compliant)</p>
+                        <p><span className="font-semibold text-slate-700">RC Number:</span> RC 1984291 • Corporate Affairs Commission</p>
+                        <p className="text-slate-400">Global Operations Center • International Due-Diligence Desk</p>
+                      </div>
+                    </div>
+
+                    {/* Status Badge */}
+                    <div className="text-left sm:text-right shrink-0">
+                      {isPaid ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-black bg-emerald-100 text-emerald-900 px-3.5 py-1.5 rounded-full border border-emerald-300 shadow-xs">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          PAID IN FULL
+                        </span>
+                      ) : isPending ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-black bg-amber-100 text-amber-950 px-3.5 py-1.5 rounded-full border border-amber-300 shadow-xs">
+                          <Clock className="w-4 h-4 text-amber-600 animate-pulse" />
+                          PAYMENT PENDING
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-black bg-rose-100 text-rose-900 px-3.5 py-1.5 rounded-full border border-rose-300 shadow-xs">
+                          <AlertTriangle className="w-4 h-4 text-rose-600" />
+                          PAYMENT FAILED
+                        </span>
+                      )}
+                      <p className="text-[10px] text-slate-500 mt-1 font-mono uppercase font-bold tracking-wider">
+                        {isPaid ? "OFFICIAL TAX CLEARANCE" : isPending ? "PRO-FORMA INVOICE" : "VOID INVOICE"}
+                      </p>
+                      <p className="text-[10px] text-slate-400 font-mono">
+                        Ref: {selectedReceipt.reference?.slice(0, 18)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Status Notice Banner */}
+                  <div className="relative z-10">
+                    {isPaid && (
+                      <div className="bg-emerald-50/90 border border-emerald-200 rounded-xl p-3.5 text-emerald-950 text-xs flex items-start gap-2.5 shadow-xs">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-bold text-slate-900">Official Tax Clearance Verified</p>
+                          <p className="text-[11px] text-slate-600 mt-0.5">
+                            Payment settled in full via {selectedReceipt.provider || "PAYSTACK"}. Statutory 7.5% Value Added Tax has been accounted for under Federal Inland Revenue Service (FIRS) Value Added Tax Act compliance.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {isPending && (
+                      <div className="bg-amber-50/90 border border-amber-200 rounded-xl p-3.5 text-amber-950 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                        <div className="flex items-start gap-2.5">
+                          <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                          <div>
+                            <p className="font-bold text-slate-900">Payment Pending Confirmation</p>
+                            <p className="text-[11px] text-slate-600 mt-0.5">
+                              This document is an official Pro-Forma Tax Invoice. If you have already authorized this charge with your bank or Paystack, click <strong className="font-semibold text-slate-900">Verify Payment</strong> to refresh your clearance receipt to Paid in Full.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="shrink-0 self-end sm:self-auto no-print">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleVerifyPaymentReference(selectedReceipt.reference)}
+                            disabled={verifyingReceiptId === selectedReceipt.reference}
+                            className="bg-white hover:bg-amber-100 text-amber-900 border-amber-300 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer"
+                          >
+                            <RefreshCw className={`w-3.5 h-3.5 ${verifyingReceiptId === selectedReceipt.reference ? "animate-spin text-amber-700" : ""}`} />
+                            <span>{verifyingReceiptId === selectedReceipt.reference ? "Verifying with Gateway..." : "Verify Payment"}</span>
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {isFailed && (
+                      <div className="bg-rose-50/90 border border-rose-200 rounded-xl p-3.5 text-rose-950 text-xs flex items-start gap-2.5 shadow-xs">
+                        <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-bold text-slate-900">Transaction Not Completed</p>
+                          <p className="text-[11px] text-slate-600 mt-0.5">
+                            This transaction attempt was declined by the card issuer or cancelled. You can retry with another card, wire transfer, or Paystack.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Billed To & Property Assignment Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs relative z-10">
+                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                      <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">
+                        Billed To (Investor / Client)
+                      </span>
+                      <p className="font-bold text-slate-900 text-sm">{selectedReceipt.customerName || "Valued Diaspora Investor"}</p>
+                      <p className="text-slate-600 font-mono text-[11px] mt-0.5">{selectedReceipt.customerEmail || "N/A"}</p>
+                      <p className="text-slate-400 text-[10px] mt-1">
+                        Tax Jurisdiction: {selectedReceipt.resolvedCurrency === "USD" ? "International Investor (Cross-Border)" : "Primary Statutory Jurisdiction"}
+                      </p>
+                    </div>
+
+                    <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                      <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block mb-1">
+                        Property / Service Subject
+                      </span>
+                      <p className="font-bold text-slate-900 text-sm truncate" title={selectedReceipt.caseTitle}>
+                        {selectedReceipt.caseTitle || "LandIntel Cadastral Due-Diligence Case"}
+                      </p>
+                      <p className="text-slate-600 text-[11px] mt-0.5 truncate" title={selectedReceipt.caseLocation || selectedReceipt.caseAddress}>
+                        {selectedReceipt.caseLocation || selectedReceipt.caseAddress || "Official Cadastral Survey Zone"}
+                      </p>
+                      <p className="text-slate-400 text-[10px] mt-1 font-mono">
+                        Case Identifier: {selectedReceipt.caseId ? `CASE-${selectedReceipt.caseId.slice(-8).toUpperCase()}` : "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Metadata Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs bg-slate-50 p-3 rounded-xl border border-slate-200 relative z-10">
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase font-bold block">Issue Date</span>
+                      <span className="font-bold text-slate-800">
+                        {new Date(selectedReceipt.createdAt).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase font-bold block">Payment Status</span>
+                      <span className={`font-bold font-mono text-[11px] uppercase ${isPaid ? "text-emerald-700" : isPending ? "text-amber-700" : "text-rose-700"}`}>
+                        {isPaid ? "Settled (Paid)" : isPending ? "Pending Settlement" : "Unpaid / Failed"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase font-bold block">Transaction Ref</span>
+                      <span className="font-mono text-slate-800 truncate block text-[11px] font-medium" title={selectedReceipt.reference}>
+                        {selectedReceipt.reference}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase font-bold block">Statutory VAT</span>
+                      <span className="font-semibold text-emerald-800">Standard 7.5%</span>
+                    </div>
+                  </div>
+
+                  {/* Line Items Table */}
+                  <div className="border border-slate-200 rounded-xl overflow-hidden text-xs relative z-10">
+                    <table className="w-full text-left">
+                      <thead className="bg-slate-100 text-slate-600 text-[10px] uppercase font-mono border-b border-slate-200">
+                        <tr>
+                          <th className="p-3">Service Deliverable &amp; Cadastral Investigation</th>
+                          <th className="p-3 text-right">VAT Rate</th>
+                          <th className="p-3 text-right">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        <tr>
+                          <td className="p-3 text-slate-800">
+                            <span className="font-bold block text-xs">
+                              {selectedReceipt.caseTitle || selectedReceipt.metadata?.description || selectedReceipt.metadata?.packageName || "Instant Cadastral Audit Report"}
+                            </span>
+                            <span className="text-[11px] text-slate-500 block mt-0.5 leading-relaxed">
+                              &bull; 15-Section Cadastral &amp; Title Verification Deep-Scan<br />
+                              &bull; Boundary Coordinates &amp; Beacon Overlap Analysis Matrix<br />
+                              &bull; Cross-Document Contradiction Check (Deed, Survey Plan &amp; Gazette)<br />
+                              &bull; Surveyor &amp; Lawyer Inquiry Checklists with Certified PDF
+                            </span>
+                          </td>
+                          <td className="p-3 text-right font-mono text-slate-500 align-top">
+                            Excl. VAT
+                          </td>
+                          <td className="p-3 text-right font-mono font-bold text-slate-900 align-top">
+                            {selectedReceipt.currencySymbol || "₦"}{selectedReceipt.subtotal?.toLocaleString()}
+                          </td>
+                        </tr>
+                        <tr className="bg-emerald-50/50">
+                          <td className="p-3 text-emerald-900 font-medium">
+                            Statutory Value Added Tax (VAT 7.5%)
+                            <span className="text-[10px] text-emerald-700 block font-normal">
+                              Federal Inland Revenue Service (FIRS) Value Added Tax Act Section 34
+                            </span>
+                          </td>
+                          <td className="p-3 text-right font-mono font-semibold text-emerald-800">
+                            7.5%
+                          </td>
+                          <td className="p-3 text-right font-mono font-bold text-emerald-800">
+                            +{selectedReceipt.currencySymbol || "₦"}{selectedReceipt.vatAmount?.toLocaleString()}
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot className="bg-slate-900 text-white font-bold">
+                        <tr>
+                          <td className="p-3.5 text-xs" colSpan={2}>
+                            {isPaid ? (
+                              <>
+                                <span className="block text-emerald-400">Total Amount Paid In Full ({selectedReceipt.resolvedCurrency || "NGN"})</span>
+                                <span className="text-[10px] text-slate-300 font-normal">Official tax clearance confirmed and settled in full</span>
+                              </>
+                            ) : isPending ? (
+                              <>
+                                <span className="block text-amber-300">Total Amount Payable / Due ({selectedReceipt.resolvedCurrency || "NGN"})</span>
+                                <span className="text-[10px] text-amber-200/80 font-normal">Payment pending settlement via payment gateway</span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="block text-rose-300">Total Unsettled Balance ({selectedReceipt.resolvedCurrency || "NGN"})</span>
+                                <span className="text-[10px] text-slate-400 font-normal">Transaction declined or cancelled</span>
+                              </>
+                            )}
+                          </td>
+                          <td className={`p-3.5 text-right font-mono text-lg ${isPaid ? "text-emerald-400" : isPending ? "text-amber-300" : "text-rose-400"}`}>
+                            {selectedReceipt.currencySymbol || "₦"}{selectedReceipt.total?.toLocaleString()}
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+
+                  {/* Statutory Compliance Footer & Action Buttons */}
+                  <div className="pt-2 border-t border-slate-100 space-y-3 relative z-10">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[11px] text-slate-500">
+                      <span className="flex items-center gap-1.5">
+                        <ShieldCheck className={`w-4 h-4 shrink-0 ${isPaid ? "text-emerald-600" : isPending ? "text-amber-600" : "text-rose-600"}`} />
+                        <span>
+                          {isPaid
+                            ? "Authenticated Statutory Electronic VAT Clearance Receipt"
+                            : isPending
+                            ? "Authenticated Statutory Pro-Forma Tax Invoice"
+                            : "Void Transaction Notice"}
+                        </span>
+                      </span>
+                      <span className="font-mono text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                        Auth Code: LDI-{isPaid ? "SEC" : isPending ? "PEND" : "VOID"}-{selectedReceipt.reference?.slice(-8).toUpperCase()}
+                      </span>
+                    </div>
+
+                    <p className="text-[10px] text-slate-400 leading-normal">
+                      {isPaid
+                        ? "This electronic statutory receipt is generated in compliance with applicable cross-border tax administration standards. Retain this invoice as official proof of statutory payment for due-diligence expenditure."
+                        : isPending
+                        ? "This pro-forma invoice specifies the consideration due. Upon transaction settlement, an official FIRS tax clearance receipt will be issued automatically."
+                        : "This transaction record documents an uncompleted payment attempt. No funds have been settled for this reference."}
+                    </p>
+
+                    {/* Action Buttons (Hidden during print) */}
+                    <div className="flex flex-wrap justify-between items-center gap-2 pt-3 no-print border-t border-slate-100">
+                      <div className="flex items-center gap-2">
+                        {isPending && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleVerifyPaymentReference(selectedReceipt.reference)}
+                            disabled={verifyingReceiptId === selectedReceipt.reference}
+                            className="font-bold text-xs flex items-center gap-1.5 border-amber-300 hover:bg-amber-50 text-amber-900 cursor-pointer"
+                          >
+                            <RefreshCw className={`w-3.5 h-3.5 ${verifyingReceiptId === selectedReceipt.reference ? "animate-spin text-amber-700" : ""}`} />
+                            <span>{verifyingReceiptId === selectedReceipt.reference ? "Verifying with Gateway..." : "Verify Payment Status"}</span>
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 ml-auto">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedReceipt(null)}
+                          className="font-medium text-xs px-4 cursor-pointer"
+                        >
+                          Close
+                        </Button>
+
+                        {isPending && (
+                          <a
+                            href={`/api/payments/test-checkout?ref=${selectedReceipt.reference}&caseId=${selectedReceipt.caseId || ""}&planKey=${selectedReceipt.metadata?.planKey || ""}`}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm transition-all cursor-pointer"
+                          >
+                            <CreditCard className="w-3.5 h-3.5" />
+                            <span>Complete Payment Now</span>
+                          </a>
+                        )}
+
+                        {isFailed && (
+                          <a
+                            href={`/api/payments/test-checkout?ref=${selectedReceipt.reference}&caseId=${selectedReceipt.caseId || ""}&planKey=${selectedReceipt.metadata?.planKey || ""}`}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-sm transition-all cursor-pointer"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" />
+                            <span>Retry Payment</span>
+                          </a>
+                        )}
+
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => window.print()}
+                          className={`font-bold text-xs flex items-center gap-1.5 shadow-sm px-4 cursor-pointer ${
+                            isPaid ? "bg-emerald-700 hover:bg-emerald-800 text-white" : "bg-slate-900 hover:bg-black text-white"
+                          }`}
+                        >
+                          <Printer className="w-3.5 h-3.5" />
+                          <span>{isPaid ? "Print Official Receipt" : "Print Pro-Forma Invoice"}</span>
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        );
+      })()}
 
       {/* Property Selector Modal if multiple properties */}
       {propertySelectModalOpen && (
