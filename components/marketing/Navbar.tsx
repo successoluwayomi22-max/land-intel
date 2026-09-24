@@ -77,12 +77,50 @@ export const Navbar: React.FC = () => {
     window.location.href = "/";
   };
 
-  const links = [
-    { label: t("howItWorks"), href: "/how-it-works" },
-    { label: t("whatWeAnalyze"), href: "/#what-we-analyze" },
-    { label: t("pricing"), href: "/pricing" },
-    { label: t("security"), href: "/security" },
-    { label: t("faq"), href: "/faq" },
+  const desktopNavLinks = [
+    {
+      label: t("howItWorks") || "How It Works",
+      href: "/how-it-works",
+    },
+    {
+      label: (
+        <>
+          <span className="hidden xl:inline">{t("whatWeAnalyze") || "What We Analyze"}</span>
+          <span className="inline xl:hidden">Analyze</span>
+        </>
+      ),
+      href: "/#what-we-analyze",
+    },
+    {
+      label: (
+        <>
+          <span className="hidden xl:inline">{t("pricingPlans") || t("pricing") || "Pricing & Plans"}</span>
+          <span className="inline xl:hidden">Pricing</span>
+        </>
+      ),
+      href: "/pricing",
+    },
+    {
+      label: (
+        <>
+          <span className="hidden xl:inline">{t("security") || "Security & NDPR"}</span>
+          <span className="inline xl:hidden">Security</span>
+        </>
+      ),
+      href: "/security",
+    },
+    {
+      label: t("faq") || "FAQ",
+      href: "/faq",
+    },
+  ];
+
+  const mobileNavLinks = [
+    { label: t("howItWorks") || "How It Works", href: "/how-it-works" },
+    { label: t("whatWeAnalyze") || "What We Analyze", href: "/#what-we-analyze" },
+    { label: t("pricingPlans") || t("pricing") || "Pricing & Plans", href: "/pricing" },
+    { label: t("security") || "Security & NDPR", href: "/security" },
+    { label: t("faq") || "FAQ", href: "/faq" },
   ];
 
   const isAdmin = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
@@ -97,7 +135,7 @@ export const Navbar: React.FC = () => {
     <header dir="ltr" className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-border shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 min-h-[64px] max-h-[64px] flex items-center justify-between flex-nowrap min-w-0">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 shrink-0 mr-3 lg:mr-6 group notranslate">
+        <Link href="/" className="flex items-center gap-2.5 shrink-0 mr-2 xl:mr-6 group notranslate">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center font-black text-white shadow-sm ring-1 ring-emerald-500/20 group-hover:scale-105 transition-transform">
             L
           </div>
@@ -109,13 +147,13 @@ export const Navbar: React.FC = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1.5 text-xs font-semibold text-slate-700 shrink min-w-0">
-          {links.map((link) => (
+        <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs font-semibold text-slate-700 shrink-0">
+          {desktopNavLinks.map((link, idx) => (
             <Link
-              key={link.href}
+              key={link.href + idx}
               href={link.href}
               prefetch={true}
-              className="px-2.5 py-1.5 rounded-lg text-slate-700 hover:text-emerald-700 hover:bg-slate-50 transition-all whitespace-nowrap"
+              className="px-2 py-1 xl:px-2.5 xl:py-1.5 rounded-lg text-slate-700 hover:text-emerald-700 hover:bg-slate-50 transition-all whitespace-nowrap"
             >
               {link.label}
             </Link>
@@ -123,19 +161,21 @@ export const Navbar: React.FC = () => {
         </nav>
 
         {/* Actions */}
-        <div className="hidden lg:flex items-center gap-2.5 shrink-0">
+        <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0 ml-auto pl-2 xl:pl-4">
           <LocaleSelector variant="light" compact />
 
           {user ? (
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2 xl:gap-2.5">
               {/* New Property Case Action Button */}
               <Link
                 href="/properties/new"
                 prefetch={true}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-all whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 xl:px-3.5 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-all whitespace-nowrap"
               >
                 <PlusCircle className="w-3.5 h-3.5" />
-                <span>{t("newCase") || "New Property Case"}</span>
+                <span>
+                  New <span className="hidden xl:inline">Property </span>Case
+                </span>
               </Link>
 
               {/* User Avatar Dropdown - First Letter of User */}
@@ -236,9 +276,12 @@ export const Navbar: React.FC = () => {
               <Link
                 href="/register"
                 prefetch={true}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-all whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 xl:px-3.5 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-all whitespace-nowrap"
               >
-                <span>{t("analyzeProperty") || "Analyze a Property"}</span>
+                <span>
+                  <span className="hidden xl:inline">{t("analyzeProperty") || "Analyze a Property"}</span>
+                  <span className="inline xl:hidden">Verify Property</span>
+                </span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -262,7 +305,7 @@ export const Navbar: React.FC = () => {
       {mobileOpen && (
         <div className="lg:hidden border-b border-brand-border bg-white px-4 py-4 space-y-3">
           <nav className="flex flex-col space-y-2 text-sm font-semibold text-brand-textPrimary">
-            {links.map((link) => (
+            {mobileNavLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
