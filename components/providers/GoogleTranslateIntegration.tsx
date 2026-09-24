@@ -189,5 +189,17 @@ function hideTranslateArtifacts() {
         htmlEl.style.overflow = "hidden";
       }
     });
+
+    // Fix Lighthouse: "[aria-hidden="true"] elements contain focusable descendants"
+    // Neutralizes any focusable children injected into aria-hidden containers by external scripts
+    document.querySelectorAll('[aria-hidden="true"]').forEach((hiddenEl) => {
+      const focusables = hiddenEl.querySelectorAll(
+        'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      );
+      focusables.forEach((f) => {
+        f.setAttribute("tabindex", "-1");
+        f.setAttribute("aria-hidden", "true");
+      });
+    });
   } catch {}
 }

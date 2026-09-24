@@ -20,9 +20,20 @@ export async function POST(request: Request) {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
-    const user = await db.user.findUnique({
+    let user = await db.user.findUnique({
       where: { email: normalizedEmail },
     });
+
+    if (!user) {
+      user = await db.user.findFirst({
+        where: {
+          email: {
+            equals: normalizedEmail,
+            mode: "insensitive",
+          },
+        },
+      });
+    }
 
     // Check if the user has a registered account
     if (!user) {

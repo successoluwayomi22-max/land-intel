@@ -359,9 +359,15 @@ export default function ForgotPasswordPage() {
         <Card className="p-5 sm:p-8 shadow-card space-y-5">
           {error && (
             <ErrorAlert
-              title="Notice"
+              title="Account Notice"
               message={error}
               severity="error"
+              actionLabel={error.includes("No account") ? "Create account with this email" : undefined}
+              onAction={
+                error.includes("No account")
+                  ? () => router.push(`/register?email=${encodeURIComponent(email)}`)
+                  : undefined
+              }
               onDismiss={() => setError("")}
             />
           )}

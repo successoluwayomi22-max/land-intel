@@ -52,18 +52,18 @@ export const PricingCards: React.FC = () => {
         <div className="bg-white border border-brand-border rounded-card p-6 shadow-card space-y-6 flex flex-col justify-between hover:border-brand-blue/40 transition-colors">
           <div className="space-y-4">
             <div>
-              <span className="text-[11px] font-bold text-brand-textMuted uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
                 {t("preliminaryEvaluation") || "Preliminary Evaluation"}
-              </span>
-              <h2 className="text-3xl font-extrabold font-heading text-brand-darkNavy mt-1">
+              </h3>
+              <div className="text-3xl font-extrabold font-heading text-brand-darkNavy mt-1">
                 {formatPrice(0)}
-              </h2>
-              <p className="text-xs text-brand-textSecondary mt-1">
+              </div>
+              <p className="text-xs text-slate-700 mt-1">
                 {t("freeScreening") || "Explore preliminary risk indicators and document classifications"}
               </p>
             </div>
 
-            <ul className="space-y-2.5 text-xs text-brand-textSecondary border-t pt-4">
+            <ul className="space-y-2.5 text-xs text-slate-700 border-t pt-4">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>1 Active Property Case</span>
@@ -84,12 +84,12 @@ export const PricingCards: React.FC = () => {
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>{t("verifiedTitle") || "11-Point Verification Checklist"}</span>
               </li>
-              <li className="flex items-center gap-2 text-slate-400">
-                <Lock className="w-3.5 h-3.5 shrink-0" />
+              <li className="flex items-center gap-2 text-slate-600 font-medium">
+                <Lock className="w-3.5 h-3.5 shrink-0 text-slate-500" />
                 <span>Page-level discrepancy evidence locked</span>
               </li>
-              <li className="flex items-center gap-2 text-slate-400">
-                <Lock className="w-3.5 h-3.5 shrink-0" />
+              <li className="flex items-center gap-2 text-slate-600 font-medium">
+                <Lock className="w-3.5 h-3.5 shrink-0 text-slate-500" />
                 <span>Official PDF report export locked</span>
               </li>
             </ul>
@@ -111,28 +111,28 @@ export const PricingCards: React.FC = () => {
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">
+                <h3 className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
                   {t("singleReport") || "Cadastral Due-Diligence Audit"}
-                </span>
+                </h3>
                 <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
                   7.5% VAT Included
                 </span>
               </div>
               <div className="flex items-baseline gap-1 mt-1">
-                <h2 className="text-3xl font-extrabold font-heading text-brand-darkNavy">
+                <div className="text-3xl font-extrabold font-heading text-brand-darkNavy">
                   {formatPrice(48375)}
-                </h2>
-                <span className="text-xs text-brand-textMuted font-medium">{t("perProperty") || "/ property"}</span>
+                </div>
+                <span className="text-xs text-slate-600 font-medium">{t("perProperty") || "/ property"}</span>
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5 font-mono">
+              <p className="text-[11px] text-slate-600 mt-0.5 font-mono">
                 Base: {formatPrice(45000)} &bull; 7.5% Statutory VAT: {formatPrice(3375)}
               </p>
-              <p className="text-xs text-brand-textSecondary mt-1">
+              <p className="text-xs text-slate-700 mt-1">
                 {t("reportPriceTitle") || "Instant 15-section risk audit & boundary cross-examination"}
               </p>
             </div>
 
-            <ul className="space-y-2.5 text-xs text-brand-textSecondary border-t pt-4">
+            <ul className="space-y-2.5 text-xs text-slate-700 border-t pt-4">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span><strong>{t("everythingInFree") || "Everything in Free Tier"}</strong></span>
@@ -177,29 +177,29 @@ export const PricingCards: React.FC = () => {
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-brand-blue uppercase tracking-wider flex items-center gap-1.5">
+                <h3 className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-brand-blue" />
                   <span>{t("professionalPlan") || "Professional Investor"}</span>
-                </span>
-                <span className="text-[10px] font-bold text-blue-300 bg-blue-950/90 border border-blue-500/40 px-2 py-0.5 rounded-md shadow-2xs">
+                </h3>
+                <span className="text-[10px] font-bold text-blue-200 bg-blue-950 border border-blue-400/40 px-2 py-0.5 rounded-md shadow-2xs">
                   7.5% VAT Included
                 </span>
               </div>
               <div className="flex items-baseline gap-1 mt-1.5">
-                <h2 className="text-3xl font-extrabold font-heading text-white tracking-tight">
+                <div className="text-3xl font-extrabold font-heading text-white tracking-tight">
                   {formatPrice(134375)}
-                </h2>
-                <span className="text-xs text-slate-400 font-medium">/ month</span>
+                </div>
+                <span className="text-xs text-slate-300 font-medium">/ month</span>
               </div>
-              <p className="text-[11px] text-slate-400 mt-0.5 font-mono">
+              <p className="text-[11px] text-slate-300 mt-0.5 font-mono">
                 Base: {formatPrice(125000)} &bull; 7.5% Statutory VAT: {formatPrice(9375)}
               </p>
-              <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
+              <p className="text-xs text-slate-200 mt-1.5 leading-relaxed">
                 Full-featured portfolio due-diligence for diaspora investors &amp; real-estate developers.
               </p>
             </div>
 
-            <ul className="space-y-2 text-xs text-slate-300 border-t border-slate-800/90 pt-4">
+            <ul className="space-y-2 text-xs text-slate-200 border-t border-slate-800/90 pt-4">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span><strong>15 Active Property Cases</strong> monthly</span>
@@ -237,7 +237,7 @@ export const PricingCards: React.FC = () => {
       </div>
 
       <div className="text-center pt-2">
-        <p className="text-xs text-brand-textSecondary flex items-center justify-center gap-1.5">
+        <p className="text-xs text-slate-700 flex items-center justify-center gap-1.5 font-medium">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
           <span>Secured instant checkout. Accepts Mastercard, Visa, Verve, Apple Pay &amp; International Bank Cards.</span>
         </p>

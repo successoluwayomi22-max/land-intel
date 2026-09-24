@@ -21,12 +21,13 @@ export default function PricingPage() {
           <h1 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
             {t("pricingTitle") || "Know The Land Risk Before Committing Millions"}
           </h1>
-          <p className="text-sm text-brand-textSecondary leading-relaxed">
+          <p className="text-sm text-slate-700 leading-relaxed">
             {t("pricingSubtitle") ||
               "No recurring monthly subscriptions. Use preliminary screening for free, or unlock comprehensive certified 15-section due-diligence reports via secure payment in your local currency."}
           </p>
         </div>
 
+        <h2 className="sr-only">Available Pricing & Due-Diligence Plans</h2>
         <PricingCards />
       </main>
 
