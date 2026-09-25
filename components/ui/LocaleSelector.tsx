@@ -97,7 +97,11 @@ export const LocaleSelector: React.FC<{
   const allCurCount = Object.keys(CURRENCIES).length;
 
   return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
+    <div
+      className="relative inline-block text-left notranslate"
+      translate="no"
+      ref={dropdownRef}
+    >
       {/* Modern High-End Trigger Button */}
       <button
         type="button"
@@ -117,11 +121,19 @@ export const LocaleSelector: React.FC<{
             (window as any).__landintel_load_translate?.();
           }
         }}
-        className={`notranslate group relative inline-flex items-center ${compact ? "gap-1.5 px-2.5 py-1 text-[11px]" : "gap-2 px-3 py-1.5 text-xs"} rounded-full font-semibold transition-all duration-200 border shadow-xs cursor-pointer select-none shrink-0 ${
+        className={`notranslate group relative inline-flex items-center ${
+          compact ? "gap-1.5 px-2.5 py-1 text-[11px]" : "gap-2 px-3 py-1.5 text-xs"
+        } rounded-full font-semibold transition-all duration-200 border shadow-xs cursor-pointer select-none shrink-0 ${
           isDark
             ? "bg-slate-900/90 hover:bg-slate-800 text-slate-100 border-slate-700/80 hover:border-slate-600 focus:ring-2 focus:ring-emerald-500/40"
-            : "bg-white hover:bg-slate-50 text-slate-900 border-slate-200 hover:border-slate-300 focus:ring-2 focus:ring-brand-blue/30"
-        } ${open ? (isDark ? "ring-2 ring-emerald-500/50 border-emerald-500/60" : "ring-2 ring-blue-500/30 border-blue-400") : ""}`}
+            : "bg-white hover:bg-slate-50 text-slate-900 border-slate-200 hover:border-slate-300 focus:ring-2 focus:ring-emerald-500/30"
+        } ${
+          open
+            ? isDark
+              ? "ring-2 ring-emerald-500/50 border-emerald-500/60"
+              : "ring-2 ring-emerald-500/40 border-emerald-500/50 shadow-sm"
+            : ""
+        }`}
         title={`Active: ${currency} (${activeCurrency.symbol}) | Language: ${activeLanguage.nativeName} (${activeLanguage.label})`}
       >
         {compact ? (
@@ -133,12 +145,18 @@ export const LocaleSelector: React.FC<{
             <span className={isDark ? "text-slate-700" : "text-slate-300"}>•</span>
             <span className="flex items-center gap-1">
               <CountryFlag countryCode={activeLanguage.countryCode} size={13} />
-              <span className={`font-mono text-[10px] font-bold uppercase ${isDark ? "text-emerald-400" : "text-blue-700"}`}>
+              <span
+                className={`font-mono text-[10px] font-bold uppercase ${
+                  isDark ? "text-emerald-400" : "text-emerald-700"
+                }`}
+              >
                 {activeLanguage.code}
               </span>
             </span>
             <ChevronDown
-              className={`w-3 h-3 transition-transform duration-200 ${open ? "rotate-180 text-emerald-500" : isDark ? "text-slate-400" : "text-slate-500"}`}
+              className={`w-3 h-3 transition-transform duration-200 ${
+                open ? "rotate-180 text-emerald-500" : isDark ? "text-slate-400" : "text-slate-500"
+              }`}
             />
           </>
         ) : (
@@ -156,269 +174,332 @@ export const LocaleSelector: React.FC<{
             {/* Language Badge */}
             <span className="flex items-center gap-1.5">
               <CountryFlag countryCode={activeLanguage.countryCode} size={15} />
-              <span className={`font-mono text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-emerald-400" : "text-blue-700"}`}>
+              <span
+                className={`font-mono text-[11px] font-bold uppercase tracking-wider ${
+                  isDark ? "text-emerald-400" : "text-emerald-700"
+                }`}
+              >
                 {activeLanguage.code}
               </span>
             </span>
 
             <ChevronDown
-              className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180 text-emerald-500" : isDark ? "text-slate-400" : "text-slate-500"}`}
+              className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                open ? "rotate-180 text-emerald-500" : isDark ? "text-slate-400" : "text-slate-500"
+              }`}
             />
           </>
         )}
       </button>
 
-      {/* Floating Modal Popover */}
+      {/* Floating Modal Popover & Backdrop */}
       {open && (
-        <div
-          className={`fixed inset-x-3 top-16 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 w-auto sm:w-[410px] max-w-[calc(100vw-1.5rem)] rounded-2xl shadow-2xl z-[99999] border isolate overflow-hidden ${
-            isDark
-              ? "bg-[#0B1120] border-slate-700 text-white shadow-black/90 ring-1 ring-slate-700"
-              : "bg-white border-slate-200 text-slate-900 shadow-2xl ring-1 ring-slate-200"
-          } animate-in fade-in zoom-in-95 duration-150`}
-          style={{ backgroundColor: isDark ? "#0B1120" : "#ffffff" }}
-        >
-          {/* Popover Header */}
-          <div className="p-3.5 pb-2.5 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                <Globe className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-xs font-extrabold uppercase tracking-wider font-heading flex items-center gap-1.5 text-slate-900 dark:text-white">
-                  <span>{t("currencyAndLanguage") || "Language & Currency"}</span>
-                </h3>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                  {activeLanguage.nativeName} • {activeCurrency.code} ({activeCurrency.symbol})
-                </p>
-              </div>
-            </div>
+        <>
+          {/* Backdrop overlay: Prevents page bleed-through and handles click-outside */}
+          <div
+            className="fixed inset-0 bg-slate-950/45 backdrop-blur-[2px] z-[99998] transition-opacity animate-in fade-in duration-150"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
 
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
-              aria-label="Close selector"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Segmented Switcher Tabs */}
-          <div className="p-2.5 pb-2">
-            <div className="grid grid-cols-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs font-bold">
-              <button
-                type="button"
-                onClick={() => setActiveTab("languages")}
-                className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg transition-all cursor-pointer ${
-                  activeTab === "languages"
-                    ? "bg-white dark:bg-slate-800 text-brand-blue dark:text-emerald-400 shadow-xs"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                }`}
-              >
-                <Globe className="w-3.5 h-3.5" />
-                <span>{t("languagesTab") || "Languages"}</span>
-                <span className="text-[10px] py-0.2 px-1.5 rounded-full bg-slate-200 dark:bg-slate-700 font-mono">
-                  {allLangCount}
-                </span>
-              </button>
+          {/* Modal Card Container */}
+          <div
+            translate="no"
+            className={`notranslate fixed inset-x-3 top-20 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2.5 w-auto sm:w-[440px] max-w-[calc(100vw-1.5rem)] rounded-2xl shadow-2xl z-[99999] border isolate overflow-hidden ${
+              isDark
+                ? "bg-[#0B1120] border-slate-700/80 text-white shadow-black/90 ring-1 ring-slate-700/60"
+                : "bg-white border-slate-200 text-slate-900 shadow-2xl shadow-slate-900/15 ring-1 ring-slate-200/80"
+            } animate-in fade-in zoom-in-95 duration-150`}
+            style={{ backgroundColor: isDark ? "#0B1120" : "#ffffff" }}
+          >
+            {/* Popover Header */}
+            <div className="p-4 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 shadow-xs">
+                  <Globe className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-black uppercase tracking-wider font-heading flex items-center gap-1.5 text-slate-900 dark:text-white">
+                    <span>{t("currencyAndLanguage") || "Currency & Language"}</span>
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                    {activeLanguage.nativeName} • {activeCurrency.code} ({activeCurrency.symbol})
+                  </p>
+                </div>
+              </div>
 
               <button
                 type="button"
-                onClick={() => setActiveTab("currency")}
-                className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg transition-all cursor-pointer ${
-                  activeTab === "currency"
-                    ? "bg-white dark:bg-slate-800 text-brand-blue dark:text-emerald-400 shadow-xs"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                }`}
+                onClick={() => setOpen(false)}
+                className="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Close selector"
               >
-                <DollarSign className="w-3.5 h-3.5" />
-                <span>{t("currencyTab") || "Currencies"}</span>
-                <span className="text-[10px] py-0.2 px-1.5 rounded-full bg-slate-200 dark:bg-slate-700 font-mono">
-                  {allCurCount}
-                </span>
+                <X className="w-4 h-4" />
               </button>
             </div>
-          </div>
 
-          {/* Search Input */}
-          <div className="px-3 pb-2">
-            <div className="relative flex items-center">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 pointer-events-none" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={
-                  activeTab === "languages"
-                    ? (t("searchLanguages") || "Search languages, countries...")
-                    : (t("searchCurrencies") || "Search currency name or code...")
-                }
-                className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:focus:ring-emerald-500/30"
-              />
-              {searchQuery && (
+            {/* Segmented Switcher Tabs */}
+            <div className="px-4 pt-3 pb-2.5">
+              <div className="grid grid-cols-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 text-xs font-bold">
                 <button
                   type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-2 text-slate-400 hover:text-slate-600 dark:hover:text-white p-0.5"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Region Chips (Languages View) */}
-          {activeTab === "languages" && (
-            <div className="px-3 pb-2 flex items-center gap-1.5 overflow-x-auto text-[11px] no-scrollbar">
-              {["All", "Global", "Africa", "Asia", "Europe", "Americas"].map((reg) => (
-                <button
-                  key={reg}
-                  type="button"
-                  onClick={() => setRegionFilter(reg)}
-                  className={`px-2.5 py-0.5 rounded-full whitespace-nowrap transition-colors font-medium cursor-pointer ${
-                    regionFilter === reg
-                      ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold"
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  onClick={() => setActiveTab("languages")}
+                  className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg transition-all cursor-pointer ${
+                    activeTab === "languages"
+                      ? "bg-white dark:bg-slate-800 text-emerald-800 dark:text-emerald-400 shadow-xs border border-emerald-500/20"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
-                  {reg === "All"
-                    ? (t("allRegions") || "All")
-                    : reg === "Global"
-                    ? (t("popularGlobal") || "Global")
-                    : reg === "Africa"
-                    ? (t("africanLanguages") || "Africa")
-                    : reg}
+                  <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>{t("languagesTab") || "Languages"}</span>
+                  <span
+                    className={`text-[10px] py-0.5 px-1.5 rounded-full font-mono font-bold ${
+                      activeTab === "languages"
+                        ? "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300"
+                        : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
+                    }`}
+                  >
+                    {allLangCount}
+                  </span>
                 </button>
-              ))}
-            </div>
-          )}
 
-          {/* List Content */}
-          <div className="px-3 pb-3 max-h-[300px] overflow-y-auto space-y-1">
-            {activeTab === "languages" ? (
-              filteredLanguages.length === 0 ? (
-                <div className="py-8 text-center text-xs text-slate-400">
-                  No languages match &ldquo;{searchQuery}&rdquo;
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-1.5">
-                  {filteredLanguages.map((lKey) => {
-                    const l = LANGUAGES[lKey];
-                    const isSelected = language === lKey;
-                    return (
-                      <button
-                        key={lKey}
-                        type="button"
-                        onClick={() => {
-                          setLanguage(lKey);
-                          setOpen(false);
-                        }}
-                        className={`flex items-start gap-2.5 p-2 rounded-xl text-left transition-all border cursor-pointer ${
-                          isSelected
-                            ? isDark
-                              ? "bg-emerald-500/15 border-emerald-500/50 text-emerald-300 ring-1 ring-emerald-500/40"
-                              : "bg-blue-50/80 border-blue-300 text-blue-900 ring-1 ring-blue-400/40 shadow-xs"
-                            : isDark
-                            ? "bg-slate-900/40 hover:bg-slate-800 border-slate-800 text-slate-200"
-                            : "bg-slate-50/60 hover:bg-slate-100 border-slate-200/70 text-slate-700"
-                        }`}
-                      >
-                        <div className="pt-0.5 shrink-0">
-                          <CountryFlag countryCode={l.countryCode} size={18} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-xs truncate leading-tight">
-                              {l.nativeName}
-                            </span>
-                            {isSelected && (
-                              <Check className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 shrink-0 ml-1" />
-                            )}
-                          </div>
-                          <span className="text-[10px] text-slate-400 block truncate mt-0.5">
-                            {l.label}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              )
-            ) : filteredCurrencies.length === 0 ? (
-              <div className="py-8 text-center text-xs text-slate-400">
-                No currencies match &ldquo;{searchQuery}&rdquo;
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("currency")}
+                  className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg transition-all cursor-pointer ${
+                    activeTab === "currency"
+                      ? "bg-white dark:bg-slate-800 text-emerald-800 dark:text-emerald-400 shadow-xs border border-emerald-500/20"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  }`}
+                >
+                  <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>{t("currencyTab") || "Currencies"}</span>
+                  <span
+                    className={`text-[10px] py-0.5 px-1.5 rounded-full font-mono font-bold ${
+                      activeTab === "currency"
+                        ? "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300"
+                        : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
+                    }`}
+                  >
+                    {allCurCount}
+                  </span>
+                </button>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-1.5">
-                {filteredCurrencies.map((cKey) => {
-                  const c = CURRENCIES[cKey];
-                  const isSelected = currency === cKey;
-                  const rateToNgn = liveRates[cKey] || c.rateToNgn || 1;
+            </div>
+
+            {/* Search Input */}
+            <div className="px-4 pb-2.5">
+              <div className="relative flex items-center">
+                <Search className="w-3.5 h-3.5 text-emerald-600/70 dark:text-emerald-400 absolute left-3.5 pointer-events-none" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={
+                    activeTab === "languages"
+                      ? t("searchLanguages") || "Search languages, countries..."
+                      : t("searchCurrencies") || "Search currency name or code..."
+                  }
+                  className="w-full pl-9 pr-8 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/60 transition-all shadow-2xs"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Region Filter Chips (Languages View) */}
+            {activeTab === "languages" && (
+              <div className="px-4 pb-2.5 flex items-center gap-1.5 overflow-x-auto text-[11px] no-scrollbar">
+                {["All", "Global", "Africa", "Asia", "Europe", "Americas"].map((reg) => {
+                  const isSelected = regionFilter === reg;
                   return (
                     <button
-                      key={cKey}
+                      key={reg}
                       type="button"
-                      onClick={() => {
-                        setCurrency(cKey);
-                        setOpen(false);
-                      }}
-                      className={`flex items-center justify-between p-2.5 rounded-xl text-left transition-all border cursor-pointer ${
+                      onClick={() => setRegionFilter(reg)}
+                      className={`px-3 py-1 rounded-full whitespace-nowrap transition-all font-semibold text-xs cursor-pointer ${
                         isSelected
-                          ? isDark
-                            ? "bg-emerald-500/15 border-emerald-500/50 text-emerald-300 ring-1 ring-emerald-500/40"
-                            : "bg-blue-50/80 border-blue-300 text-blue-900 ring-1 ring-blue-400/40 shadow-xs"
-                          : isDark
-                          ? "bg-slate-900/40 hover:bg-slate-800 border-slate-800 text-slate-200"
-                          : "bg-slate-50/60 hover:bg-slate-100 border-slate-200/70 text-slate-700"
+                          ? "bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-bold shadow-xs scale-[1.02]"
+                          : "bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <CountryFlag countryCode={c.countryCode} size={22} />
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-extrabold text-xs">{c.code}</span>
-                            <span className="text-[11px] font-semibold text-slate-400">
-                              ({c.symbol})
-                            </span>
-                          </div>
-                          <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
-                            {c.name}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="text-right flex items-center gap-3">
-                        <div className="text-[10px] text-slate-400 font-mono">
-                          {isSelected ? "Selected" : "Instant Settle"}
-                        </div>
-                        {isSelected && (
-                          <Check className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
-                        )}
-                      </div>
+                      {reg === "All"
+                        ? t("allRegions") || "All"
+                        : reg === "Global"
+                        ? t("popularGlobal") || "Global"
+                        : reg === "Africa"
+                        ? t("africanLanguages") || "African & Diaspora"
+                        : reg}
                     </button>
                   );
                 })}
               </div>
             )}
-          </div>
 
-          {/* Footer Bar */}
-          <div className="px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-blue-500" />
-              <span>
-                {t("detectedRegion") || "Region"}: <strong>{detectedCountry}</strong>
-              </span>
+            {/* List Content */}
+            <div className="px-4 pb-3 max-h-[320px] overflow-y-auto space-y-1.5 custom-scrollbar">
+              {activeTab === "languages" ? (
+                filteredLanguages.length === 0 ? (
+                  <div className="py-10 text-center text-xs text-slate-400 space-y-2">
+                    <p>No languages match &ldquo;{searchQuery}&rdquo;</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setRegionFilter("All");
+                      }}
+                      className="text-emerald-600 dark:text-emerald-400 font-semibold underline text-xs"
+                    >
+                      Clear search filters
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    {filteredLanguages.map((lKey) => {
+                      const l = LANGUAGES[lKey];
+                      const isSelected = language === lKey;
+                      return (
+                        <button
+                          key={lKey}
+                          type="button"
+                          onClick={() => {
+                            setLanguage(lKey);
+                            setOpen(false);
+                          }}
+                          className={`flex items-start gap-2.5 p-2.5 rounded-xl text-left transition-all border cursor-pointer ${
+                            isSelected
+                              ? isDark
+                                ? "bg-emerald-950/40 border-emerald-500/60 text-white ring-1 ring-emerald-500/50 shadow-xs"
+                                : "bg-emerald-50/90 border-emerald-500/50 text-emerald-950 ring-1 ring-emerald-500/30 shadow-xs"
+                              : isDark
+                              ? "bg-slate-900/50 hover:bg-slate-800/80 border-slate-800 hover:border-slate-700 text-slate-200"
+                              : "bg-slate-50/70 hover:bg-white hover:border-emerald-500/40 hover:shadow-xs border-slate-200/80 text-slate-800"
+                          }`}
+                        >
+                          <div className="pt-0.5 shrink-0">
+                            <CountryFlag countryCode={l.countryCode} size={18} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-xs truncate leading-tight">
+                                {l.nativeName}
+                              </span>
+                              {isSelected && (
+                                <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 ml-1 shadow-2xs">
+                                  <Check className="w-2.5 h-2.5 stroke-[3]" />
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-[10px] text-slate-400 block truncate mt-0.5 font-medium">
+                              {l.label}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )
+              ) : filteredCurrencies.length === 0 ? (
+                <div className="py-10 text-center text-xs text-slate-400 space-y-2">
+                  <p>No currencies match &ldquo;{searchQuery}&rdquo;</p>
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="text-emerald-600 dark:text-emerald-400 font-semibold underline text-xs"
+                  >
+                    Clear search
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-2">
+                  {filteredCurrencies.map((cKey) => {
+                    const c = CURRENCIES[cKey];
+                    const isSelected = currency === cKey;
+                    return (
+                      <button
+                        key={cKey}
+                        type="button"
+                        onClick={() => {
+                          setCurrency(cKey);
+                          setOpen(false);
+                        }}
+                        className={`flex items-center justify-between p-3 rounded-xl text-left transition-all border cursor-pointer ${
+                          isSelected
+                            ? isDark
+                              ? "bg-emerald-950/40 border-emerald-500/60 text-white ring-1 ring-emerald-500/50 shadow-xs"
+                              : "bg-emerald-50/90 border-emerald-500/50 text-emerald-950 ring-1 ring-emerald-500/30 shadow-xs"
+                            : isDark
+                            ? "bg-slate-900/50 hover:bg-slate-800/80 border-slate-800 hover:border-slate-700 text-slate-200"
+                            : "bg-slate-50/70 hover:bg-white hover:border-emerald-500/40 hover:shadow-xs border-slate-200/80 text-slate-800"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <CountryFlag countryCode={c.countryCode} size={22} />
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-black text-xs text-slate-900 dark:text-white">
+                                {c.code}
+                              </span>
+                              <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                                ({c.symbol})
+                              </span>
+                            </div>
+                            <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-medium">
+                              {c.name}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="text-right flex items-center gap-3">
+                          <span
+                            className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                              isSelected
+                                ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold"
+                                : "text-slate-400 bg-slate-100 dark:bg-slate-800"
+                            }`}
+                          >
+                            {isSelected ? "Active" : "Instant Settle"}
+                          </span>
+                          {isSelected && (
+                            <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                              <Check className="w-2.5 h-2.5 stroke-[3]" />
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-1 font-medium text-slate-500">
-              <Globe className="w-3 h-3 text-blue-500" />
-              <span>Multi-Language Ready</span>
+
+            {/* Footer Bar */}
+            <div className="px-4 py-2.5 bg-slate-50/90 dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>
+                  {t("detectedRegion") || "Region"}:{" "}
+                  <strong className="text-slate-900 dark:text-white">{detectedCountry}</strong>
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 font-medium text-slate-500 dark:text-slate-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>{allLangCount} Languages • Live FX</span>
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
 };
+
+export default LocaleSelector;
