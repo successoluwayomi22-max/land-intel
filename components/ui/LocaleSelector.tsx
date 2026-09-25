@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, Check, Globe, DollarSign, Search, X, MapPin } from "lucide-react";
 import {
   useLocale,
@@ -29,23 +30,36 @@ export const LocaleSelector: React.FC<{
     t,
   } = useLocale();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"languages" | "currency">("languages");
   const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState<string>("All");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Close on outside click
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Close on outside click (outside both trigger button and portaled modal)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (!open) return;
+      const target = e.target as Node;
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target) &&
+        modalRef.current &&
+        !modalRef.current.contains(target)
+      ) {
         setOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [open]);
 
   // Lock background scroll and handle Escape key when modal is open
   useEffect(() => {
@@ -228,27 +242,29 @@ export const LocaleSelector: React.FC<{
         )}
       </button>
 
-      {/* Centered Modal Dialog on desktop, Native Bottom Sheet on mobile */}
-      {open && (
-        <div
-          className="fixed inset-0 z-[99999] flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150"
-          onClick={() => setOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label={t("currencyAndLanguage") || "Currency & Language Selector"}
-        >
-          {/* Modal / Bottom Sheet Card Container */}
-          <div
-            translate="no"
-            onClick={(e) => e.stopPropagation()}
-            className={`notranslate w-full sm:max-w-[480px] max-h-[85dvh] sm:max-h-[82dvh] rounded-t-3xl sm:rounded-2xl shadow-2xl border flex flex-col overflow-hidden ${
-              isDark
-                ? "bg-[#0B1120] border-slate-700/80 text-white shadow-black/90 ring-1 ring-slate-700/60"
-                : "bg-white border-slate-200 text-slate-900 shadow-2xl shadow-slate-950/25 ring-1 ring-slate-200/80"
-            } animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200`}
-            style={{ backgroundColor: isDark ? "#0B1120" : "#ffffff" }}
-          >
-            {/* Mobile Drag Handle */}
+      {/* Centered Modal Dialog on desktop, Native Bottom Sheet on mobile - Portaled to document.body */}
+      {open && mounted && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              className="fixed inset-0 z-[999999] flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150"
+              onClick={() => setOpen(false)}
+              role="dialog"
+              aria-modal="true"
+              aria-label={t("currencyAndLanguage") || "Currency & Language Selector"}
+            >
+              {/* Modal / Bottom Sheet Card Container */}
+              <div
+                ref={modalRef}
+                translate="no"
+                onClick={(e) => e.stopPropagation()}
+                className={`notranslate w-full sm:max-w-[480px] max-h-[85vh] max-h-[85dvh] sm:max-h-[82vh] sm:max-h-[82dvh] rounded-t-3xl sm:rounded-2xl shadow-2xl border flex flex-col overflow-hidden ${
+                  isDark
+                    ? "bg-[#0B1120] border-slate-700/80 text-white shadow-black/90 ring-1 ring-slate-700/60"
+                    : "bg-white border-slate-200 text-slate-900 shadow-2xl shadow-slate-950/25 ring-1 ring-slate-200/80"
+                } animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200`}
+                style={{ backgroundColor: isDark ? "#0B1120" : "#ffffff" }}
+              >
+                {/* Mobile Drag Handle */}
             <div className="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
 
             {/* Sheet / Dialog Header */}
@@ -565,9 +581,11 @@ export const LocaleSelector: React.FC<{
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        </div>,
+        document.body
+      )
+    : null}
+</div>
   );
 };
 
