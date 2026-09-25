@@ -34,7 +34,7 @@ export function OTPEmail({
           <!-- Header -->
           <tr>
             <td style="background:linear-gradient(135deg,#0c1427 0%,#1e3a5f 100%);padding:32px;text-align:center;">
-              <div style="display:inline-block;width:44px;height:44px;background-color:rgba(255,255,255,0.15);border-radius:10px;line-height:44px;font-size:20px;font-weight:900;color:#ffffff;text-align:center;">L</div>
+              <img src="https://land-intel-omega.vercel.app/logo-icon.svg" width="44" height="44" alt="Land Intel" style="display:inline-block;width:44px;height:44px;border:0;outline:none;" />
               <p style="color:rgba(255,255,255,0.8);font-size:13px;margin:12px 0 0;font-weight:600;">Email Verification</p>
             </td>
           </tr>

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 import {
   Shield,
   ShieldCheck,
@@ -250,19 +251,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <aside className="hidden md:flex flex-col fixed top-0 left-0 bottom-0 w-64 bg-[#070B16] border-r border-amber-500/20 text-slate-200 z-30 select-none">
         {/* Operations Brand Header */}
         <div className="p-4 border-b border-amber-500/20 bg-[#0A1020]">
-          <Link href="/admin" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-black text-slate-950 shadow-md shadow-amber-500/20 text-sm">
-              L
-            </div>
-            <div>
-              <span className="font-heading font-extrabold text-sm tracking-tight text-white block">
-                LandIntel
-              </span>
-              <span className="text-[9px] tracking-widest text-amber-400 font-mono font-bold uppercase block">
-                OPS COCKPIT v2.4
-              </span>
-            </div>
-          </Link>
+          <div className="flex items-center gap-2.5">
+            <LandIntelLogo href="/admin" size="sm" variant="dark" />
+            <span className="text-[9px] tracking-widest text-amber-400 font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">
+              OPS
+            </span>
+          </div>
           <div className="mt-2.5 flex items-center gap-1.5 text-[10px] text-emerald-400 font-mono bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/40">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
             <span>NODE: CADASTRAL-CENTRAL [ONLINE]</span>
@@ -355,10 +349,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <header className="bg-[#0A1020]/95 backdrop-blur-md border-b border-amber-500/20 sticky top-0 z-20 px-4 sm:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="md:hidden flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 text-xs">
-                L
-              </div>
-              <span className="font-heading font-extrabold text-sm text-white">LandIntel OPS</span>
+              <LandIntelLogo href="/admin" size="sm" variant="dark" />
+              <span className="text-[9px] tracking-widest text-amber-400 font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">
+                OPS
+              </span>
             </div>
             <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-400">
               <span className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold uppercase text-[10px]">

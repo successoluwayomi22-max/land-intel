@@ -57,8 +57,8 @@ export function PaymentReceiptEmail({
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <div style="display:inline-block;width:40px;height:40px;background-color:rgba(255,255,255,0.15);border-radius:10px;line-height:40px;font-size:20px;font-weight:900;color:#ffffff;text-align:center;">L</div>
-                    <span style="font-size:18px;font-weight:800;color:#ffffff;margin-left:10px;vertical-align:middle;">LandIntel</span>
+                    <img src="https://land-intel-omega.vercel.app/logo-icon.svg" width="36" height="36" alt="Land Intel" style="display:inline-block;width:36px;height:36px;border:0;outline:none;vertical-align:middle;" />
+                    <span style="font-size:18px;font-weight:900;color:#ffffff;margin-left:10px;vertical-align:middle;letter-spacing:-0.3px;">LAND <span style="color:#34d399;">INTEL</span></span>
                   </td>
                   <td align="right">
                     <span style="display:inline-block;background-color:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:0.5px;">

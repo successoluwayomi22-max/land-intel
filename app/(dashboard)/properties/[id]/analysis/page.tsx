@@ -32,6 +32,7 @@ import { useToast } from "@/components/ui/Toast";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { ReportCheckoutModal } from "@/components/payments/ReportCheckoutModal";
 import { ONE_OFF_PACKAGES } from "@/lib/services/plans";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 import dynamic from "next/dynamic";
 
 // Lazy-load map to avoid SSR issues
@@ -155,10 +156,10 @@ export default function PropertyAnalysisPage() {
       {/* Print-only header */}
       <div className="hidden print:block p-8 border-b border-slate-200">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-brand-blue flex items-center justify-center font-black text-white text-lg">L</div>
-            <div>
-              <h1 className="text-xl font-extrabold text-slate-900">LandIntel Official Due Diligence & Scam Audit</h1>
+          <div className="flex items-center gap-4">
+            <LandIntelLogo size="md" variant="light" />
+            <div className="border-l border-slate-200 pl-4">
+              <h1 className="text-xl font-extrabold text-slate-900">Official Due Diligence & Scam Audit</h1>
               <p className="text-xs text-slate-500">Confidential • Case Ref: {caseId.slice(0, 8).toUpperCase()} • Generated {new Date().toLocaleDateString()}</p>
             </div>
           </div>

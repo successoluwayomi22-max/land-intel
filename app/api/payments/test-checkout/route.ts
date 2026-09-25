@@ -96,12 +96,10 @@ export async function GET(request: NextRequest) {
       <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden space-y-0">
         
         <div class="bg-[#0B132B] text-white p-5 flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow">
-              L
-            </div>
+          <div class="flex items-center gap-3">
+            <img src="/logo-icon.svg" alt="Land Intel" class="w-8 h-8 drop-shadow" />
             <div>
-              <span class="font-bold text-sm tracking-tight block">LandIntel</span>
+              <span class="font-bold text-sm tracking-tight block text-white">LAND <span class="text-emerald-400">INTEL</span></span>
               <span class="text-[10px] text-emerald-400 font-medium block">Secure Diaspora Payment Gateway</span>
             </div>
           </div>

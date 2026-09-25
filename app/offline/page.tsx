@@ -16,6 +16,7 @@ import {
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { LocaleSelector } from "@/components/ui/LocaleSelector";
 import { Button } from "@/components/ui/Button";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 
 export default function OfflinePage() {
   const { t } = useLocale();
@@ -74,17 +75,12 @@ export default function OfflinePage() {
 
       {/* Top Navbar */}
       <header className="relative z-10 border-b border-slate-800/80 bg-slate-900/50 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-slate-950 shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-            L
-          </div>
-          <span className="font-heading font-extrabold text-base tracking-tight text-white">
-            LandIntel
-          </span>
+        <div className="flex items-center gap-2.5">
+          <LandIntelLogo href="/" size="sm" variant="dark" />
           <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-semibold border border-slate-700">
             Offline Center
           </span>
-        </Link>
+        </div>
 
         {/* High-End Locale Switcher on Offline Page */}
         <div className="flex items-center gap-3">

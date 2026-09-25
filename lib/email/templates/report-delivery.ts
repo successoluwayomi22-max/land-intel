@@ -56,7 +56,7 @@ export function ReportDeliveryEmail({
           <!-- Header -->
           <tr>
             <td style="background:linear-gradient(135deg,#0c1427 0%,#064e3b 100%);padding:40px 32px;text-align:center;">
-              <div style="display:inline-block;width:48px;height:48px;background-color:rgba(255,255,255,0.15);border-radius:12px;line-height:48px;font-size:22px;font-weight:900;color:#ffffff;text-align:center;margin-bottom:14px;">L</div>
+              <img src="https://land-intel-omega.vercel.app/logo-icon.svg" width="48" height="48" alt="Land Intel" style="display:inline-block;width:48px;height:48px;border:0;outline:none;margin-bottom:14px;" />
               <h1 style="color:#ffffff;font-size:22px;font-weight:800;margin:0 0 6px;letter-spacing:-0.5px;">Due-Diligence Dossier Certified</h1>
               <p style="color:rgba(255,255,255,0.8);font-size:13px;margin:0;font-weight:500;">Official Land Title & Cadastral Audit Report</p>
             </td>

@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { LocaleSelector } from "@/components/ui/LocaleSelector";
 import { useLocale } from "@/components/providers/LocaleProvider";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 
 interface UserProfile {
   id: string;
@@ -142,17 +143,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* 1. FIXED DESKTOP SIDEBAR */}
       <aside className="hidden md:flex flex-col fixed top-0 left-0 bottom-0 w-64 bg-[#0B1220] text-white z-30 border-r border-slate-800 select-none">
         {/* Brand Header */}
-        <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
-          <Link href="/dashboard" prefetch={true} className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-lg bg-brand-blue flex items-center justify-center font-black text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform text-sm">
-              L
-            </div>
+        <div className="p-4 border-b border-slate-800/80 flex items-center justify-between">
+          <Link href="/dashboard" prefetch={true} className="flex items-center gap-3 group">
+            <LandIntelLogo iconOnly size="md" variant="dark" />
             <div>
-              <span className="font-heading font-extrabold text-sm tracking-tight text-white block">
-                LandIntel
+              <span className="font-heading font-black text-sm tracking-tight text-white block group-hover:text-emerald-400 transition-colors">
+                LAND <span className="text-emerald-400">INTEL</span>
               </span>
-              <span className="text-[10px] tracking-wider text-blue-400 font-bold uppercase block -mt-0.5">
-                {t("dashboard")}
+              <span className="text-[10px] tracking-wider text-emerald-400/90 font-bold uppercase block -mt-0.5">
+                INVESTOR WORKSPACE
               </span>
             </div>
           </Link>
@@ -306,12 +305,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* 2. MOBILE HEADER & DRAWER */}
       <div dir="ltr" className="md:hidden sticky top-0 z-40 bg-[#0B1220] border-b border-slate-800 text-white px-3 sm:px-4 h-14 min-h-[56px] max-h-[56px] flex items-center justify-between flex-nowrap min-w-0">
-        <Link href="/dashboard" prefetch={true} className="flex items-center gap-2 shrink-0 notranslate">
-          <div className="w-7 h-7 rounded bg-brand-blue flex items-center justify-center font-black text-white text-xs">
-            L
-          </div>
-          <span className="font-heading font-bold text-sm tracking-tight text-white">LandIntel</span>
-        </Link>
+        <LandIntelLogo href="/dashboard" size="sm" variant="dark" className="shrink-0 notranslate" />
 
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <LocaleSelector variant="dark" compact />
