@@ -2817,6 +2817,9 @@ interface LocaleContextType {
   formatPrice: (amountNgn: number, options?: { showCode?: boolean }) => string;
   t: (key: string) => string;
   detectedCountry: string;
+  detectedCity: string;
+  isAutoDetected: boolean;
+  resetToAutoDetect: () => Promise<void>;
   liveRates: Record<string, number>;
 }
 
@@ -2829,13 +2832,18 @@ const LocaleContext = createContext<LocaleContextType>({
   formatPrice: (amt) => `${Math.round(amt / 1500).toLocaleString()}`,
   t: (k) => k,
   detectedCountry: "NG",
+  detectedCity: "Lagos",
+  isAutoDetected: true,
+  resetToAutoDetect: async () => {},
   liveRates: { NGN: 1, USD: 1500, GBP: 1950, EUR: 1650, CAD: 1100, AUD: 1000, GHS: 100, KES: 11.5, ZAR: 85, AED: 408 },
 });
 
 export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currency, setCurrencyState] = useState<SupportedCurrency>("USD");
+  const [currency, setCurrencyState] = useState<SupportedCurrency>("NGN");
   const [language, setLanguageState] = useState<SupportedLanguage>("en");
-  const [detectedCountry, setDetectedCountry] = useState<string>("US");
+  const [detectedCountry, setDetectedCountry] = useState<string>("NG");
+  const [detectedCity, setDetectedCity] = useState<string>("");
+  const [isAutoDetected, setIsAutoDetected] = useState<boolean>(true);
   const [ratesFromUsd, setRatesFromUsd] = useState<Record<string, number>>({
     USD: 1,
     NGN: 1500,
@@ -2857,6 +2865,58 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     AUD: 1000,
   });
 
+  // Client-side device locale detection
+  const getDeviceLanguage = (): SupportedLanguage | null => {
+    if (typeof window === "undefined" || !window.navigator) return null;
+    const navLangs = window.navigator.languages || [window.navigator.language];
+    for (const raw of navLangs) {
+      if (!raw) continue;
+      const lower = raw.toLowerCase();
+      // Exact match e.g. "yo", "ig", "pcm"
+      if (lower in LANGUAGES) return lower as SupportedLanguage;
+      // Base prefix e.g. "fr-FR" -> "fr", "es-ES" -> "es"
+      const prefix = lower.split("-")[0];
+      if (prefix in LANGUAGES) return prefix as SupportedLanguage;
+    }
+    return null;
+  };
+
+  // Perform full real-time IP & device auto-detection
+  const performAutoDetect = async () => {
+    try {
+      const deviceLang = getDeviceLanguage();
+      const res = await fetch(`/api/geo?t=${Date.now()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.country) {
+          setDetectedCountry(data.country);
+        }
+        if (data.city) {
+          setDetectedCity(data.city);
+        }
+        // Auto-set Currency based on detected location
+        if (data.currency && CURRENCIES[data.currency as SupportedCurrency]) {
+          setCurrencyState(data.currency as SupportedCurrency);
+          localStorage.setItem("landintel_currency", data.currency);
+        }
+        // Auto-set Language (prioritize device language, fallback to country language)
+        const targetLang = deviceLang || (data.language in LANGUAGES ? data.language : "en");
+        if (targetLang && LANGUAGES[targetLang as SupportedLanguage]) {
+          setLanguageState(targetLang as SupportedLanguage);
+          localStorage.setItem("landintel_lang", targetLang);
+          syncGoogleTranslate(targetLang as SupportedLanguage);
+        }
+        setIsAutoDetected(true);
+      }
+    } catch {
+      // Graceful fallback to device language
+      const deviceLang = getDeviceLanguage();
+      if (deviceLang && LANGUAGES[deviceLang]) {
+        setLanguageState(deviceLang);
+      }
+    }
+  };
+
   useEffect(() => {
     // 1. Fetch live global forex rates continuously
     fetch("/api/exchange-rates")
@@ -2873,7 +2933,11 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       })
       .catch(() => {});
 
-    // 2. Check localStorage for user preference
+    // 2. Check if user previously made a manual override
+    const isManual = typeof window !== "undefined"
+      ? localStorage.getItem("landintel_user_manual_override") === "true"
+      : false;
+
     const savedCurrency = (typeof window !== "undefined"
       ? localStorage.getItem("landintel_currency") || localStorage.getItem("diasporaland_currency")
       : null) as SupportedCurrency;
@@ -2882,32 +2946,25 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       ? localStorage.getItem("landintel_lang") || localStorage.getItem("diasporaland_lang")
       : null) as SupportedLanguage;
 
-    if (savedCurrency && CURRENCIES[savedCurrency]) {
+    if (isManual && savedCurrency && CURRENCIES[savedCurrency]) {
       setCurrencyState(savedCurrency);
+      setIsAutoDetected(false);
     }
-    if (savedLang && LANGUAGES[savedLang]) {
+    if (isManual && savedLang && LANGUAGES[savedLang]) {
       setLanguageState(savedLang);
-    } else {
-      // Firmly default to "en"
-      setLanguageState("en");
-      if (typeof window !== "undefined") {
-        localStorage.setItem("landintel_lang", "en");
-        localStorage.setItem("diasporaland_lang", "en");
-      }
+      setIsAutoDetected(false);
     }
 
-    // 3. Geolocation lookup for currency only if not already saved
-    if (!savedCurrency) {
-      fetch("/api/geo")
+    // 3. If no manual override, execute real-time IP & device auto-tracking immediately
+    if (!isManual) {
+      performAutoDetect();
+    } else {
+      // Still fetch geo country for region indicator
+      fetch(`/api/geo?t=${Date.now()}`)
         .then((res) => res.json())
         .then((data) => {
-          if (data.country) {
-            setDetectedCountry(data.country);
-          }
-          if (!savedCurrency && data.currency && CURRENCIES[data.currency as SupportedCurrency]) {
-            setCurrencyState(data.currency as SupportedCurrency);
-            localStorage.setItem("landintel_currency", data.currency);
-          }
+          if (data.country) setDetectedCountry(data.country);
+          if (data.city) setDetectedCity(data.city);
         })
         .catch(() => {});
     }
@@ -2915,14 +2972,27 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const setCurrency = (c: SupportedCurrency) => {
     setCurrencyState(c);
+    setIsAutoDetected(false);
     if (typeof window !== "undefined") {
       localStorage.setItem("landintel_currency", c);
       localStorage.setItem("diasporaland_currency", c);
+      localStorage.setItem("landintel_user_manual_override", "true");
       try {
         document.cookie = `landintel_currency=${c}; path=/; max-age=31536000; SameSite=Lax`;
         document.cookie = `diasporaland_currency=${c}; path=/; max-age=31536000; SameSite=Lax`;
       } catch {}
     }
+  };
+
+  const resetToAutoDetect = async () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("landintel_user_manual_override");
+      localStorage.removeItem("landintel_currency");
+      localStorage.removeItem("landintel_lang");
+      localStorage.removeItem("diasporaland_currency");
+      localStorage.removeItem("diasporaland_lang");
+    }
+    await performAutoDetect();
   };
 
   const GOOGLE_LANG_MAP: Record<SupportedLanguage, string> = {
@@ -3050,9 +3120,11 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const setLanguage = (l: SupportedLanguage) => {
     setLanguageState(l);
+    setIsAutoDetected(false);
     if (typeof window !== "undefined") {
       localStorage.setItem("landintel_lang", l);
       localStorage.setItem("diasporaland_lang", l);
+      localStorage.setItem("landintel_user_manual_override", "true");
       try {
         document.cookie = `landintel_lang=${l}; path=/; max-age=31536000; SameSite=Lax`;
         document.cookie = `diasporaland_lang=${l}; path=/; max-age=31536000; SameSite=Lax`;
@@ -3305,6 +3377,9 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         formatPrice,
         t,
         detectedCountry,
+        detectedCity,
+        isAutoDetected,
+        resetToAutoDetect,
         liveRates,
       }}
     >

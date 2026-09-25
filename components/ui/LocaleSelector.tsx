@@ -16,7 +16,18 @@ export const LocaleSelector: React.FC<{
   variant?: "light" | "dark";
   compact?: boolean;
 }> = ({ variant = "light", compact = false }) => {
-  const { currency, setCurrency, language, setLanguage, detectedCountry, liveRates, t } = useLocale();
+  const {
+    currency,
+    setCurrency,
+    language,
+    setLanguage,
+    detectedCountry,
+    detectedCity,
+    isAutoDetected,
+    resetToAutoDetect,
+    liveRates,
+    t,
+  } = useLocale();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"languages" | "currency">("languages");
   const [searchQuery, setSearchQuery] = useState("");
@@ -141,8 +152,8 @@ export const LocaleSelector: React.FC<{
           }
         }}
         className={`notranslate group relative inline-flex items-center ${
-          compact ? "gap-1.5 px-2.5 py-1 text-[11px]" : "gap-2 px-3 py-1.5 text-xs"
-        } rounded-full font-semibold transition-all duration-200 border shadow-xs cursor-pointer select-none shrink-0 ${
+          compact ? "gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px]" : "gap-2 px-3 py-1.5 text-xs"
+        } rounded-full font-semibold transition-all duration-200 border shadow-xs cursor-pointer select-none shrink-0 whitespace-nowrap ${
           isDark
             ? "bg-slate-900/90 hover:bg-slate-800 text-slate-100 border-slate-700/80 hover:border-slate-600 focus:ring-2 focus:ring-emerald-500/40"
             : "bg-white hover:bg-slate-50 text-slate-900 border-slate-200 hover:border-slate-300 focus:ring-2 focus:ring-emerald-500/30"
@@ -161,8 +172,8 @@ export const LocaleSelector: React.FC<{
               <CountryFlag countryCode={activeCurrency.countryCode} size={13} />
               <span className={isDark ? "text-white" : "text-slate-900"}>{currency}</span>
             </span>
-            <span className={isDark ? "text-slate-700" : "text-slate-300"}>•</span>
-            <span className="flex items-center gap-1">
+            <span className={`hidden min-[380px]:inline ${isDark ? "text-slate-700" : "text-slate-300"}`}>•</span>
+            <span className="hidden min-[380px]:flex items-center gap-1">
               <CountryFlag countryCode={activeLanguage.countryCode} size={13} />
               <span
                 className={`font-mono text-[10px] font-bold uppercase ${
@@ -173,7 +184,7 @@ export const LocaleSelector: React.FC<{
               </span>
             </span>
             <ChevronDown
-              className={`w-3 h-3 transition-transform duration-200 ${
+              className={`w-3 h-3 transition-transform duration-200 shrink-0 ${
                 open ? "rotate-180 text-emerald-500" : isDark ? "text-slate-400" : "text-slate-500"
               }`}
             />
@@ -254,6 +265,35 @@ export const LocaleSelector: React.FC<{
                 aria-label="Close selector"
               >
                 <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Real-Time Live Auto-Tracking Status Banner */}
+            <div className="shrink-0 px-4 py-2 bg-emerald-500/5 dark:bg-emerald-950/20 border-b border-emerald-500/10 flex items-center justify-between text-[11px]">
+              <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 truncate">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="truncate">
+                  {isAutoDetected ? "Live Auto-Tracking:" : "Detected Location:"}{" "}
+                  <strong className="text-slate-900 dark:text-white font-bold">
+                    {detectedCountry}{detectedCity ? ` (${detectedCity})` : ""}
+                  </strong>
+                </span>
+                {isAutoDetected && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300">
+                    LIVE
+                  </span>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  await resetToAutoDetect();
+                }}
+                className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 shrink-0 ml-2 cursor-pointer"
+                title="Re-track location and device language in real-time"
+              >
+                <span>Auto-Detect</span>
               </button>
             </div>
 
@@ -507,11 +547,12 @@ export const LocaleSelector: React.FC<{
                 <span>
                   {t("detectedRegion") || "Region"}:{" "}
                   <strong className="text-slate-900 dark:text-white">{detectedCountry}</strong>
+                  {detectedCity ? ` • ${detectedCity}` : ""}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 font-medium text-slate-500 dark:text-slate-400">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>{allLangCount} Languages • Live FX</span>
+                <span>{isAutoDetected ? "Live Auto-Tracking" : `${allLangCount} Languages • Live FX`}</span>
               </div>
             </div>
           </div>

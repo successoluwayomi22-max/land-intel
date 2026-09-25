@@ -304,22 +304,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* 2. MOBILE HEADER & DRAWER */}
-      <div dir="ltr" className="md:hidden sticky top-0 z-40 bg-[#0B1220] border-b border-slate-800 text-white px-3 sm:px-4 h-14 min-h-[56px] max-h-[56px] flex items-center justify-between flex-nowrap min-w-0">
+      <div dir="ltr" className="md:hidden sticky top-0 z-40 bg-[#0B1220] border-b border-slate-800 text-white px-2.5 sm:px-4 h-14 min-h-[56px] max-h-[56px] flex items-center justify-between gap-2 min-w-0">
         <LandIntelLogo href="/dashboard" size="sm" variant="dark" className="shrink-0 notranslate" />
 
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 min-w-0">
           <LocaleSelector variant="dark" compact />
           <Link
             href="/"
             prefetch={true}
-            className="px-2.5 py-1 rounded bg-slate-800 text-[11px] font-semibold text-slate-200 hover:text-white flex items-center gap-1"
+            className="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-slate-800 text-[11px] font-semibold text-slate-200 hover:text-white flex items-center gap-1 transition-colors"
+            title={t("returnHome") || "Main Site"}
           >
-            <Home className="w-3 h-3 text-emerald-400" />
-            <span className="hidden xs:inline">{t("returnHome") || "Main Site"}</span>
+            <Home className="w-4 h-4 sm:w-3 sm:h-3 text-emerald-400" />
+            <span className="hidden sm:inline">{t("returnHome") || "Main Site"}</span>
           </Link>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-1.5 text-slate-300 hover:text-white rounded-lg hover:bg-slate-800"
+            className="p-1.5 text-slate-300 hover:text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
             aria-label="Toggle Menu"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -339,6 +340,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
 
             <div className="flex-1 py-4 space-y-4 overflow-y-auto">
+              {/* Mobile Currency & Language Quick Switcher */}
+              <div className="pb-3 border-b border-slate-800">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block font-bold mb-2">
+                  {t("currencyAndLanguage") || "Currency & Language"}
+                </span>
+                <div className="w-full flex items-center justify-between">
+                  <LocaleSelector variant="dark" />
+                </div>
+              </div>
+
               <Link
                 href="/properties/new"
                 prefetch={true}

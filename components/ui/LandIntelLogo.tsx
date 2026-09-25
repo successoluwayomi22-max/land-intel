@@ -39,7 +39,7 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
   const gridFill = isDark ? "#0F172A" : "#F8FAFC";
 
   const content = (
-    <div className={`inline-flex items-center ${currentSize.gap} group select-none ${className}`}>
+    <div className={`inline-flex items-center ${currentSize.gap} group select-none ${href ? "" : className}`}>
       {/* ── Brand Architectural Pin & Cadastral Grid SVG Icon (Concept 5) ── */}
       <div
         className="relative shrink-0 transition-transform duration-300 group-hover:scale-105"
@@ -126,7 +126,7 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
       {/* ── Brand Typography ── */}
       {showText && !iconOnly && (
         <span
-          className={`font-heading font-black tracking-tight ${currentSize.text} ${mainTextColor} transition-colors group-hover:text-emerald-600`}
+          className={`font-heading font-black tracking-tight whitespace-nowrap ${currentSize.text} ${mainTextColor} transition-colors group-hover:text-emerald-600`}
         >
           LAND <span className={accentTextColor}>INTEL</span>
         </span>
@@ -136,7 +136,10 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
 
   if (href) {
     return (
-      <Link href={href} className="inline-flex items-center focus:outline-none">
+      <Link
+        href={href}
+        className={`inline-flex items-center shrink-0 min-w-0 focus:outline-none ${className}`}
+      >
         {content}
       </Link>
     );
