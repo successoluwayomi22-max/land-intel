@@ -25,6 +25,7 @@ export const LocaleSelector: React.FC<{
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -35,6 +36,24 @@ export const LocaleSelector: React.FC<{
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Lock background scroll and handle Escape key when modal is open
+  useEffect(() => {
+    if (!open) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  // Reset search and auto-focus input on open
   useEffect(() => {
     if (open) {
       setSearchQuery("");
@@ -192,28 +211,28 @@ export const LocaleSelector: React.FC<{
         )}
       </button>
 
-      {/* Floating Modal Popover & Backdrop */}
+      {/* Centered Modal Dialog & Backdrop Overlay (Fits any screen height/width) */}
       {open && (
-        <>
-          {/* Backdrop overlay: Prevents page bleed-through and handles click-outside */}
-          <div
-            className="fixed inset-0 bg-slate-950/45 backdrop-blur-[2px] z-[99998] transition-opacity animate-in fade-in duration-150"
-            onClick={() => setOpen(false)}
-            aria-hidden="true"
-          />
-
+        <div
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-3.5 sm:p-5 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150"
+          onClick={() => setOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("currencyAndLanguage") || "Currency & Language Selector"}
+        >
           {/* Modal Card Container */}
           <div
             translate="no"
-            className={`notranslate fixed inset-x-3 top-20 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2.5 w-auto sm:w-[440px] max-w-[calc(100vw-1.5rem)] rounded-2xl shadow-2xl z-[99999] border isolate overflow-hidden ${
+            onClick={(e) => e.stopPropagation()}
+            className={`notranslate w-full max-w-[460px] max-h-[85vh] sm:max-h-[80vh] rounded-2xl shadow-2xl border flex flex-col overflow-hidden ${
               isDark
                 ? "bg-[#0B1120] border-slate-700/80 text-white shadow-black/90 ring-1 ring-slate-700/60"
-                : "bg-white border-slate-200 text-slate-900 shadow-2xl shadow-slate-900/15 ring-1 ring-slate-200/80"
+                : "bg-white border-slate-200 text-slate-900 shadow-2xl shadow-slate-950/25 ring-1 ring-slate-200/80"
             } animate-in fade-in zoom-in-95 duration-150`}
             style={{ backgroundColor: isDark ? "#0B1120" : "#ffffff" }}
           >
             {/* Popover Header */}
-            <div className="p-4 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+            <div className="shrink-0 p-4 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 shadow-xs">
                   <Globe className="w-4 h-4" />
@@ -239,7 +258,7 @@ export const LocaleSelector: React.FC<{
             </div>
 
             {/* Segmented Switcher Tabs */}
-            <div className="px-4 pt-3 pb-2.5">
+            <div className="shrink-0 px-4 pt-3 pb-2.5">
               <div className="grid grid-cols-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 text-xs font-bold">
                 <button
                   type="button"
@@ -288,7 +307,7 @@ export const LocaleSelector: React.FC<{
             </div>
 
             {/* Search Input */}
-            <div className="px-4 pb-2.5">
+            <div className="shrink-0 px-4 pb-2.5">
               <div className="relative flex items-center">
                 <Search className="w-3.5 h-3.5 text-emerald-600/70 dark:text-emerald-400 absolute left-3.5 pointer-events-none" />
                 <input
@@ -317,7 +336,7 @@ export const LocaleSelector: React.FC<{
 
             {/* Region Filter Chips (Languages View) */}
             {activeTab === "languages" && (
-              <div className="px-4 pb-2.5 flex items-center gap-1.5 overflow-x-auto text-[11px] no-scrollbar">
+              <div className="shrink-0 px-4 pb-2.5 flex items-center gap-1.5 overflow-x-auto text-[11px] no-scrollbar">
                 {["All", "Global", "Africa", "Asia", "Europe", "Americas"].map((reg) => {
                   const isSelected = regionFilter === reg;
                   return (
@@ -344,8 +363,8 @@ export const LocaleSelector: React.FC<{
               </div>
             )}
 
-            {/* List Content */}
-            <div className="px-4 pb-3 max-h-[320px] overflow-y-auto space-y-1.5 custom-scrollbar">
+            {/* List Content (Dynamically sized to fill remaining vertical height) */}
+            <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-3 space-y-1.5 custom-scrollbar">
               {activeTab === "languages" ? (
                 filteredLanguages.length === 0 ? (
                   <div className="py-10 text-center text-xs text-slate-400 space-y-2">
@@ -482,7 +501,7 @@ export const LocaleSelector: React.FC<{
             </div>
 
             {/* Footer Bar */}
-            <div className="px-4 py-2.5 bg-slate-50/90 dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+            <div className="shrink-0 px-4 py-2.5 bg-slate-50/90 dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
               <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
                 <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>
@@ -496,7 +515,7 @@ export const LocaleSelector: React.FC<{
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
