@@ -216,62 +216,62 @@ export default function LandingPage() {
         <HeroSection />
 
         {/* 2. INSTITUTIONAL METRICS & REGULATORY TRUST MARQUEE */}
-        <section className="py-10 bg-white border-y border-brand-border">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
-              <div className="text-center sm:text-left border-l-2 border-blue-600 pl-4 py-1">
-                <span className="text-2xl sm:text-3xl font-black font-heading text-brand-darkNavy tracking-tight">
+        <section className="py-8 sm:py-10 bg-white border-y border-brand-border">
+          <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6 lg:gap-8">
+              <div className="text-center sm:text-left border-l-2 border-blue-600 pl-3 sm:pl-4 py-1">
+                <span className="text-xl xs:text-2xl sm:text-3xl font-black font-heading text-brand-darkNavy tracking-tight">
                   $3.2M+
                 </span>
-                <p className="text-xs text-brand-textSecondary font-medium mt-1">
+                <p className="text-[11px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">
                   Contested Land Capital Scrutinized
                 </p>
               </div>
 
-              <div className="text-center sm:text-left border-l-2 border-emerald-600 pl-4 py-1">
-                <span className="text-2xl sm:text-3xl font-black font-heading text-emerald-600 tracking-tight">
+              <div className="text-center sm:text-left border-l-2 border-emerald-600 pl-3 sm:pl-4 py-1">
+                <span className="text-xl xs:text-2xl sm:text-3xl font-black font-heading text-emerald-600 tracking-tight">
                   1,420+
                 </span>
-                <p className="text-xs text-brand-textSecondary font-medium mt-1">
+                <p className="text-[11px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">
                   Cadastral Beacons Cross-Examined
                 </p>
               </div>
 
-              <div className="text-center sm:text-left border-l-2 border-cyan-600 pl-4 py-1">
-                <span className="text-2xl sm:text-3xl font-black font-heading text-cyan-700 tracking-tight">
+              <div className="text-center sm:text-left border-l-2 border-cyan-600 pl-3 sm:pl-4 py-1">
+                <span className="text-xl xs:text-2xl sm:text-3xl font-black font-heading text-cyan-700 tracking-tight">
                   Multi-Grid
                 </span>
-                <p className="text-xs text-brand-textSecondary font-medium mt-1">
+                <p className="text-[11px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">
                   WGS-84 Coordinate Grid Coverage
                 </p>
               </div>
 
-              <div className="text-center sm:text-left border-l-2 border-purple-600 pl-4 py-1">
-                <span className="text-2xl sm:text-3xl font-black font-heading text-purple-700 tracking-tight">
+              <div className="text-center sm:text-left border-l-2 border-purple-600 pl-3 sm:pl-4 py-1">
+                <span className="text-xl xs:text-2xl sm:text-3xl font-black font-heading text-purple-700 tracking-tight">
                   100%
                 </span>
-                <p className="text-xs text-brand-textSecondary font-medium mt-1">
+                <p className="text-[11px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">
                   Defensible Page-Linked Evidence
                 </p>
               </div>
             </div>
 
             {/* Regulatory Grounding Badges */}
-            <div className="mt-8 pt-6 border-t border-brand-border flex flex-wrap items-center justify-center gap-y-3 gap-x-8 text-xs text-brand-textSecondary">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <div className="mt-6 pt-5 sm:mt-8 sm:pt-6 border-t border-brand-border flex flex-wrap items-center justify-center gap-y-2.5 gap-x-4 sm:gap-x-8 text-[11px] sm:text-xs text-brand-textSecondary">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
                 <span>Statutory Land Act Legal Heuristics</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Compass className="w-4 h-4 text-blue-600" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 shrink-0" />
                 <span>Survey Plan Seal & Beacon Integrity</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Landmark className="w-4 h-4 text-cyan-600" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Landmark className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-600 shrink-0" />
                 <span>Official Cadastral & Land Registry Alignment</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-purple-600" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 shrink-0" />
                 <span>Zero AI Model Training on Private Deeds</span>
               </div>
             </div>
@@ -279,16 +279,16 @@ export default function LandingPage() {
         </section>
 
         {/* 3. PERSUASIVE STORYTELLING: REAL-WORLD AUDIT SCENARIOS */}
-        <section className="py-20 lg:py-24 bg-slate-50/70 border-b border-brand-border">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="max-w-3xl mx-auto text-center space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+        <section className="py-14 sm:py-20 lg:py-24 bg-slate-50/70 border-b border-brand-border">
+          <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
+            <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-3">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500">
                 Forensic Due Diligence Audits
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
                 How Undetected Land Defects Cost Investors Millions
               </h2>
-              <p className="text-sm sm:text-base text-brand-textSecondary leading-relaxed font-normal">
+              <p className="text-xs xs:text-sm sm:text-base text-brand-textSecondary leading-relaxed font-normal">
                 Every year, remote and diaspora investors transfer capital for parcels encumbered by arterial setbacks, competing deeds, or revoked government excisions. Here is how independent cadastral verification protects buyers before contracts are executed.
               </p>
             </div>
@@ -296,7 +296,7 @@ export default function LandingPage() {
             {/* Interactive Case Study Tabs & Cards */}
             <div className="max-w-5xl mx-auto">
               {/* Tab Selector */}
-              <div role="tablist" aria-label="Case Studies" className="flex flex-wrap items-center justify-center gap-2 mb-8">
+              <div role="tablist" aria-label="Case Studies" className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8">
                 {caseStudies.map((cs, idx) => (
                   <button
                     key={cs.id}
@@ -306,7 +306,7 @@ export default function LandingPage() {
                     aria-selected={activeCaseTab === idx}
                     aria-controls={cs.id}
                     onClick={() => setActiveCaseTab(idx)}
-                    className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                    className={`px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 sm:gap-2 ${
                       activeCaseTab === idx
                         ? "bg-blue-700 text-white shadow-md ring-1 ring-blue-700"
                         : "bg-white text-slate-700 hover:text-brand-darkNavy hover:bg-slate-50 border border-brand-border shadow-2xs"
@@ -326,51 +326,53 @@ export default function LandingPage() {
                     id={cs.id}
                     role="tabpanel"
                     aria-labelledby={`tab-${cs.id}`}
-                    className="bg-white border border-brand-border rounded-2xl p-6 sm:p-9 shadow-card space-y-6 relative overflow-hidden"
+                    className="bg-white border border-brand-border rounded-xl sm:rounded-2xl p-4 sm:p-8 shadow-card space-y-4 sm:space-y-6 relative overflow-hidden"
                   >
-                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-border pb-4">
-                      <span className={`text-[11px] font-mono font-bold px-3 py-1 rounded-md border ${cs.badgeColor}`}>
+                    <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2 border-b border-brand-border pb-3 sm:pb-4">
+                      <span className={`text-[10px] sm:text-[11px] font-mono font-bold px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md border w-fit ${cs.badgeColor}`}>
                         {cs.tag}
                       </span>
-                      <div className="flex items-center gap-2 text-xs font-mono text-emerald-700 font-bold">
-                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-mono text-emerald-700 font-bold">
+                        <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
                         <span>Capital Protected: {cs.lossPrevented}</span>
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <h3 className="text-xl sm:text-2xl font-black font-heading text-brand-darkNavy tracking-tight">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <h3 className="text-lg xs:text-xl sm:text-2xl font-black font-heading text-brand-darkNavy tracking-tight leading-snug">
                         {cs.title}
                       </h3>
-                      <p className="text-xs font-medium text-slate-600 flex items-center gap-1.5">
-                        <Users className="w-3.5 h-3.5 text-brand-blue" />
-                        <span>Investor Profile: {cs.investor}</span>
-                        <span className="text-slate-400" aria-hidden="true">|</span>
+                      <p className="text-[11px] sm:text-xs font-medium text-slate-600 flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <span className="flex items-center gap-1">
+                          <Users className="w-3.5 h-3.5 text-brand-blue shrink-0" />
+                          <span>Investor Profile: {cs.investor}</span>
+                        </span>
+                        <span className="text-slate-400 hidden xs:inline" aria-hidden="true">|</span>
                         <span className="text-amber-800 font-semibold">{cs.riskType}</span>
                       </p>
                     </div>
 
                     {/* 3 Step Breakdown */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-                      <div className="bg-slate-50 border border-brand-border rounded-xl p-4 space-y-2">
-                        <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                          <FileText className="w-3.5 h-3.5 text-brand-blue" />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 pt-1 sm:pt-2">
+                      <div className="bg-slate-50 border border-brand-border rounded-xl p-3.5 sm:p-4 space-y-1.5 sm:space-y-2">
+                        <span className="text-[10px] sm:text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                          <FileText className="w-3.5 h-3.5 text-brand-blue shrink-0" />
                           <span>1. Transaction Context</span>
                         </span>
                         <p className="text-xs text-brand-textSecondary leading-relaxed">{cs.summary}</p>
                       </div>
 
-                      <div className="bg-rose-50/50 border border-rose-200 rounded-xl p-4 space-y-2">
-                        <span className="text-[11px] font-bold text-rose-700 uppercase tracking-wider flex items-center gap-1.5">
-                          <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+                      <div className="bg-rose-50/50 border border-rose-200 rounded-xl p-3.5 sm:p-4 space-y-1.5 sm:space-y-2">
+                        <span className="text-[10px] sm:text-[11px] font-bold text-rose-700 uppercase tracking-wider flex items-center gap-1.5">
+                          <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
                           <span>2. Hidden Risk Detected</span>
                         </span>
                         <p className="text-xs text-slate-700 leading-relaxed">{cs.deception}</p>
                       </div>
 
-                      <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4 space-y-2">
-                        <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
-                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                      <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3.5 sm:p-4 space-y-1.5 sm:space-y-2">
+                        <span className="text-[10px] sm:text-[11px] font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
+                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                           <span>3. Cadastral Resolution</span>
                         </span>
                         <p className="text-xs text-slate-700 leading-relaxed">{cs.detection}</p>
@@ -378,18 +380,18 @@ export default function LandingPage() {
                     </div>
 
                     {/* Verdict Banner */}
-                    <div className="bg-slate-50 border border-brand-border rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="bg-slate-50 border border-brand-border rounded-xl p-3.5 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                          <ShieldCheck className="w-5 h-5" />
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                          <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
                         <div>
-                          <span className="text-xs font-bold text-brand-darkNavy block">Audit Verdict</span>
-                          <span className="text-xs text-slate-700 font-mono font-medium">{cs.verdict}</span>
+                          <span className="text-[11px] sm:text-xs font-bold text-brand-darkNavy block">Audit Verdict</span>
+                          <span className="text-xs text-slate-700 font-mono font-medium leading-tight block">{cs.verdict}</span>
                         </div>
                       </div>
                       <Link href="/register" prefetch={true} className="w-full sm:w-auto">
-                        <Button variant="primary" size="sm" className="w-full sm:w-auto text-xs py-2 px-4 shadow-sm font-bold">
+                        <Button variant="primary" size="sm" className="w-full sm:w-auto text-xs py-2.5 sm:py-2 px-4 shadow-sm font-bold flex items-center justify-center">
                           <span>Screen Your Property Now</span>
                           <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                         </Button>
@@ -403,23 +405,26 @@ export default function LandingPage() {
         </section>
 
         {/* 4. COMPARISON MATRIX: WHATSAPP VS LANDINTEL */}
-        <section className="py-20 bg-white border-b border-brand-border">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="max-w-3xl mx-auto text-center space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">
+        <section className="py-14 sm:py-20 bg-white border-b border-brand-border">
+          <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
+            <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
                 Decision Framework
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
                 Blind Faith vs. Cadastral Intelligence
               </h2>
-              <p className="text-sm text-brand-textSecondary leading-relaxed">
+              <p className="text-xs xs:text-sm text-brand-textSecondary leading-relaxed">
                 Why relying on informal agent assurances fails, and how automated cadastral cross-examination protects your capital.
               </p>
             </div>
 
-            <div className="max-w-5xl mx-auto bg-white border border-brand-border rounded-2xl shadow-card overflow-hidden">
+            <div className="max-w-5xl mx-auto bg-white border border-brand-border rounded-xl sm:rounded-2xl shadow-card overflow-hidden">
+              <div className="sm:hidden px-4 py-2 bg-slate-50 border-b border-brand-border text-center text-[10px] text-slate-500 font-semibold flex items-center justify-center gap-1.5">
+                <span>← Swipe horizontally to compare all features →</span>
+              </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
+                <table className="w-full min-w-[600px] text-left text-xs border-collapse">
                   <thead>
                     <tr className="border-b border-brand-border bg-slate-50 text-slate-700 font-bold font-heading uppercase tracking-wider text-[11px]">
                       <th className="py-4 px-5 w-1/3">Due-Diligence Vector</th>
@@ -459,26 +464,26 @@ export default function LandingPage() {
         </section>
 
         {/* 5. CADASTRAL ENGINE PILLARS */}
-        <section className="py-20 bg-slate-50/70 border-b border-brand-border" id="how-it-works">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="max-w-3xl mx-auto text-center space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">
+        <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border" id="how-it-works">
+          <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
+            <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
                 Proprietary Technology
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
                 How LandIntel Deconstructs Property Risk
               </h2>
-              <p className="text-sm text-brand-textSecondary leading-relaxed">
+              <p className="text-xs xs:text-sm text-brand-textSecondary leading-relaxed">
                 Four interlocking analysis engines turn raw, fragmented property documents into an explainable, defensible risk verdict.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white border border-brand-border rounded-2xl p-6 space-y-4 shadow-subtle hover:border-brand-blue/50 hover:shadow-card transition-all">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-black">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              <div className="bg-white border border-brand-border rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-3 sm:space-y-4 shadow-subtle hover:border-brand-blue/50 hover:shadow-card transition-all">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center font-black text-xs sm:text-sm">
                   01
                 </div>
-                <h3 className="text-base font-bold text-brand-darkNavy font-heading">
+                <h3 className="text-sm sm:text-base font-bold text-brand-darkNavy font-heading">
                   OCR Coordinate Extraction
                 </h3>
                 <p className="text-xs text-brand-textSecondary leading-relaxed">
@@ -486,11 +491,11 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="bg-white border border-brand-border rounded-2xl p-6 space-y-4 shadow-subtle hover:border-emerald-500/50 hover:shadow-card transition-all">
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-black">
+              <div className="bg-white border border-brand-border rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-3 sm:space-y-4 shadow-subtle hover:border-emerald-500/50 hover:shadow-card transition-all">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-100 text-emerald-900 flex items-center justify-center font-black text-xs sm:text-sm">
                   02
                 </div>
-                <h3 className="text-base font-bold text-brand-darkNavy font-heading">
+                <h3 className="text-sm sm:text-base font-bold text-brand-darkNavy font-heading">
                   Cadastral Buffer Radar
                 </h3>
                 <p className="text-xs text-brand-textSecondary leading-relaxed">
@@ -498,11 +503,11 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="bg-white border border-brand-border rounded-2xl p-6 space-y-4 shadow-subtle hover:border-cyan-500/50 hover:shadow-card transition-all">
-                <div className="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-900 flex items-center justify-center font-black">
+              <div className="bg-white border border-brand-border rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-3 sm:space-y-4 shadow-subtle hover:border-cyan-500/50 hover:shadow-card transition-all">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-cyan-100 text-cyan-900 flex items-center justify-center font-black text-xs sm:text-sm">
                   03
                 </div>
-                <h3 className="text-base font-bold text-brand-darkNavy font-heading">
+                <h3 className="text-sm sm:text-base font-bold text-brand-darkNavy font-heading">
                   Deed vs. Survey Heuristics
                 </h3>
                 <p className="text-xs text-brand-textSecondary leading-relaxed">
@@ -510,11 +515,11 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="bg-white border border-brand-border rounded-2xl p-6 space-y-4 shadow-subtle hover:border-purple-500/50 hover:shadow-card transition-all">
-                <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-900 flex items-center justify-center font-black">
+              <div className="bg-white border border-brand-border rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-3 sm:space-y-4 shadow-subtle hover:border-purple-500/50 hover:shadow-card transition-all">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-100 text-purple-900 flex items-center justify-center font-black text-xs sm:text-sm">
                   04
                 </div>
-                <h3 className="text-base font-bold text-brand-darkNavy font-heading">
+                <h3 className="text-sm sm:text-base font-bold text-brand-darkNavy font-heading">
                   Statutory Consent Audit
                 </h3>
                 <p className="text-xs text-brand-textSecondary leading-relaxed">
@@ -526,32 +531,32 @@ export default function LandingPage() {
         </section>
 
         {/* 6. WHAT WE ANALYZE (DOCUMENT COVERAGE) */}
-        <section className="py-20 bg-white border-b border-brand-border" id="what-we-analyze">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="max-w-3xl mx-auto text-center space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">
+        <section className="py-14 sm:py-20 bg-white border-b border-brand-border" id="what-we-analyze">
+          <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
+            <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
                 Document Scrutiny
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
                 Complete Coverage of Statutory Land Instruments
               </h2>
-              <p className="text-sm text-brand-textSecondary leading-relaxed">
+              <p className="text-xs xs:text-sm text-brand-textSecondary leading-relaxed">
                 Whether purchasing in an uncommitted peri-urban layout, a planned residential scheme, or an ancestral family parcel, LandIntel evaluates the entire chain of title.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
               {documentItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <div
                     key={item.title}
-                    className="bg-slate-50/60 border border-brand-border rounded-2xl p-6 space-y-3 hover:bg-white hover:border-slate-300 hover:shadow-subtle transition-all"
+                    className="bg-slate-50/60 border border-brand-border rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-2.5 sm:space-y-3 hover:bg-white hover:border-slate-300 hover:shadow-subtle transition-all"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-blue-50 text-brand-blue flex items-center justify-center">
-                      <Icon className="w-5 h-5" />
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-blue-50 text-brand-blue flex items-center justify-center">
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
-                    <h3 className="text-base font-bold text-brand-darkNavy font-heading">{item.title}</h3>
+                    <h3 className="text-sm sm:text-base font-bold text-brand-darkNavy font-heading">{item.title}</h3>
                     <p className="text-xs text-brand-textSecondary leading-relaxed">{item.desc}</p>
                   </div>
                 );
@@ -561,40 +566,40 @@ export default function LandingPage() {
         </section>
 
         {/* 7. VERIFIED DIASPORA TESTIMONIALS */}
-        <section className="py-20 bg-slate-50/70 border-b border-brand-border">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="max-w-3xl mx-auto text-center space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">
+        <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border">
+          <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
+            <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-3">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
                 Verified Investor Perspectives
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
                 Trusted by Cross-Border & Remote Investors Worldwide
               </h2>
-              <p className="text-sm text-brand-textSecondary leading-relaxed">
+              <p className="text-xs xs:text-sm text-brand-textSecondary leading-relaxed">
                 Real diaspora investors who protected their capital from real-estate fraud before signing or wiring funds.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {testimonials.map((tItem, i) => (
                 <div
                   key={i}
-                  className="bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between space-y-5 hover:border-slate-300 hover:shadow-card transition-all shadow-subtle"
+                  className="bg-white border border-brand-border rounded-xl sm:rounded-2xl p-4 sm:p-6 flex flex-col justify-between space-y-4 sm:space-y-5 hover:border-slate-300 hover:shadow-card transition-all shadow-subtle"
                 >
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-teal-500 text-white font-bold text-sm flex items-center justify-center shadow-xs">
+                      <div className="flex items-center gap-2.5 sm:gap-3">
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-blue-600 to-teal-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center shadow-xs shrink-0">
                           {tItem.avatar}
                         </div>
-                        <div>
-                          <h3 className="text-sm font-bold text-brand-darkNavy font-heading">
+                        <div className="min-w-0">
+                          <h3 className="text-xs sm:text-sm font-bold text-brand-darkNavy font-heading truncate">
                             {tItem.name}
                           </h3>
-                          <p className="text-[11px] text-slate-500">{tItem.role}</p>
+                          <p className="text-[10px] sm:text-[11px] text-slate-500 truncate">{tItem.role}</p>
                         </div>
                       </div>
-                      <Quote className="w-6 h-6 text-slate-300" />
+                      <Quote className="w-5 h-5 sm:w-6 sm:h-6 text-slate-300 shrink-0" />
                     </div>
 
                     <p className="text-xs text-slate-600 leading-relaxed italic">
@@ -602,7 +607,7 @@ export default function LandingPage() {
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 space-y-1.5 text-[11px]">
+                  <div className="pt-3 sm:pt-4 border-t border-slate-100 space-y-1 text-[11px]">
                     <div className="flex items-center justify-between text-slate-500">
                       <span>Vetted Parcel:</span>
                       <span className="font-mono text-brand-darkNavy font-semibold">{tItem.property}</span>
@@ -619,16 +624,16 @@ export default function LandingPage() {
         </section>
 
         {/* 8. TRANSPARENT PRICING WITH MULTI-CURRENCY SUPPORT */}
-        <section className="py-20 bg-white border-b border-brand-border" id="pricing">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="max-w-3xl mx-auto text-center space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">
+        <section className="py-14 sm:py-20 bg-white border-b border-brand-border" id="pricing">
+          <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
+            <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
                 Transparent Pricing
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
                 Generous Free Scans. Pay Only for Official Certification.
               </h2>
-              <p className="text-sm text-brand-textSecondary leading-relaxed">
+              <p className="text-xs xs:text-sm text-brand-textSecondary leading-relaxed">
                 No monthly subscriptions or hidden retainers. Run preliminary coordinate analysis for free; unlock comprehensive, tamper-evident 15-section PDF reports per transaction.
               </p>
             </div>
@@ -638,16 +643,16 @@ export default function LandingPage() {
         </section>
 
         {/* 9. FREQUENTLY ASKED QUESTIONS */}
-        <section className="py-20 bg-slate-50/70 border-b border-brand-border" id="faq">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-            <div className="text-center space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">
+        <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border" id="faq">
+          <div className="max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
+            <div className="text-center space-y-2.5 sm:space-y-3">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
                 Transparent Intelligence
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
                 Frequently Asked Questions
               </h2>
-              <p className="text-sm text-brand-textSecondary">
+              <p className="text-xs xs:text-sm text-brand-textSecondary">
                 Direct answers regarding cadastral risk detection, document privacy, and legal report boundaries.
               </p>
             </div>
@@ -690,7 +695,7 @@ export default function LandingPage() {
                 }),
               }}
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-6">
               {[
                 {
                   q: "Does LandIntel replace a licensed surveyor or property lawyer?",
@@ -715,9 +720,9 @@ export default function LandingPage() {
               ].map((faq, i) => (
                 <div
                   key={i}
-                  className="bg-white border border-brand-border rounded-2xl p-6 shadow-subtle space-y-2 hover:border-slate-300 transition-colors"
+                  className="bg-white border border-brand-border rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-subtle space-y-1.5 sm:space-y-2 hover:border-slate-300 transition-colors"
                 >
-                  <h3 className="text-sm font-bold text-brand-darkNavy font-heading">{faq.q}</h3>
+                  <h3 className="text-xs sm:text-sm font-bold text-brand-darkNavy font-heading leading-snug">{faq.q}</h3>
                   <p className="text-xs text-brand-textSecondary leading-relaxed">{faq.a}</p>
                 </div>
               ))}
@@ -726,26 +731,26 @@ export default function LandingPage() {
         </section>
 
         {/* 10. FINAL CALL TO ACTION */}
-        <section className="py-20 bg-slate-50 text-brand-darkNavy relative overflow-hidden border-t border-brand-border">
-          <div className="max-w-4xl mx-auto px-4 text-center space-y-4 relative z-10">
-            <span className="text-xs font-bold uppercase tracking-wider text-brand-blue">
+        <section className="py-14 sm:py-20 bg-slate-50 text-brand-darkNavy relative overflow-hidden border-t border-brand-border">
+          <div className="max-w-4xl mx-auto px-3.5 sm:px-4 text-center space-y-3.5 sm:space-y-4 relative z-10">
+            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
               Independent Due Diligence
             </span>
 
-            <h2 className="text-3xl sm:text-5xl font-black font-heading tracking-tight text-brand-darkNavy">
+            <h2 className="text-2xl xs:text-3xl sm:text-5xl font-black font-heading tracking-tight text-brand-darkNavy leading-tight">
               Before You Wire Purchase Funds, Confirm Your Title.
             </h2>
 
-            <p className="text-slate-700 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-normal">
+            <p className="text-slate-700 text-xs xs:text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-normal px-2 sm:px-0">
               Upload your survey plan or deed. We verify boundary coordinates against state acquisition zones, review statutory documents, and deliver an actionable due diligence report before you sign.
             </p>
 
-            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 w-full max-w-xs sm:max-w-none mx-auto">
               <Link href="/register" prefetch={true} className="w-full sm:w-auto">
                 <Button
                   variant="primary"
                   size="lg"
-                  className="w-full sm:w-auto shadow-md py-4 px-8 font-bold text-sm"
+                  className="w-full sm:w-auto shadow-md py-3.5 sm:py-4 px-6 sm:px-8 font-bold text-xs sm:text-sm"
                 >
                   <span>Start Property Due Diligence</span>
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -755,24 +760,24 @@ export default function LandingPage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto bg-white border-slate-300 text-slate-700 hover:text-brand-darkNavy hover:bg-slate-100 py-4 px-6 font-bold text-sm shadow-xs"
+                  className="w-full sm:w-auto bg-white border-slate-300 text-slate-700 hover:text-brand-darkNavy hover:bg-slate-100 py-3.5 sm:py-4 px-6 font-bold text-xs sm:text-sm shadow-xs"
                 >
                   <span>View Sample Audit Report</span>
                 </Button>
               </Link>
             </div>
 
-            <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-700 font-medium">
+            <div className="pt-4 sm:pt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-6 text-[11px] sm:text-xs text-slate-700 font-medium">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
                 <span>Free Initial Coordinate Scan</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-emerald-600" />
+                <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
                 <span>256-bit Encrypted & Confidential</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
                 <span>Direct Registry & Gazette Cross-Check</span>
               </span>
             </div>
