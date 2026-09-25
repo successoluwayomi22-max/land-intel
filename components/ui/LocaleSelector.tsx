@@ -64,14 +64,20 @@ export const LocaleSelector: React.FC<{
     };
   }, [open]);
 
-  // Reset search and auto-focus input on open
+  // Reset search and auto-focus input ONLY on desktop with mouse pointer (prevent mobile keyboard popup)
   useEffect(() => {
     if (open) {
       setSearchQuery("");
-      // slight delay for auto-focus
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 50);
+      // Only auto-focus on desktop devices with fine pointer (mouse), NOT on mobile touchscreens
+      if (
+        typeof window !== "undefined" &&
+        window.innerWidth >= 768 &&
+        window.matchMedia("(pointer: fine)").matches
+      ) {
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+        }, 50);
+      }
     }
   }, [open, activeTab]);
 
@@ -222,34 +228,37 @@ export const LocaleSelector: React.FC<{
         )}
       </button>
 
-      {/* Centered Modal Dialog & Backdrop Overlay (Fits any screen height/width) */}
+      {/* Centered Modal Dialog on desktop, Native Bottom Sheet on mobile */}
       {open && (
         <div
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-3.5 sm:p-5 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150"
+          className="fixed inset-0 z-[99999] flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150"
           onClick={() => setOpen(false)}
           role="dialog"
           aria-modal="true"
           aria-label={t("currencyAndLanguage") || "Currency & Language Selector"}
         >
-          {/* Modal Card Container */}
+          {/* Modal / Bottom Sheet Card Container */}
           <div
             translate="no"
             onClick={(e) => e.stopPropagation()}
-            className={`notranslate w-full max-w-[460px] max-h-[85vh] max-h-[85dvh] sm:max-h-[80vh] sm:max-h-[80dvh] rounded-2xl shadow-2xl border flex flex-col overflow-hidden ${
+            className={`notranslate w-full sm:max-w-[480px] max-h-[85dvh] sm:max-h-[82dvh] rounded-t-3xl sm:rounded-2xl shadow-2xl border flex flex-col overflow-hidden ${
               isDark
                 ? "bg-[#0B1120] border-slate-700/80 text-white shadow-black/90 ring-1 ring-slate-700/60"
                 : "bg-white border-slate-200 text-slate-900 shadow-2xl shadow-slate-950/25 ring-1 ring-slate-200/80"
-            } animate-in fade-in zoom-in-95 duration-150`}
+            } animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200`}
             style={{ backgroundColor: isDark ? "#0B1120" : "#ffffff" }}
           >
-            {/* Popover Header */}
-            <div className="shrink-0 p-4 pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+            {/* Mobile Drag Handle */}
+            <div className="w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
+
+            {/* Sheet / Dialog Header */}
+            <div className="shrink-0 px-4 pt-1 pb-3 sm:p-4 sm:pb-3 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 shadow-xs">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 shadow-xs shrink-0">
                   <Globe className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-black uppercase tracking-wider font-heading flex items-center gap-1.5 text-slate-900 dark:text-white">
+                  <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider font-heading flex items-center gap-1.5 text-slate-900 dark:text-white">
                     <span>{t("currencyAndLanguage") || "Currency & Language"}</span>
                   </h3>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
@@ -261,7 +270,7 @@ export const LocaleSelector: React.FC<{
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="Close selector"
               >
                 <X className="w-4 h-4" />
@@ -404,7 +413,7 @@ export const LocaleSelector: React.FC<{
             )}
 
             {/* List Content (Dynamically sized to fill remaining vertical height) */}
-            <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-3 space-y-1.5 custom-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-3 space-y-1.5 custom-scrollbar overscroll-contain">
               {activeTab === "languages" ? (
                 filteredLanguages.length === 0 ? (
                   <div className="py-10 text-center text-xs text-slate-400 space-y-2">
@@ -433,7 +442,7 @@ export const LocaleSelector: React.FC<{
                             setLanguage(lKey);
                             setOpen(false);
                           }}
-                          className={`flex items-start gap-2.5 p-2.5 rounded-xl text-left transition-all border cursor-pointer ${
+                          className={`flex items-start gap-2 p-2 sm:p-2.5 rounded-xl text-left transition-all border cursor-pointer min-h-[44px] ${
                             isSelected
                               ? isDark
                                 ? "bg-emerald-950/40 border-emerald-500/60 text-white ring-1 ring-emerald-500/50 shadow-xs"
@@ -447,17 +456,17 @@ export const LocaleSelector: React.FC<{
                             <CountryFlag countryCode={l.countryCode} size={18} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between gap-1">
                               <span className="font-bold text-xs truncate leading-tight">
                                 {l.nativeName}
                               </span>
                               {isSelected && (
-                                <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 ml-1 shadow-2xs">
-                                  <Check className="w-2.5 h-2.5 stroke-[3]" />
+                                <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                                  <Check className="w-2 h-2 stroke-[3]" />
                                 </span>
                               )}
                             </div>
-                            <span className="text-[10px] text-slate-400 block truncate mt-0.5 font-medium">
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400 block truncate font-medium">
                               {l.label}
                             </span>
                           </div>
@@ -541,18 +550,18 @@ export const LocaleSelector: React.FC<{
             </div>
 
             {/* Footer Bar */}
-            <div className="shrink-0 px-4 py-2.5 bg-slate-50/90 dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-              <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
-                <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span>
+            <div className="shrink-0 px-4 py-2 sm:py-2.5 bg-slate-50/90 dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 truncate">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="truncate">
                   {t("detectedRegion") || "Region"}:{" "}
                   <strong className="text-slate-900 dark:text-white">{detectedCountry}</strong>
                   {detectedCity ? ` • ${detectedCity}` : ""}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5 font-medium text-slate-500 dark:text-slate-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>{isAutoDetected ? "Live Auto-Tracking" : `${allLangCount} Languages • Live FX`}</span>
+              <div className="flex items-center gap-1.5 font-medium text-slate-500 dark:text-slate-400 shrink-0 ml-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span>{isAutoDetected ? "Live Auto-Tracking" : `${allLangCount} Languages`}</span>
               </div>
             </div>
           </div>
