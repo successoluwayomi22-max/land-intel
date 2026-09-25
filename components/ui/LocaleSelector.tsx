@@ -224,7 +224,7 @@ export const LocaleSelector: React.FC<{
           <div
             translate="no"
             onClick={(e) => e.stopPropagation()}
-            className={`notranslate w-full max-w-[460px] max-h-[85vh] sm:max-h-[80vh] rounded-2xl shadow-2xl border flex flex-col overflow-hidden ${
+            className={`notranslate w-full max-w-[460px] max-h-[85vh] max-h-[85dvh] sm:max-h-[80vh] sm:max-h-[80dvh] rounded-2xl shadow-2xl border flex flex-col overflow-hidden ${
               isDark
                 ? "bg-[#0B1120] border-slate-700/80 text-white shadow-black/90 ring-1 ring-slate-700/60"
                 : "bg-white border-slate-200 text-slate-900 shadow-2xl shadow-slate-950/25 ring-1 ring-slate-200/80"
@@ -381,7 +381,7 @@ export const LocaleSelector: React.FC<{
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2">
                     {filteredLanguages.map((lKey) => {
                       const l = LANGUAGES[lKey];
                       const isSelected = language === lKey;
