@@ -95,23 +95,23 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Global Proof Bar */}
+        {/* Global Methodology Proof Bar */}
         <div className="pt-6 border-t border-brand-border grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 text-center">
           <div className="p-2 sm:p-0">
-            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">$3.2M+</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">Land Value Vetted</div>
+            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">{t("proof1Title") || "15-Point Check"}</div>
+            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">{t("proof1Subtitle") || "Statutory Deed & Cadastral Audit"}</div>
           </div>
           <div className="p-2 sm:p-0">
-            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">1,420+</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">Survey Plans Charted</div>
+            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">{t("proof2Title") || "UTM 31N/32N"}</div>
+            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">{t("proof2Subtitle") || "SURCON Sub-Meter Coordinate Grid"}</div>
           </div>
           <div className="p-2 sm:p-0">
-            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-emerald-600 font-heading tracking-tight">0</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">Undetected Clashes</div>
+            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-emerald-600 font-heading tracking-tight">{t("proof3Title") || "Gazette Overlay"}</div>
+            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">{t("proof3Subtitle") || "Committed Acquisition & Setback Screening"}</div>
           </div>
           <div className="p-2 sm:p-0">
-            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">Universal</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">Multi-Jurisdictions</div>
+            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-purple-700 font-heading tracking-tight">{t("proof4Title") || "SHA-256"}</div>
+            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">{t("proof4Subtitle") || "Tamper-Proof Audit QR Seal"}</div>
           </div>
         </div>
       </div>

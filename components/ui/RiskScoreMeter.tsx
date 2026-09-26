@@ -2,6 +2,7 @@ import React from "react";
 import { RiskBadge } from "./RiskBadge";
 import { getPurchaseRecommendation } from "@/lib/ai/types";
 import { AlertOctagon, AlertTriangle, CheckCircle2, ShieldCheck, XCircle } from "lucide-react";
+import { useLocale } from "@/components/providers/LocaleProvider";
 
 export interface RiskScoreMeterProps {
   score: number;
@@ -23,6 +24,7 @@ export const RiskScoreMeter: React.FC<RiskScoreMeterProps> = ({
   breakdown,
   compact = false,
 }) => {
+  const { t } = useLocale();
   const normScore = Math.max(0, Math.min(100, score));
   const isSynthetic = (explanation || "").toLowerCase().includes("synthetic") || (explanation || "").toLowerCase().includes("placeholder");
   const recommendation = getPurchaseRecommendation(normScore, level, { isSynthetic });
@@ -191,6 +193,14 @@ export const RiskScoreMeter: React.FC<RiskScoreMeterProps> = ({
           </div>
         </div>
       )}
+
+      {/* Statutory Scope & Non-Legal-Advice Warning */}
+      <div className="p-3 bg-amber-50/80 border border-amber-200/90 rounded-lg flex items-start gap-2.5 text-xs text-amber-950">
+        <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+        <p className="text-[11px] leading-relaxed text-amber-900">
+          {t("legalDisclaimerRisk") || "Legal Scope Notice: LandIntel provides preliminary algorithmic due diligence to catch document discrepancies, coordinate buffer overlaps, and gazette conflicts. It cannot establish legal ownership or replace registered surveyors and legal counsel."}
+        </p>
+      </div>
     </div>
   );
 };

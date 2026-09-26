@@ -149,12 +149,15 @@ export function ReportDeliveryEmail({
           <!-- Footer -->
           <tr>
             <td style="background-color:#f8fafc;border-top:1px solid #e2e8f0;padding:24px 32px;text-align:center;">
-              <p style="font-size:12px;font-weight:700;color:#0f172a;margin:0 0 4px;">LandIntel Global Technologies</p>
-              <p style="font-size:11px;color:#94a3b8;margin:0 0 8px;">Institutional Due Diligence & Cadastral Risk Intelligence</p>
+              <p style="font-size:12px;font-weight:700;color:#0f172a;margin:0 0 4px;">LandIntel Technologies Ltd &bull; CAC Reg. RC 8365907</p>
+              <p style="font-size:11px;color:#94a3b8;margin:0 0 8px;">Plot 14, Commercial Avenue, Victoria Island, Lagos, Nigeria</p>
               <p style="font-size:11px;color:#94a3b8;margin:0;">
                 <a href="${reportUrl}" style="color:#0369a1;text-decoration:none;">Workspace</a> &bull;
-                <a href="https://land-intel-omega.vercel.app/security" style="color:#0369a1;text-decoration:none;">Security & NDPR</a> &bull;
+                <a href="https://land-intel-omega.vercel.app/security" style="color:#0369a1;text-decoration:none;">Security &amp; NDPR</a> &bull;
                 <a href="mailto:support@landintel.ai" style="color:#0369a1;text-decoration:none;">Contact Support</a>
+              </p>
+              <p style="font-size:10px;color:#cbd5e1;margin:8px 0 0;">
+                Notice: Official certified report delivery. Do not forward this link to unauthorized third parties.
               </p>
             </td>
           </tr>

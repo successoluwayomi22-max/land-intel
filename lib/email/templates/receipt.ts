@@ -156,8 +156,10 @@ export function PaymentReceiptEmail({
           <!-- Footer -->
           <tr>
             <td style="background-color:#f8fafc;border-top:1px solid #e2e8f0;padding:20px 32px;text-align:center;">
-              <p style="font-size:11px;color:#94a3b8;margin:0;">
-                LandIntel Global Technologies &bull; Institutional Land Due Diligence &bull; support@landintel.ai
+              <p style="font-size:11px;color:#94a3b8;margin:0;line-height:1.5;">
+                LandIntel Technologies Ltd &bull; CAC Reg. RC 8365907<br />
+                Plot 14, Commercial Avenue, Victoria Island, Lagos, Nigeria<br />
+                &copy; ${new Date().getFullYear()} LandIntel. All rights reserved.
               </p>
             </td>
           </tr>

@@ -5,6 +5,8 @@ import { getJurisdictionAdapter } from "@/lib/jurisdictions/registry";
 import { reconcileCaseDocuments } from "@/lib/ai/reconciliation";
 import { analyzeBoundaryPolygon } from "@/lib/geo/geospatial";
 import { getPurchaseRecommendation } from "@/lib/ai/types";
+import QRCode from "qrcode";
+import crypto from "crypto";
 
 /**
  * Generates an authentic, publication-grade Property Due-Diligence Risk Report in PDF format
@@ -73,6 +75,30 @@ export async function generatePropertyDueDiligencePdf(caseId: string): Promise<U
   const textMuted = rgb(100 / 255, 116 / 255, 139 / 255);
   const borderColor = rgb(226 / 255, 232 / 255, 240 / 255);
 
+  const verificationId = `LI-NG-${propertyCase.id.slice(-8).toUpperCase()}`;
+  const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://landintel.ai"}/verify/${propertyCase.id}`;
+  const verificationHash = crypto
+    .createHash("sha256")
+    .update(`${propertyCase.id}-${propertyCase.createdAt.toISOString()}-${propertyCase.title}`)
+    .digest("hex")
+    .toUpperCase();
+
+  let qrImage = null;
+  try {
+    const qrBuffer = await QRCode.toBuffer(verificationUrl, {
+      type: "png",
+      width: 140,
+      margin: 1,
+      color: {
+        dark: "#0b1220",
+        light: "#ffffff",
+      },
+    });
+    qrImage = await pdfDoc.embedPng(qrBuffer);
+  } catch (qrErr) {
+    console.warn("[PDF] QR Code generation fallback:", qrErr);
+  }
+
   let page = pdfDoc.addPage([595.28, 841.89]); // A4 dimensions
   const { width, height } = page.getSize();
   let y = height - 50;
@@ -101,9 +127,9 @@ export async function generatePropertyDueDiligencePdf(caseId: string): Promise<U
   // Header Banner
   page.drawRectangle({
     x: 50,
-    y: y - 55,
+    y: y - 60,
     width: width - 100,
-    height: 65,
+    height: 70,
     color: primaryNavy,
   });
 
@@ -117,27 +143,45 @@ export async function generatePropertyDueDiligencePdf(caseId: string): Promise<U
 
   page.drawText(`GLOBAL PROPERTY DUE-DILIGENCE & CADASTRAL INTELLIGENCE — ${jurisdiction.name.toUpperCase()}`, {
     x: 65,
-    y: y - 36,
-    size: 8,
-    font: fontRegular,
-    color: rgb(203 / 255, 213 / 255, 225 / 255),
-  });
-
-  page.drawText(`Case Ref: DL-${new Date().getFullYear()}-${propertyCase.id.slice(-6).toUpperCase()}`, {
-    x: width - 200,
-    y: y - 18,
-    size: 8,
-    font: fontRegular,
-    color: rgb(203 / 255, 213 / 255, 225 / 255),
-  });
-
-  page.drawText(`Date: ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`, {
-    x: width - 200,
     y: y - 34,
     size: 8,
     font: fontRegular,
     color: rgb(203 / 255, 213 / 255, 225 / 255),
   });
+
+  page.drawText(`Case Ref: ${verificationId}`, {
+    x: width - 235,
+    y: y - 18,
+    size: 8,
+    font: fontBold,
+    color: rgb(52 / 255, 211 / 255, 153 / 255), // Emerald light
+  });
+
+  page.drawText(`Date: ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`, {
+    x: width - 235,
+    y: y - 32,
+    size: 7.5,
+    font: fontRegular,
+    color: rgb(203 / 255, 213 / 255, 225 / 255),
+  });
+
+  page.drawText(`Hash: ${verificationHash.slice(0, 18)}...`, {
+    x: width - 235,
+    y: y - 46,
+    size: 6.5,
+    font: fontRegular,
+    color: rgb(148 / 255, 163 / 255, 184 / 255),
+  });
+
+  // Render QR Code in Header
+  if (qrImage) {
+    page.drawImage(qrImage, {
+      x: width - 102,
+      y: y - 56,
+      width: 44,
+      height: 44,
+    });
+  }
 
   y -= 80;
 
@@ -207,12 +251,12 @@ export async function generatePropertyDueDiligencePdf(caseId: string): Promise<U
     }
   );
 
-  page.drawText("Score derived deterministically from multi-document cross-examination, cadastral heuristics, and registry checks.", {
+  page.drawText("PRELIMINARY SCAN NOTICE: Algorithmic document & coordinate due diligence. Does NOT substitute for an on-ground SURCON surveyor charting or official title search.", {
     x: 65,
     y: y - 58,
-    size: 7,
-    font: fontRegular,
-    color: textMuted,
+    size: 6.5,
+    font: fontBold,
+    color: rgb(180 / 255, 83 / 255, 9 / 255),
   });
 
   y -= 80;
@@ -477,6 +521,41 @@ export async function generatePropertyDueDiligencePdf(caseId: string): Promise<U
   const disclaimer = APP_CONFIG.legalDisclaimer;
   page.drawText(disclaimer.slice(0, 110), { x: 60, y: y - 26, size: 7, font: fontRegular, color: textMuted });
   page.drawText(disclaimer.slice(110), { x: 60, y: y - 38, size: 7, font: fontRegular, color: textMuted });
+
+  // 11. CRYPTOGRAPHIC INTEGRITY & AUTHENTICITY SEAL
+  page.drawRectangle({
+    x: 50,
+    y: y - 105,
+    width: width - 100,
+    height: 44,
+    color: rgb(15 / 255, 23 / 255, 42 / 255), // Slate-900
+    borderColor: rgb(16 / 255, 185 / 255, 129 / 255), // Emerald border
+    borderWidth: 0.75,
+  });
+
+  page.drawText("CRYPTOGRAPHIC INTEGRITY & VERIFICATION SEAL", {
+    x: 60,
+    y: y - 74,
+    size: 7.5,
+    font: fontBold,
+    color: rgb(52 / 255, 211 / 255, 153 / 255),
+  });
+
+  page.drawText(`VERIFICATION REF: ${verificationId}  |  SHA-256 DIGEST: ${verificationHash.slice(0, 36)}...`, {
+    x: 60,
+    y: y - 86,
+    size: 6.5,
+    font: fontRegular,
+    color: rgb(226 / 255, 232 / 255, 240 / 255),
+  });
+
+  page.drawText(`VERIFY AUTHENTICITY ONLINE: ${verificationUrl}`, {
+    x: 60,
+    y: y - 97,
+    size: 6.5,
+    font: fontBold,
+    color: rgb(56 / 255, 189 / 255, 248 / 255), // Sky-400
+  });
 
   // Page numbering on all pages
   const totalPages = pdfDoc.getPageCount();

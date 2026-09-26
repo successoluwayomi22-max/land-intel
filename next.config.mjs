@@ -2,9 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  experimental: {
-    useWasmBinary: true,
-  },
+
   headers: async () => [
     {
       source: '/:path*',

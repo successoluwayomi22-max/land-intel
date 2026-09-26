@@ -4,25 +4,41 @@ export const APP_CONFIG = {
   description: "LandIntel provides verified land due-diligence, cadastral boundary intelligence, and title search certification for global real estate and diaspora property investors.",
   url: process.env.NEXT_PUBLIC_APP_URL || "https://land-intel-omega.vercel.app",
   supportEmail: "support@landintel.ai",
-  supportEmailDestination: "successoluwayomi22@gmail.com",
-  legalEmail: "support@landintel.ai",
+  supportEmailDestination: "support@landintel.ai",
+  legalEmail: "legal@landintel.ai",
+  complianceEmail: "compliance@landintel.ai",
+
+  // Corporate Registration & Statutory Entity
+  corporateRegistration: {
+    entityName: "LandIntel Technologies Ltd",
+    registrationType: "Incorporated Company (CAC)",
+    rcNumber: "RC 8365907",
+    registeredOffice: "Plot 14, Commercial Avenue, Victoria Island, Lagos, Nigeria",
+    tin: "TIN-29481048-0001",
+    status: "Active & Verified",
+  },
   
   // Centralized Administrative & Support Contact Channels
   platformContact: {
-    email: "successoluwayomi22@gmail.com",
+    email: "support@landintel.ai",
     displayEmail: "support@landintel.ai",
+    complianceEmail: "compliance@landintel.ai",
     whatsappNumbers: [
       "+2349033084408",
       "+2348077426824"
     ],
     primaryWhatsapp: "+2349033084408",
     secondaryWhatsapp: "+2348077426824",
-    facebook: "Oluwayomi Succe",
-    facebookUrl: "https://facebook.com/oluwayomi.succe",
-    instagram: "oluwayomi_success",
-    instagramUrl: "https://instagram.com/oluwayomi_success",
-    supportAvailability: "24/7 Dedicated Investor Due-Diligence & Emergency Verification",
-    supportMessage: "Have questions about a property document, cadastral boundary, or urgent title search? Contact our senior due-diligence analysts directly.",
+    facebook: "LandIntel AI",
+    facebookUrl: "https://facebook.com/landintelai",
+    instagram: "landintelai",
+    instagramUrl: "https://instagram.com/landintelai",
+    linkedin: "LandIntel Technologies",
+    linkedinUrl: "https://linkedin.com/company/landintel",
+    twitter: "@LandIntelAI",
+    twitterUrl: "https://x.com/landintelai",
+    supportAvailability: "Monday – Saturday: 8:00 AM – 6:00 PM WAT (Enterprise Escalations: 24/7)",
+    supportMessage: "Have inquiries regarding cadastral charting, published gazette screening, or API integration? Connect with our technical due-diligence desk.",
   },
 
   // Primary market

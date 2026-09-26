@@ -29,28 +29,68 @@ export function hashOTP(code: string): string {
   return crypto.createHash("sha256").update(code).digest("hex");
 }
 
+/**
+ * Convert HTML email templates to clean, readable plain-text alternatives.
+ * Mail clients (Gmail, Outlook) heavily penalize HTML-only emails that lack text bodies.
+ */
+function htmlToPlainText(html: string): string {
+  return html
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&bull;/g, "•")
+    .replace(/&copy;/g, "©")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 interface DispatchEmailOptions {
   to: string;
   subject: string;
   html: string;
+  text?: string;
   label: string;
 }
 
 /**
- * Resilient multi-provider email dispatcher:
- * 1. Tries SMTP first (e.g. Gmail App Password).
+ * Resilient multi-provider email dispatcher with anti-spam compliance:
+ * 1. Tries SMTP first (e.g. custom corporate relay or Google Workspace).
  * 2. If SMTP fails or times out, immediately falls back to Resend API.
- * 3. If only Resend is configured, sends directly via Resend.
+ * 3. Enforces dual-format (HTML + plain text) to satisfy spam filters.
+ * 4. Adds RFC List-Unsubscribe and anti-spam metadata headers.
  */
 async function dispatchEmail({
   to,
   subject,
   html,
+  text,
   label,
 }: DispatchEmailOptions): Promise<{ success: boolean; error?: string }> {
   if (!isEmailEnabled()) {
     console.log(`[EMAIL] Skipped ${label} to ${to} — email provider not configured`);
     return { success: true };
+  }
+
+  const plainText = text || htmlToPlainText(html);
+  const entityRefId = crypto.randomBytes(16).toString("hex");
+
+  // Determine if sending domain is a custom domain or Gmail relay
+  const isGmailRelay = SMTP_FROM.toLowerCase().includes("@gmail.com");
+
+  const deliverabilityHeaders: Record<string, string> = {
+    "X-Entity-Ref-ID": entityRefId,
+    "X-Auto-Response-Suppress": "OOF, AutoReply",
+  };
+
+  // Only attach List-Unsubscribe if sender has a matching verified custom domain
+  // (Adding external domain mailto on @gmail.com triggers Google's DMARC anti-spoofing filter)
+  if (!isGmailRelay) {
+    deliverabilityHeaders["List-Unsubscribe"] = "<mailto:support@landintel.ai?subject=unsubscribe>";
+    deliverabilityHeaders["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click";
   }
 
   let smtpError: string | null = null;
@@ -64,6 +104,8 @@ async function dispatchEmail({
         replyTo: BRAND_EMAIL,
         subject,
         html,
+        text: plainText,
+        headers: deliverabilityHeaders,
       });
       console.log(`[EMAIL] ${label} sent successfully via SMTP to ${to}`);
       return { success: true };
@@ -84,6 +126,8 @@ async function dispatchEmail({
         replyTo: BRAND_EMAIL,
         subject,
         html,
+        text: plainText,
+        headers: deliverabilityHeaders,
       });
 
       if (error) {

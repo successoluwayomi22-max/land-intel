@@ -53,7 +53,7 @@ export default function LandingPage() {
       deception:
         "Physical site visit videos arranged via messaging apps showed dry ground and neighboring perimeter walls. However, the vendor's surveyor had shifted the site boundary on paper by 140 meters to mask where the parcel actually lay.",
       detection:
-        "LandIntel's Cadastral Engine mathematically plotted the 4 boundary coordinates (WGS-84) against official Cadastral Masterplan GIS layers. The coordinates plotted squarely into a gazetted arterial highway setback buffer with zero development rights.",
+        "LandIntel's Cadastral Engine mathematically plotted the 4 boundary coordinates (WGS-84) against published government gazette and masterplan setback layers. The coordinates plotted squarely into a gazetted arterial highway setback buffer with zero development rights.",
       verdict: "CRITICAL RISK (Score: 92/100) — Transaction Aborted Safely",
       badgeColor: "bg-rose-50 border-rose-200 text-rose-700",
     },
@@ -174,36 +174,42 @@ export default function LandingPage() {
     },
   ];
 
-  const testimonials = [
+  const scamTraps = [
     {
-      name: "Dr. James Oduya",
-      role: "Consultant Physician",
-      location: "Cross-Border Property Investor — London, UK",
-      avatar: "JO",
-      quote:
-        "I was on the verge of wiring funds for two plots in a high-growth corridor. The agent was persuasive, and the survey looked official. LandIntel's coordinate plotting revealed the beacons sat squarely in a committed government infrastructure setback. That 5-minute scan saved my life savings.",
-      property: "Coastal Corridor Sector 3",
-      saving: "$41,500 (£32,000)",
+      title: t("scam1Title") || "The Coordinate Shift Trap",
+      subtitle: t("scam1Subtitle") || "Paper Survey Moved to Dry Ground",
+      icon: Compass,
+      tag: t("scam1Tag") || "RED FLAG 01",
+      description:
+        t("scam1Desc") ||
+        "Vendor presents a clean survey plan, but the beacon coordinates mathematically plot 140 meters away into a committed government road buffer or drainage canal.",
+      howWeScan:
+        t("scam1How") ||
+        "Our cadastral engine plots the exact UTM 31N/32N coordinates against official published gazette acquisition and setback layers.",
     },
     {
-      name: "Sarah & David Chen",
-      role: "Senior Software Engineers",
-      location: "Remote Real Estate Buyers — Toronto, Canada",
-      avatar: "SC",
-      quote:
-        "When buying from abroad, you are constantly told 'trust me, my representative is on the ground.' LandIntel gave us mathematical proof. The Deed had a different plot number than the registered survey plan. We forced the developer to fix the conveyance before signing.",
-      property: "Prime Residential Enclave",
-      saving: "$43,500 (CA$59,000)",
+      title: t("scam2Title") || "Rival Deed & Missing Consent",
+      subtitle: t("scam2Subtitle") || "Ancestral Deed Without Power of Attorney",
+      icon: Scale,
+      tag: t("scam2Tag") || "RED FLAG 02",
+      description:
+        t("scam2Desc") ||
+        "Vendor signs a Deed of Assignment citing family land, but lacks mandatory Governor's consent or the registered Principal Family Head power of attorney.",
+      howWeScan:
+        t("scam2How") ||
+        "Our document heuristic checks assignor title covenants and statutory Land Use Act compliance to prevent rival ownership claims.",
     },
     {
-      name: "Engr. Marcus Adeyemi",
-      role: "Infrastructure Project Director",
-      location: "Energy Sector Executive — Houston, TX",
-      avatar: "MA",
-      quote:
-        "The 15-section Due-Diligence PDF is institutional grade. I handed it directly to my independent property attorney, and it gave him exact beacon numbers and land registry volume references to cross-check against central archives. No guesswork.",
-      property: "Metropolitan Cadastral Zone 04",
-      saving: "$73,000 (€67,000)",
+      title: t("scam3Title") || "The 'Excision in Progress' Illusion",
+      subtitle: t("scam3Subtitle") || "Selling Committed Acquisition Land",
+      icon: ShieldAlert,
+      tag: t("scam3Tag") || "RED FLAG 03",
+      description:
+        t("scam3Desc") ||
+        "Marketing ads promise 'excision in progress', but the parcel sits squarely on gazetted committed government acquisition where excision can never be granted.",
+      howWeScan:
+        t("scam3How") ||
+        "Our gazette matching layer cross-examines coordinates against gazetted government revocation notices to prevent total forfeiture.",
     },
   ];
 
@@ -221,37 +227,37 @@ export default function LandingPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6 lg:gap-8">
               <div className="text-center sm:text-left border-l-2 border-blue-600 pl-3 sm:pl-4 py-1">
                 <span className="text-xl xs:text-2xl sm:text-3xl font-black font-heading text-brand-darkNavy tracking-tight">
-                  $3.2M+
+                  {t("proof1Title") || "15-Point AI Check"}
                 </span>
                 <p className="text-[11px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">
-                  Contested Land Capital Scrutinized
+                  {t("proof1Subtitle") || "Statutory Deed & Gazette Screening"}
                 </p>
               </div>
 
               <div className="text-center sm:text-left border-l-2 border-emerald-600 pl-3 sm:pl-4 py-1">
                 <span className="text-xl xs:text-2xl sm:text-3xl font-black font-heading text-emerald-600 tracking-tight">
-                  1,420+
+                  {t("proof2Title") || "SURCON Sub-Meter"}
                 </span>
                 <p className="text-[11px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">
-                  Cadastral Beacons Cross-Examined
+                  {t("proof2Subtitle") || "Beacon Boundary & Closure Precision"}
                 </p>
               </div>
 
               <div className="text-center sm:text-left border-l-2 border-cyan-600 pl-3 sm:pl-4 py-1">
                 <span className="text-xl xs:text-2xl sm:text-3xl font-black font-heading text-cyan-700 tracking-tight">
-                  Multi-Grid
+                  {t("proof3Title") || "UTM 31N/32N"}
                 </span>
                 <p className="text-[11px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">
-                  WGS-84 Coordinate Grid Coverage
+                  {t("proof3Subtitle") || "Minna Datum & WGS-84 Coordinate Grid"}
                 </p>
               </div>
 
               <div className="text-center sm:text-left border-l-2 border-purple-600 pl-3 sm:pl-4 py-1">
                 <span className="text-xl xs:text-2xl sm:text-3xl font-black font-heading text-purple-700 tracking-tight">
-                  100%
+                  {t("proof4Title") || "SHA-256"}
                 </span>
                 <p className="text-[11px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">
-                  Defensible Page-Linked Evidence
+                  {t("proof4Subtitle") || "Tamper-Proof Audit QR Verification"}
                 </p>
               </div>
             </div>
@@ -260,20 +266,25 @@ export default function LandingPage() {
             <div className="mt-6 pt-5 sm:mt-8 sm:pt-6 border-t border-brand-border flex flex-wrap items-center justify-center gap-y-2.5 gap-x-4 sm:gap-x-8 text-[11px] sm:text-xs text-brand-textSecondary">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
-                <span>Statutory Land Act Legal Heuristics</span>
+                <span>Statutory Land Use Act Heuristics</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 shrink-0" />
-                <span>Survey Plan Seal & Beacon Integrity</span>
+                <span>Survey Plan Seal &amp; Beacon Integrity</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <Landmark className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-600 shrink-0" />
-                <span>Official Cadastral & Land Registry Alignment</span>
+                <span>Independent Cadastral Charting &amp; Published Gazette Screening</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 shrink-0" />
                 <span>Zero AI Model Training on Private Deeds</span>
               </div>
+            </div>
+
+            {/* Transparent Methodology & Professional Scope Callout */}
+            <div className="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-lg text-center text-[11px] text-slate-600 max-w-4xl mx-auto leading-relaxed">
+              <span className="font-semibold text-slate-800">{t("methodologyScopeTitle") || "Methodology & Scope Transparency:"}</span> {t("methodologyScopeDesc") || "LandIntel provides preliminary algorithmic due-diligence by cross-referencing your beacon coordinates against published government gazettes, committed acquisitions, and masterplan setbacks. It is designed to empower diaspora buyers, property lawyers, and registered SURCON surveyors before funds are committed."}
             </div>
           </div>
         </section>
@@ -565,60 +576,61 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 7. VERIFIED DIASPORA TESTIMONIALS */}
+        {/* 7. SCAM RED-FLAGS WE SCAN FOR */}
         <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-3">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
-                Verified Investor Perspectives
+                {t("scamEngineTag") || "Scam Prevention Engine"}
               </span>
               <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
-                Trusted by Cross-Border & Remote Investors Worldwide
+                {t("scamEngineTitle") || "The 3 Most Common Land Scams LandIntel Catches"}
               </h2>
               <p className="text-xs xs:text-sm text-brand-textSecondary leading-relaxed">
-                Real diaspora investors who protected their capital from real-estate fraud before signing or wiring funds.
+                {t("scamEngineSubtitle") || "Before wiring deposits to vendors or developers, our document engine scans your paperwork for these high-risk real estate traps."}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-              {testimonials.map((tItem, i) => (
-                <div
-                  key={i}
-                  className="bg-white border border-brand-border rounded-xl sm:rounded-2xl p-4 sm:p-6 flex flex-col justify-between space-y-4 sm:space-y-5 hover:border-slate-300 hover:shadow-card transition-all shadow-subtle"
-                >
-                  <div className="space-y-3 sm:space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5 sm:gap-3">
-                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-blue-600 to-teal-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center shadow-xs shrink-0">
-                          {tItem.avatar}
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="text-xs sm:text-sm font-bold text-brand-darkNavy font-heading truncate">
-                            {tItem.name}
-                          </h3>
-                          <p className="text-[10px] sm:text-[11px] text-slate-500 truncate">{tItem.role}</p>
+              {scamTraps.map((trap, i) => {
+                const Icon = trap.icon;
+                return (
+                  <div
+                    key={i}
+                    className="bg-white border border-brand-border rounded-xl sm:rounded-2xl p-5 sm:p-6 flex flex-col justify-between space-y-4 hover:border-slate-300 hover:shadow-card transition-all shadow-subtle"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-50 border border-rose-200 text-rose-700">
+                          {trap.tag}
+                        </span>
+                        <div className="w-8 h-8 rounded-lg bg-blue-50 text-brand-blue flex items-center justify-center">
+                          <Icon className="w-4 h-4" />
                         </div>
                       </div>
-                      <Quote className="w-5 h-5 sm:w-6 sm:h-6 text-slate-300 shrink-0" />
+
+                      <div>
+                        <h3 className="text-sm sm:text-base font-bold text-brand-darkNavy font-heading">
+                          {trap.title}
+                        </h3>
+                        <p className="text-[11px] font-semibold text-slate-500">{trap.subtitle}</p>
+                      </div>
+
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        {trap.description}
+                      </p>
                     </div>
 
-                    <p className="text-xs text-slate-600 leading-relaxed italic">
-                      &ldquo;{tItem.quote}&rdquo;
-                    </p>
-                  </div>
-
-                  <div className="pt-3 sm:pt-4 border-t border-slate-100 space-y-1 text-[11px]">
-                    <div className="flex items-center justify-between text-slate-500">
-                      <span>Vetted Parcel:</span>
-                      <span className="font-mono text-brand-darkNavy font-semibold">{tItem.property}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-emerald-700 font-bold">
-                      <span>Capital Protected:</span>
-                      <span className="font-mono">{tItem.saving}</span>
+                    <div className="pt-3 border-t border-slate-100 bg-slate-50/70 p-3 rounded-lg text-[11px] text-slate-700 space-y-1">
+                      <span className="font-bold text-brand-darkNavy block flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        {t("howOurScanCatchesIt") || "How Our Scan Catches It:"}
+                      </span>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">{trap.howWeScan}</p>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>

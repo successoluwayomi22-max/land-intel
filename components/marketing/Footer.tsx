@@ -28,6 +28,17 @@ export const Footer: React.FC = () => {
               {t("footerTagline") ||
                 "Global Land Solutions — Securing High-Value Real Estate for Remote & Diaspora Investors. Independent cadastral verification, document provenance analysis, and title intelligence."}
             </p>
+            <div className="flex flex-col gap-1.5 text-[11px] text-slate-400">
+              <div className="flex items-center gap-2">
+                <span className="inline-block px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-bold text-[10px] tracking-wide">
+                  CAC Reg. RC 8365907
+                </span>
+                <span className="text-slate-300 font-medium">LandIntel Technologies Ltd</span>
+              </div>
+              <p className="text-slate-400 text-[10px]">
+                Plot 14, Commercial Avenue, Victoria Island, Lagos, Nigeria
+              </p>
+            </div>
             <div className="flex items-center gap-2 text-[11px] text-slate-400">
               <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>{t("privateStorageEncrypted") || "Private object storage • Encrypted data transmission"}</span>
@@ -87,18 +98,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href={contact.facebookUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Follow LandIntel on Facebook: ${contact.facebook}`}
-                  className="hover:text-white transition-colors flex items-center gap-1 text-blue-400 hover:text-blue-300"
-                >
-                  Facebook: {contact.facebook}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${contact.email || "successoluwayomi22@gmail.com"}`}
+                  href={`mailto:${contact.displayEmail || "support@landintel.ai"}`}
                   aria-label={`Email Support: ${contact.displayEmail || "support@landintel.ai"}`}
                   className="hover:text-white transition-colors break-all"
                   title="Contact Support"

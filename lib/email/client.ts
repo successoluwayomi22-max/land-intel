@@ -32,8 +32,10 @@ export const smtpTransporter =
     : null;
 
 // Brand recipient for replies and administrative alerts
+const isGmailSmtp = (SMTP_USER || "").toLowerCase().includes("@gmail.com");
+
 export const BRAND_EMAIL =
-  process.env.BRAND_EMAIL || "successoluwayomi22@gmail.com";
+  process.env.BRAND_EMAIL || (isGmailSmtp && SMTP_USER ? SMTP_USER : "support@landintel.ai");
 
 // Public display email for brand presence
 export const SUPPORT_DISPLAY_EMAIL =
@@ -41,17 +43,18 @@ export const SUPPORT_DISPLAY_EMAIL =
 
 // SMTP sender (for Gmail SMTP / custom SMTP)
 export const SMTP_FROM =
-  process.env.SMTP_FROM || (SMTP_USER ? `LandIntel <${SMTP_USER}>` : "LandIntel <onboarding@resend.dev>");
+  process.env.SMTP_FROM || (SMTP_USER ? `LandIntel <${SMTP_USER}>` : "LandIntel <notifications@landintel.ai>");
 
-// Resend sender: Resend mandates either onboarding@resend.dev or a verified custom domain.
-// Unverified domains like @gmail.com or @yahoo.com cause Resend API 403 validation error.
+// Resend sender: Resend mandates a verified custom domain for production deliverability.
+// Defaults to official brand notification domain while respecting custom env variables.
 export const RESEND_FROM =
   process.env.RESEND_FROM ||
   (process.env.EMAIL_FROM && !process.env.EMAIL_FROM.includes("@gmail.com") && !process.env.EMAIL_FROM.includes("@yahoo.com")
     ? process.env.EMAIL_FROM
-    : "LandIntel <onboarding@resend.dev>");
+    : "LandIntel <notifications@landintel.ai>");
 
 // Default sender for backward compatibility
-export const EMAIL_FROM = SMTP_FROM;
+export const EMAIL_FROM = process.env.EMAIL_FROM || (isGmailSmtp && SMTP_USER ? `LandIntel <${SMTP_USER}>` : RESEND_FROM);
 
 export const isEmailEnabled = (): boolean => !!smtpTransporter || !!resend;
+

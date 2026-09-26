@@ -415,14 +415,26 @@ export default function PropertyCaseHubPage() {
           </Button>
 
           {isReportUnlocked ? (
-            <a
-              href={`/api/properties/${caseId}/report/pdf`}
-              download
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-blue hover:bg-brand-blueHover text-white text-xs font-bold rounded-button shadow-subtle transition-all cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Download PDF</span>
-            </a>
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/verify/${caseId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-300 hover:bg-emerald-100 text-emerald-800 text-xs font-bold rounded-button shadow-2xs transition-all cursor-pointer"
+                title="View Cryptographic Certificate of Authenticity"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Verify Certificate</span>
+              </Link>
+              <a
+                href={`/api/properties/${caseId}/report/pdf`}
+                download
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-blue hover:bg-brand-blueHover text-white text-xs font-bold rounded-button shadow-subtle transition-all cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Download PDF</span>
+              </a>
+            </div>
           ) : (
             <div className="flex flex-wrap items-center gap-2">
               <Button

@@ -75,7 +75,7 @@ export function WelcomeEmail({
               </table>
 
               <p style="font-size:12px;color:#94a3b8;margin:0;line-height:1.6;text-align:center;">
-                Need help? Reply to this email or contact <a href="mailto:successoluwayomi22@gmail.com" style="color:#2563eb;text-decoration:none;font-weight:600;">support@landintel.ai</a>
+                Need help? Reply to this email or contact <a href="mailto:support@landintel.ai" style="color:#2563eb;text-decoration:none;font-weight:600;">support@landintel.ai</a>
               </p>
             </td>
           </tr>
@@ -84,8 +84,12 @@ export function WelcomeEmail({
           <tr>
             <td style="padding:20px 32px;background-color:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
               <p style="font-size:11px;color:#94a3b8;margin:0;line-height:1.5;">
-                LandIntel — Institutional Property Intelligence<br />
-                © ${new Date().getFullYear()} LandIntel. All rights reserved.
+                LandIntel Technologies Ltd &bull; CAC Reg. RC 8365907<br />
+                Plot 14, Commercial Avenue, Victoria Island, Lagos, Nigeria<br />
+                &copy; ${new Date().getFullYear()} LandIntel. All rights reserved.
+              </p>
+              <p style="font-size:10px;color:#cbd5e1;margin:6px 0 0;">
+                Security Notice: LandIntel will never ask for your password, OTP, or banking PIN via email.
               </p>
             </td>
           </tr>

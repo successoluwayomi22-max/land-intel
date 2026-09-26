@@ -29,21 +29,30 @@ export default function DisclaimerPage() {
 
         <div className="space-y-6 text-xs text-brand-textSecondary leading-relaxed">
           <section className="space-y-2">
-            <h2 className="text-sm font-bold text-brand-textPrimary font-heading">What LandIntel Does NOT Do:</h2>
+            <h2 className="text-sm font-bold text-brand-textPrimary font-heading">What LandIntel Technology Does:</h2>
             <ul className="list-disc list-inside space-y-1.5 pl-2">
-              <li>It does <strong>NOT</strong> establish legal ownership or root of title.</li>
-              <li>It does <strong>NOT</strong> certify cadastral survey plans or authenticate official seals.</li>
-              <li>It does <strong>NOT</strong> confirm government approval, gazette status, or excision validity without official ministry verification.</li>
-              <li>It does <strong>NOT</strong> replace a certified, registered surveyor.</li>
-              <li>It does <strong>NOT</strong> replace a qualified real estate lawyer or licensed legal counsel.</li>
-              <li>It does <strong>NOT</strong> guarantee that any real-estate transaction will succeed or is free from fraud.</li>
+              <li><strong>Algorithmic Boundary Plotting:</strong> Parses survey plan beacon coordinates and plots geographic polygons in UTM Zone 31N/32N and WGS-84 formats.</li>
+              <li><strong>Published Gazette &amp; Acquisition Screening:</strong> Cross-references parsed coordinates against known, publicly gazetted acquisitions, arterial road setbacks, and coastal conservation buffers.</li>
+              <li><strong>Cross-Document Reconciliation:</strong> Performs deep OCR extraction to detect discrepancies in names, dates, plot numbers, and metric land area across deeds, contracts, and survey plans.</li>
+              <li><strong>Tamper-Proof Dossier Generation:</strong> Issues structured 15-section audit reports sealed with unique cryptographic SHA-256 hashes and verifiable QR codes.</li>
             </ul>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-sm font-bold text-brand-textPrimary font-heading">Recommended Action Protocol</h2>
+            <h2 className="text-sm font-bold text-brand-textPrimary font-heading">What LandIntel Does NOT Do:</h2>
+            <ul className="list-disc list-inside space-y-1.5 pl-2">
+              <li>It does <strong>NOT</strong> establish legal ownership or replace formal root of title.</li>
+              <li>It does <strong>NOT</strong> certify cadastral survey plans or authenticate official seals in lieu of the Surveyor General.</li>
+              <li>It does <strong>NOT</strong> replace an in-person physical title search at state registries (e.g. Alausa Lands Bureau or AGIS).</li>
+              <li>It does <strong>NOT</strong> replace a registered SURCON surveyor or licensed legal practitioner.</li>
+              <li>It does <strong>NOT</strong> serve as an insurance policy or underwrite real-estate title guarantees.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-2">
+            <h2 className="text-sm font-bold text-brand-textPrimary font-heading">Recommended Statutory Due-Diligence Protocol</h2>
             <p>
-              Buyers should always take the generated findings and questions from LandIntel to an independent property attorney to conduct an in-person physical search at the official Lands Registry or Cadastral Bureau, and commission a licensed surveyor to chart the boundary beacons directly on site.
+              LandIntel is engineered to serve as your preliminary intelligence firewall. Remote buyers and diaspora investors should take their certified LandIntel dossier directly to an independent, accredited property lawyer to file formal registry searches, and commission a licensed SURCON surveyor to verify beacon coordinates on the physical parcel before transferring purchase consideration.
             </p>
           </section>
         </div>
