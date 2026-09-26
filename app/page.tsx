@@ -33,6 +33,7 @@ import { HeroSection } from "@/components/marketing/HeroSection";
 import { Footer } from "@/components/marketing/Footer";
 import { Button } from "@/components/ui/Button";
 import { PricingCards } from "@/components/marketing/PricingCards";
+import { InteractiveDemoScanner } from "@/components/marketing/InteractiveDemoScanner";
 import { useLocale } from "@/components/providers/LocaleProvider";
 
 export default function LandingPage() {
@@ -634,6 +635,9 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* 7.5 INTERACTIVE CADASTRAL SCANNER DEMO */}
+        <InteractiveDemoScanner />
 
         {/* 8. TRANSPARENT PRICING WITH MULTI-CURRENCY SUPPORT */}
         <section className="py-14 sm:py-20 bg-white border-b border-brand-border" id="pricing">
