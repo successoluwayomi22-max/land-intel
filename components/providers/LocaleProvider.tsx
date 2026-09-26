@@ -353,6 +353,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     howOurScanCatchesIt: "How Our Scan Catches It:",
     screenPropertyNow: "Screen Your Property Now",
     auditVerdict: "Audit Verdict",
+    previewSampleReport: "Preview Sample Dossier (.PDF)",
+    downloadSampleDossier: "Download Redacted Sample Audit Dossier (15-Section PDF)",
+    sampleNotice: "See the exact 15-section cadastral analysis, coordinate calculations, and legal flags before you verify.",
   },
   zh: {
     heroTitle: "在支付数百万之前验证尼日利亚土地。",
@@ -633,6 +636,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     howOurScanCatchesIt: "Cómo lo Detecta Nuestro Análisis:",
     screenPropertyNow: "Analizar su Propiedad Ahora",
     auditVerdict: "Veredicto de la Auditoría",
+    previewSampleReport: "Ver Informe de Muestra (.PDF)",
+    downloadSampleDossier: "Descargar Muestra del Informe en 15 Secciones (.PDF)",
+    sampleNotice: "Vea exactamente el análisis catastral en 15 secciones, cálculos de coordenadas y alertas jurídicas antes de verificar.",
   },
   hi: {
     heroTitle: "करोड़ों का भुगतान करने से पहले नाइजीरियाई भूमि की पुष्टि करें।",
@@ -913,6 +919,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     howOurScanCatchesIt: "Comment Notre Scan le Détecte :",
     screenPropertyNow: "Vérifier Votre Propriété Maintenant",
     auditVerdict: "Verdict d'Audit",
+    previewSampleReport: "Aperçu du Rapport Spécimen (.PDF)",
+    downloadSampleDossier: "Télécharger le Spécimen de Rapport en 15 Points (.PDF)",
+    sampleNotice: "Consultez le spécimen exact de notre audit en 15 sections, calculs de coordonnées et alertes légales avant votre vérification.",
   },
   ar: {
     heroTitle: "تحقق من الأراضي والعقارات قبل دفع الملايين.",
@@ -1193,6 +1202,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     howOurScanCatchesIt: "How Our Scan Dey Catch Am:",
     screenPropertyNow: "Check Your Property Now",
     auditVerdict: "Wetin We Conclude",
+    previewSampleReport: "Look Sample Report (.PDF)",
+    downloadSampleDossier: "Download Sample 15-Section Report (.PDF)",
+    sampleNotice: "Check wetin our 15-section cadastral check, beacon maths, and law warnings look like before you pay.",
   },
   yo: {
     heroTitle: "Ṣayẹwo Ilẹ Naijiria Ṣaaju Ki O To San Milionu.",
@@ -1349,6 +1361,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     howOurScanCatchesIt: "Bí Àyèwò Wa Ṣe Ń Mú Un:",
     screenPropertyNow: "Ṣàyẹ̀wò Ilẹ̀ Rẹ Nísinsìnyí",
     auditVerdict: "Èsì Àyèwò",
+    previewSampleReport: "Wo Àpẹẹrẹ Ìwé Àyèwò (.PDF)",
+    downloadSampleDossier: "Gba Àpẹẹrẹ Ìwé Ìròyìn Kókó 15 (.PDF)",
+    sampleNotice: "Wo bí àyèwò kókó 15 wa, àwọn kọ́ọ̀dìnètì, àti àwọn àmì ewu ṣe rí kí o tó san owó.",
   },
   ig: {
     heroTitle: "Nyochaa Ala Na Naijiria Tupu Ị Kwụọ Ọtụtụ Nde.",
@@ -1505,6 +1520,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     howOurScanCatchesIt: "Otu Nyocha Anyị Si Ejide Ya:",
     screenPropertyNow: "Nyochaa Ala Gị Ugbu a",
     auditVerdict: "Mkpebi Nyocha",
+    previewSampleReport: "Lelee Nlele Akwụkwọ Nyocha (.PDF)",
+    downloadSampleDossier: "Budata Nlele Akwụkwọ Nyocha Isi 15 (.PDF)",
+    sampleNotice: "Hụ kpọmkwem otu nyocha ala isi 15, mgbakọ koodineti na ịdọ aka ná ntị anyị si dị tupu ị kwụọ ụgwọ.",
   },
   ha: {
     heroTitle: "Bincika Filin Najeriya Kafin Ka Biya Miliyoyi.",
@@ -1661,6 +1679,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     howOurScanCatchesIt: "Yadda Bincikenmu Ke Ganowa:",
     screenPropertyNow: "Bincika Filinku Yanzu",
     auditVerdict: "Sakamakon Bincike",
+    previewSampleReport: "Duba Misalin Takardar Bincike (.PDF)",
+    downloadSampleDossier: "Sauke Misalin Takardar Bincike na Matakai 15 (.PDF)",
+    sampleNotice: "Duba ainihin yadda binciken matakai 15, lissafin taswira, da gargaɗin shari'a suke kafin biyan kuɗi.",
   },
   de: {
     heroTitle: "Prüfen Sie Grundstücke weltweit, bevor Sie Millionen zahlen.",

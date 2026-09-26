@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   LayoutDashboard,
   PlusCircle,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/components/providers/LocaleProvider";
@@ -74,6 +75,12 @@ export const HeroSection: React.FC = () => {
                     <span>{t("howItWorks") || "See How It Works"}</span>
                   </Button>
                 </Link>
+                <a href="/sample-diligence-report.pdf" download className="w-full sm:w-auto">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto bg-slate-50 border-slate-200 text-slate-600 hover:text-brand-darkNavy hover:bg-white py-3 sm:py-3.5 px-6 font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2">
+                    <Download className="w-3.5 h-3.5" />
+                    <span>{t("previewSampleReport") || "Preview Sample Dossier (.PDF)"}</span>
+                  </Button>
+                </a>
               </>
             )}
           </div>

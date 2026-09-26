@@ -51,6 +51,7 @@ scratch/
 *.bak
 *.log
 *.pdf
+!public/sample-diligence-report.pdf
 
 # OS files
 .DS_Store

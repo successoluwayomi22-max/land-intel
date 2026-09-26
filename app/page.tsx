@@ -768,15 +768,15 @@ export default function LandingPage() {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
-              <Link href="/how-it-works" prefetch={true} className="w-full sm:w-auto">
+              <a href="/sample-diligence-report.pdf" download className="w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="lg"
                   className="w-full sm:w-auto bg-white border-slate-300 text-slate-700 hover:text-brand-darkNavy hover:bg-slate-100 py-3.5 sm:py-4 px-6 font-bold text-xs sm:text-sm shadow-xs"
                 >
-                  <span>View Sample Audit Report</span>
+                  <span>{t("previewSampleReport") || "View Sample Audit Report"}</span>
                 </Button>
-              </Link>
+              </a>
             </div>
 
             <div className="pt-4 sm:pt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-6 text-[11px] sm:text-xs text-slate-700 font-medium">
