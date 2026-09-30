@@ -115,16 +115,13 @@ export async function POST(request: NextRequest) {
       },
     }).catch((err) => console.error("[REGISTER_NOTIF_ERROR]", err));
 
-    // Send OTP and Welcome emails directly to registered address
-    // Await delivery with allSettled so Vercel Serverless Lambda does not terminate early
+    // Send OTP verification email directly to registered address
+    // Note: Welcome email is sent after the user successfully verifies their OTP in /api/auth/verify-otp
     if (emailEnabled) {
       try {
-        console.log(`[REGISTER] Dispatching OTP and Welcome emails to registered recipient: ${user.email} (OTP: ${otpCode})`);
-        await Promise.allSettled([
-          sendOTPEmail({ email: user.email, name: user.name, otpCode }),
-          sendWelcomeEmail({ email: user.email, name: user.name }),
-        ]);
-        console.log(`[REGISTER] Email dispatch completed for ${user.email}`);
+        console.log(`[REGISTER] Dispatching OTP verification email to: ${user.email}`);
+        await sendOTPEmail({ email: user.email, name: user.name, otpCode });
+        console.log(`[REGISTER] OTP email dispatched for ${user.email}`);
       } catch (err) {
         console.error("[REGISTER] Email dispatch error:", err);
       }

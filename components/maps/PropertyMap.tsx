@@ -7,8 +7,6 @@ import {
   MapPin,
   AlertCircle,
   CheckCircle2,
-  Building,
-  Trees,
   Lock,
   ArrowRight,
   Sparkles,
@@ -99,9 +97,8 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
               </div>
             )}
 
-            {/* Right Action Bar: Satellite Toggle + Ground Occupancy Status Badge */}
+            {/* Right Action Bar: Satellite / Street Map Toggle */}
             <div className="flex items-center gap-2 ml-auto pointer-events-auto">
-              {/* Satellite / Street Map Toggle Pill */}
               <button
                 type="button"
                 onClick={() => setMapType((prev) => (prev === "hybrid" ? "roadmap" : "hybrid"))}
@@ -111,26 +108,6 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
                 <Layers className="w-3.5 h-3.5 text-brand-blue shrink-0" />
                 <span className="text-[11px]">{mapType === "hybrid" ? "Satellite" : "Roadmap"}</span>
               </button>
-
-              {/* Ground Occupancy Status Badge */}
-              <div className="bg-white/95 backdrop-blur-md text-slate-900 text-[11px] font-bold px-3 py-1.5 rounded-lg shadow-md border border-slate-200/90 flex items-center gap-1.5">
-                {occupancyStatus === "OCCUPIED" ? (
-                  <>
-                    <Building className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                    <span className="text-blue-900">Ground: Structure / Occupied</span>
-                  </>
-                ) : occupancyStatus === "BARE" || occupancyStatus === "EMPTY" ? (
-                  <>
-                    <Trees className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span className="text-emerald-900">Ground: Bare / Undeveloped Land</span>
-                  </>
-                ) : (
-                  <>
-                    <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span className="text-amber-900">Ground: Verification Pending</span>
-                  </>
-                )}
-              </div>
             </div>
           </div>
         )}

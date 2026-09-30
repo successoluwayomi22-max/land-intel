@@ -4,6 +4,7 @@ import {
   SMTP_FROM,
   RESEND_FROM,
   BRAND_EMAIL,
+  SUPPORT_DISPLAY_EMAIL,
   isEmailEnabled,
 } from "./client";
 import { WelcomeEmail } from "./templates/welcome";
@@ -54,14 +55,16 @@ interface DispatchEmailOptions {
   html: string;
   text?: string;
   label: string;
+  isTransactional?: boolean;
 }
 
 /**
  * Resilient multi-provider email dispatcher with anti-spam compliance:
- * 1. Tries SMTP first (e.g. custom corporate relay or Google Workspace).
- * 2. If SMTP fails or times out, immediately falls back to Resend API.
- * 3. Enforces dual-format (HTML + plain text) to satisfy spam filters.
- * 4. Adds RFC List-Unsubscribe and anti-spam metadata headers.
+ * 1. Tries SMTP first (e.g. corporate relay or Google Workspace).
+ * 2. If SMTP fails or times out, falls back to Resend API.
+ * 3. Enforces dual-format (HTML + clean plain text) to satisfy spam filters.
+ * 4. Strictly aligns From and Reply-To domains to prevent anti-spoofing / DMARC penalties.
+ * 5. Does NOT attach List-Unsubscribe to transactional security emails (OTP, password reset).
  */
 async function dispatchEmail({
   to,
@@ -69,6 +72,7 @@ async function dispatchEmail({
   html,
   text,
   label,
+  isTransactional = false,
 }: DispatchEmailOptions): Promise<{ success: boolean; error?: string }> {
   if (!isEmailEnabled()) {
     console.log(`[EMAIL] Skipped ${label} to ${to} — email provider not configured`);
@@ -78,17 +82,25 @@ async function dispatchEmail({
   const plainText = text || htmlToPlainText(html);
   const entityRefId = crypto.randomBytes(16).toString("hex");
 
-  // Determine if sending domain is a custom domain or Gmail relay
+  // Determine if sending domain is a Gmail consumer relay
   const isGmailRelay = SMTP_FROM.toLowerCase().includes("@gmail.com");
+
+  // Aligned reply-to address matching the sender's domain
+  const smtpReplyTo = isGmailRelay ? SMTP_FROM : BRAND_EMAIL;
+  const resendReplyTo = SUPPORT_DISPLAY_EMAIL || BRAND_EMAIL;
 
   const deliverabilityHeaders: Record<string, string> = {
     "X-Entity-Ref-ID": entityRefId,
     "X-Auto-Response-Suppress": "OOF, AutoReply",
   };
 
-  // Only attach List-Unsubscribe if sender has a matching verified custom domain
-  // (Adding external domain mailto on @gmail.com triggers Google's DMARC anti-spoofing filter)
-  if (!isGmailRelay) {
+  if (isTransactional) {
+    // Transactional security notices must NOT have marketing List-Unsubscribe headers
+    deliverabilityHeaders["X-Priority"] = "1";
+    deliverabilityHeaders["Priority"] = "urgent";
+    deliverabilityHeaders["Importance"] = "high";
+  } else if (!isGmailRelay) {
+    // Only non-transactional emails with custom domains carry unsubscribe headers
     deliverabilityHeaders["List-Unsubscribe"] = "<mailto:support@landintel.ai?subject=unsubscribe>";
     deliverabilityHeaders["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click";
   }
@@ -101,7 +113,7 @@ async function dispatchEmail({
       await smtpTransporter.sendMail({
         from: SMTP_FROM,
         to,
-        replyTo: BRAND_EMAIL,
+        replyTo: smtpReplyTo,
         subject,
         html,
         text: plainText,
@@ -123,7 +135,7 @@ async function dispatchEmail({
       const { data, error } = await resend.emails.send({
         from: RESEND_FROM,
         to,
-        replyTo: BRAND_EMAIL,
+        replyTo: resendReplyTo,
         subject,
         html,
         text: plainText,
@@ -168,11 +180,27 @@ export async function sendWelcomeEmail(user: {
       loginUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://land-intel-omega.vercel.app"}/login`,
     });
 
+    const text = [
+      `Hi ${user.name || "Investor"},`,
+      "",
+      "Welcome to LandIntel! Your account is verified and ready to use.",
+      "",
+      "You now have access to institutional-grade property due diligence, cadastral boundary verification, and statutory title search certification.",
+      "",
+      `Access your dashboard here: ${process.env.NEXT_PUBLIC_APP_URL || "https://land-intel-omega.vercel.app"}/login`,
+      "",
+      "Best regards,",
+      "The LandIntel Team",
+      "support@landintel.ai",
+    ].join("\n");
+
     return await dispatchEmail({
       to: user.email,
       subject: "Welcome to LandIntel — Your Account is Ready",
       html,
+      text,
       label: "Welcome email",
+      isTransactional: true,
     });
   } catch (err: any) {
     console.error("[EMAIL] sendWelcomeEmail unexpected error:", err);
@@ -198,11 +226,27 @@ export async function sendOTPEmail(user: {
       expiresInMinutes,
     });
 
+    const text = [
+      `Hi ${user.name || "User"},`,
+      "",
+      `Your LandIntel verification code is: ${user.otpCode}`,
+      "",
+      `This verification code expires in ${expiresInMinutes} minutes.`,
+      "For your security, do not share this code with anyone.",
+      "",
+      "If you didn't request this verification code, you can safely ignore this email.",
+      "",
+      "LandIntel Security Team",
+      "support@landintel.ai",
+    ].join("\n");
+
     return await dispatchEmail({
       to: user.email,
-      subject: `${user.otpCode} — Your LandIntel Verification Code`,
+      subject: `Your LandIntel Verification Code: ${user.otpCode}`,
       html,
+      text,
       label: "OTP verification email",
+      isTransactional: true,
     });
   } catch (err: any) {
     console.error("[EMAIL] sendOTPEmail unexpected error:", err);
@@ -228,11 +272,27 @@ export async function sendPasswordResetEmail(user: {
       expiresInMinutes,
     });
 
+    const text = [
+      `Hi ${user.name || "User"},`,
+      "",
+      `Your LandIntel password reset code is: ${user.otpCode}`,
+      "",
+      `This code expires in ${expiresInMinutes} minutes.`,
+      "For your security, do not share this code with anyone.",
+      "",
+      "If you did not request a password reset, please secure your account immediately.",
+      "",
+      "LandIntel Security Team",
+      "support@landintel.ai",
+    ].join("\n");
+
     return await dispatchEmail({
       to: user.email,
-      subject: `${user.otpCode} — Reset Your LandIntel Password`,
+      subject: `Your LandIntel Password Reset Code: ${user.otpCode}`,
       html,
+      text,
       label: "Password reset email",
+      isTransactional: true,
     });
   } catch (err: any) {
     console.error("[EMAIL] sendPasswordResetEmail unexpected error:", err);
