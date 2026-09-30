@@ -22,6 +22,7 @@ import { useLocale } from "@/components/providers/LocaleProvider";
 import { LocaleSelector } from "@/components/ui/LocaleSelector";
 import { PasswordStrengthMeter, getPasswordStrength } from "@/components/ui/PasswordStrengthMeter";
 import { useToast } from "@/components/ui/Toast";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 
 const INITIAL_EXPIRY_SECONDS = 300; // 5 minutes
 
@@ -310,16 +311,9 @@ export default function ForgotPasswordPage() {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
-        <Link href="/" className="inline-flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-brand-blue flex items-center justify-center font-black text-white shadow-subtle text-base">
-            L
-          </div>
-          <div className="text-left">
-            <span className="font-heading font-extrabold text-xl tracking-tight text-brand-darkNavy block">
-              LandIntel
-            </span>
-          </div>
-        </Link>
+        <div className="flex justify-center">
+          <LandIntelLogo href="/" size="md" variant="light" />
+        </div>
 
         {step === 1 && (
           <>

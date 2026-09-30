@@ -25,6 +25,7 @@ import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
 import { ReCaptcha } from "@/components/auth/ReCaptcha";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { AuthBrandingSide } from "@/components/auth/AuthBrandingSide";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 import { PasswordStrengthMeter, getPasswordStrength } from "@/components/ui/PasswordStrengthMeter";
 
 export default function RegisterPage() {
@@ -205,15 +206,8 @@ export default function RegisterPage() {
 
         <div className="max-w-md w-full mx-auto space-y-6">
           {/* Mobile Brand Header */}
-          <div className="lg:hidden text-center space-y-2 pb-2">
-            <Link href="/" className="inline-flex items-center gap-2">
-              <div className="w-9 h-9 rounded-lg bg-brand-blue flex items-center justify-center font-black text-white text-base">
-                L
-              </div>
-              <span className="font-heading font-extrabold text-xl text-brand-darkNavy">
-                LandIntel
-              </span>
-            </Link>
+          <div className="lg:hidden text-center pb-2 flex justify-center">
+            <LandIntelLogo href="/" size="md" variant="light" />
           </div>
 
           <div className="space-y-1.5">

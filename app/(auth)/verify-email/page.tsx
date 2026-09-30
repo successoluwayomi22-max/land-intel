@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ShieldCheck, Mail, RefreshCw, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 
 const INITIAL_OTP_EXPIRY_SECONDS = 600; // 10 minutes
 
@@ -211,6 +212,11 @@ export default function VerifyEmailPage() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.06)_0,transparent_60%)] pointer-events-none" />
 
       <div className="w-full max-w-md relative z-10">
+        {/* Brand Logo */}
+        <div className="flex justify-center mb-6">
+          <LandIntelLogo href="/" size="md" variant="dark" />
+        </div>
+
         <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-br from-slate-900 to-slate-800 px-8 py-8 text-center">

@@ -11,6 +11,8 @@ import {
   ArrowRight,
   Sparkles,
   Layers,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import Link from "next/link";
 import { useLocale } from "@/components/providers/LocaleProvider";
@@ -40,7 +42,7 @@ export interface PropertyMapProps {
  * Interactive property cadastral map with boundary polygon overlay and ground reconnaissance status.
  * Renders beacon markers and boundary polygon when coordinates are provided.
  * Provides paid-only locked barrier for free users and displays accurate "Location Not Found" when unverified.
- * Eliminates overlapping native controls and provides seamless custom Satellite/Roadmap toggling.
+ * Includes interactive Satellite/Roadmap toggle and Fullscreen mode.
  */
 export const PropertyMap: React.FC<PropertyMapProps> = ({
   center,
@@ -56,8 +58,28 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
   onUnlock,
 }) => {
   const { formatPrice } = useLocale();
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [mapType, setMapType] = useState<"hybrid" | "roadmap">(showSatellite ? "hybrid" : "roadmap");
   const isLocated = Boolean(center && locationFound !== false);
+
+  // Sync fullscreen state with browser events
+  React.useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!containerRef.current) return;
+    if (!document.fullscreenElement) {
+      containerRef.current.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
 
   // Calculate center from coordinates or default to Nigerian Cadastral Region overview
   const mapCenter = useMemo(() => {
@@ -73,8 +95,11 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
   return (
     <MapProvider>
       <div
-        className={`relative rounded-xl overflow-hidden border border-slate-200 shadow-sm ${className}`}
-        style={{ height }}
+        ref={containerRef}
+        className={`relative rounded-xl overflow-hidden border border-slate-200 shadow-sm ${
+          isFullscreen ? "fixed inset-0 z-50 rounded-none w-screen h-screen border-none" : ""
+        } ${className}`}
+        style={{ height: isFullscreen ? "100vh" : height }}
       >
         {/* Status Overlay Header (Visible only when unlocked) */}
         {!isLocked && (
@@ -97,8 +122,9 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
               </div>
             )}
 
-            {/* Right Action Bar: Satellite / Street Map Toggle */}
+            {/* Right Action Bar: Satellite Toggle + Fullscreen Button */}
             <div className="flex items-center gap-2 ml-auto pointer-events-auto">
+              {/* Satellite / Street Map Toggle */}
               <button
                 type="button"
                 onClick={() => setMapType((prev) => (prev === "hybrid" ? "roadmap" : "hybrid"))}
@@ -108,11 +134,31 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
                 <Layers className="w-3.5 h-3.5 text-brand-blue shrink-0" />
                 <span className="text-[11px]">{mapType === "hybrid" ? "Satellite" : "Roadmap"}</span>
               </button>
+
+              {/* Fullscreen Button */}
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                className="bg-slate-900/90 hover:bg-slate-900 text-white backdrop-blur-md text-[11px] font-semibold px-2.5 py-1.5 rounded-lg shadow-md border border-slate-700/60 flex items-center gap-1.5 transition-all cursor-pointer"
+                title={isFullscreen ? "Exit Fullscreen" : "Fullscreen Map"}
+              >
+                {isFullscreen ? (
+                  <>
+                    <Minimize2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span className="text-[11px]">Exit</span>
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span className="text-[11px]">Fullscreen</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         )}
 
-        {/* The Google Map Container (Native controls disabled at top to prevent collision glitches) */}
+        {/* The Google Map Container */}
         <div className={`w-full h-full ${isLocked ? "filter blur-[2px] opacity-40 pointer-events-none select-none" : ""}`}>
           <Map
             defaultZoom={isLocated ? Math.min(zoom, 16) : 10}
@@ -121,7 +167,7 @@ export const PropertyMap: React.FC<PropertyMapProps> = ({
             defaultCenter={mapCenter}
             mapTypeId={mapType}
             mapTypeControl={false}
-            fullscreenControl={false}
+            fullscreenControl={!isLocked}
             streetViewControl={false}
             zoomControl={!isLocked}
             gestureHandling={isLocked ? "none" : "cooperative"}

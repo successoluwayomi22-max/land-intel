@@ -12,6 +12,7 @@ import { PasswordStrengthMeter, getPasswordStrength } from "@/components/ui/Pass
 import { useLocale } from "@/components/providers/LocaleProvider";
 import { LocaleSelector } from "@/components/ui/LocaleSelector";
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import { LandIntelLogo } from "@/components/ui/LandIntelLogo";
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -90,16 +91,9 @@ function ResetPasswordForm() {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
-        <Link href="/" className="inline-flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-brand-blue flex items-center justify-center font-black text-white shadow-subtle text-base">
-            L
-          </div>
-          <div className="text-left">
-            <span className="font-heading font-extrabold text-xl tracking-tight text-brand-darkNavy block">
-              LandIntel
-            </span>
-          </div>
-        </Link>
+        <div className="flex justify-center">
+          <LandIntelLogo href="/" size="md" variant="light" />
+        </div>
         <h2 className="text-xl font-bold font-heading text-brand-textPrimary">
           {t("resetYourPassword") || "Set New Password"}
         </h2>
