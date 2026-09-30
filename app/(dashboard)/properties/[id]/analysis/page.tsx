@@ -301,12 +301,6 @@ export default function PropertyAnalysisPage() {
               </p>
             </div>
           </div>
-
-          <div className="shrink-0 flex items-center gap-2">
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-md bg-white border shadow-2xs">
-              {occupancyStatus === "OCCUPIED" ? "Ground: Occupied Structure" : "Ground: Bare Land"}
-            </span>
-          </div>
         </div>
 
         {/* ─── Map Section (FREE TIER CAN SEE MAP!) ─── */}
