@@ -3332,6 +3332,11 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         document.cookie = `googtrans=${transVal}; path=/; domain=.${hostname}; max-age=31536000; SameSite=Lax;`;
       }
 
+      // Notify UI of active network translation
+      window.dispatchEvent(
+        new CustomEvent("landintel:translating", { detail: { lang: l, status: "pending" } })
+      );
+
       const applyToCombo = (): boolean => {
         const combo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
         if (!combo) return false;
@@ -3362,6 +3367,12 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           combo.dispatchEvent(new Event("change", { bubbles: true }));
           combo.dispatchEvent(new Event("input", { bubbles: true }));
         }
+
+        setTimeout(() => {
+          window.dispatchEvent(
+            new CustomEvent("landintel:translating", { detail: { lang: l, status: "complete" } })
+          );
+        }, 1200);
         return true;
       };
 
