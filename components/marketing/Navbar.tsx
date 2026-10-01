@@ -96,9 +96,9 @@ export const Navbar: React.FC = () => {
 
   return (
     <header dir="ltr" className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-border shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 min-h-[64px] max-h-[64px] flex items-center justify-between flex-nowrap min-w-0">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 h-16 min-h-[64px] max-h-[64px] flex items-center justify-between flex-nowrap min-w-0">
         {/* Brand */}
-        <LandIntelLogo href="/" size="md" variant="light" className="mr-3 lg:mr-6 notranslate" />
+        <LandIntelLogo href="/" size="md" variant="light" className="mr-2 sm:mr-3 lg:mr-6 notranslate shrink-0" />
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs xl:text-[13px] font-semibold text-slate-700 shrink-0">

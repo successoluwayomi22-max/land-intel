@@ -227,7 +227,7 @@ export default function LandingPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6 lg:gap-8">
               <div className="text-center sm:text-left border-l-2 border-blue-600 pl-3 sm:pl-4 py-1">
                 <span className="text-xl xs:text-2xl sm:text-3xl font-black font-heading text-brand-darkNavy tracking-tight">
-                  {t("proof1Title") || "15-Point AI Check"}
+                  {t("proof1Title") || "15-Point Cadastral Audit"}
                 </span>
                 <p className="text-[11px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">
                   {t("proof1Subtitle") || "Statutory Deed & Gazette Screening"}
@@ -278,7 +278,7 @@ export default function LandingPage() {
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 shrink-0" />
-                <span>Zero AI Model Training on Private Deeds</span>
+                <span>Strict Deed Confidentiality &amp; Zero Third-Party Sharing</span>
               </div>
             </div>
 
@@ -686,7 +686,7 @@ export default function LandingPage() {
                     },
                     {
                       q: "Are my uploaded property documents private and secure?",
-                      a: "Yes. All uploaded files are stored in private isolated storage and are never exposed publicly. Access is strictly authenticated and validated through short-lived cryptographically signed tokens. We do not use your private deeds to train public AI models.",
+                      a: "Yes. All uploaded files are stored in private isolated storage and are never exposed publicly. Access is strictly authenticated and validated through short-lived cryptographically signed tokens. We never share your private deeds or use them for third-party machine learning models.",
                     },
                     {
                       q: "Can I pay in foreign currency like USD, GBP, or CAD from abroad?",
@@ -719,7 +719,7 @@ export default function LandingPage() {
                 },
                 {
                   q: "Are my uploaded property documents private and secure?",
-                  a: "Yes. All uploaded files are stored in private isolated storage and are never exposed publicly. Access is strictly authenticated and validated through short-lived cryptographically signed tokens. We do not use your private deeds to train public AI models.",
+                  a: "Yes. All uploaded files are stored in private isolated storage and are never exposed publicly. Access is strictly authenticated and validated through short-lived cryptographically signed tokens. We never share your private deeds or use them for third-party machine learning models.",
                 },
                 {
                   q: "Can I pay in foreign currency like USD, GBP, or CAD from abroad?",

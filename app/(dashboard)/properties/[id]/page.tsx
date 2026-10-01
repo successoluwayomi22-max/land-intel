@@ -11,7 +11,6 @@ import {
   CheckCircle,
   FileCheck,
   Upload,
-  Bot,
   Lock,
   Download,
   MapPin,
@@ -264,7 +263,7 @@ export default function PropertyCaseHubPage() {
         {
           id: "welcome-ai",
           sender: "ai",
-          text: `Welcome to the LandIntel Legal & Cadastral AI Counsel for "${propertyCase.title}".\n\nI have evaluated the ${propertyCase.documents.length} document(s) in this case file, the cross-document reconciliation matrix, and the current cadastral risk score (${propertyCase.riskScore?.score ?? "N/A"}/100, ${propertyCase.riskScore?.level ?? "PENDING"}).\n\nI am grounded strictly in this property's actual uploaded instruments, extracted beacon numbers, SURCON surveying standards, and statutory Nigerian conveyancing law. You can click any suggested inquiry below or ask anything directly!`,
+          text: `Welcome to the LandIntel Legal & Cadastral Counsel for "${propertyCase.title}".\n\nWe have indexed the ${propertyCase.documents.length} document(s) in this case dossier, the cross-document reconciliation matrix, and the current cadastral risk score (${propertyCase.riskScore?.score ?? "N/A"}/100, ${propertyCase.riskScore?.level ?? "PENDING"}).\n\nAll findings are grounded strictly in this property's actual uploaded instruments, extracted beacon numbers, SURCON surveying standards, and statutory conveyancing law. You can click any suggested inquiry below or ask anything directly!`,
           evidence: `Case Dossier: ${propertyCase.title} | ${propertyCase.address}, ${propertyCase.lga}, ${propertyCase.state}.`,
           action: "Select a suggested topic below or type an inquiry about this property.",
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
@@ -318,8 +317,8 @@ export default function PropertyCaseHubPage() {
           {
             id: `err-${Date.now()}`,
             sender: "ai",
-            text: `⚠️ **AI Question Quota Exceeded**: ${data.error}`,
-            action: "Unlock Full Certified Report to get unlimited AI Assistant inquiries.",
+            text: `⚠️ **Question Quota Exceeded**: ${data.error}`,
+            action: "Unlock Full Certified Report to get unlimited Case Inquiries.",
             timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           },
         ]);
@@ -511,7 +510,7 @@ export default function PropertyCaseHubPage() {
           { id: "documents", label: `Documents (${propertyCase.documents.length})` },
           { id: "findings", label: `Findings (${propertyCase.findings.length})` },
           { id: "verification", label: "Checklist" },
-          { id: "assistant", label: "Case AI Assistant", isAi: true },
+          { id: "assistant", label: "Legal & Cadastral Counsel", isAi: true },
           { id: "report", label: "15-Section Report" },
         ].map((tab) => (
           <button
@@ -523,11 +522,11 @@ export default function PropertyCaseHubPage() {
                 : "border-transparent text-brand-textSecondary hover:text-brand-textPrimary"
             }`}
           >
-            {tab.isAi && <Bot className={`w-3.5 h-3.5 ${activeTab === "assistant" ? "text-brand-blue" : "text-emerald-600"}`} />}
+            {tab.isAi && <Scale className={`w-3.5 h-3.5 ${activeTab === "assistant" ? "text-brand-blue" : "text-emerald-600"}`} />}
             <span>{tab.label}</span>
             {tab.isAi && (
               <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                AI Counsel
+                Case Counsel
               </span>
             )}
           </button>
@@ -609,16 +608,16 @@ export default function PropertyCaseHubPage() {
             </Card>
           </div>
 
-          {/* Quick AI Assistant Gateway */}
+          {/* Quick Legal & Cadastral Counsel Gateway */}
           <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-brand-darkNavy text-white rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-slate-800 shadow-md">
             <div className="flex items-start gap-3">
               <div className="p-2.5 rounded-lg bg-brand-blue/20 text-sky-400 border border-brand-blue/30 shrink-0">
-                <Bot className="w-5 h-5" />
+                <Scale className="w-5 h-5" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold text-white font-heading">Consult LandIntel AI Assistant</h3>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-500/40">Grounded AI Counsel</span>
+                  <h3 className="text-sm font-bold text-white font-heading">Consult Cadastral &amp; Legal Counsel</h3>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-500/40">Statutory Counsel</span>
                 </div>
                 <p className="text-xs text-slate-300 max-w-xl">
                   Ask immediate questions about surveyor beacons, root of title (C of O / Governor&apos;s Consent), statutory setbacks, or whether this property is safe to purchase.
@@ -631,7 +630,7 @@ export default function PropertyCaseHubPage() {
               onClick={() => setActiveTab("assistant")}
               className="shrink-0 bg-brand-blue hover:bg-brand-blueHover text-white font-bold text-xs cursor-pointer shadow-xs"
             >
-              <span>Launch AI Assistant</span>
+              <span>Open Case Counsel</span>
               <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
             </Button>
           </div>
@@ -957,7 +956,7 @@ export default function PropertyCaseHubPage() {
         </div>
       )}
 
-      {/* TAB: CASE AI ASSISTANT (DEDICATED FULL-SCALE COUNSEL) */}
+      {/* TAB: CASE COUNSEL (DEDICATED FULL-SCALE COUNSEL) */}
       {activeTab === "assistant" && (
         <div className="space-y-6">
           {/* Header Card with Case Context */}
@@ -965,15 +964,15 @@ export default function PropertyCaseHubPage() {
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-400/30 flex items-center gap-1.5">
-                  <Bot className="w-3.5 h-3.5 text-sky-400" />
-                  LandIntel Legal &amp; Cadastral AI Counsel
+                  <Scale className="w-3.5 h-3.5 text-sky-400" />
+                  LandIntel Legal &amp; Cadastral Counsel
                 </span>
                 <span className="text-[10px] font-bold text-slate-400">
                   {propertyCase.documents.length} Document(s) Indexed &bull; SURCON Standards &bull; Land Use Act 1978
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-white font-heading tracking-tight">
-                AI Due-Diligence Counsel for {propertyCase.title}
+                Due-Diligence Case Counsel for {propertyCase.title}
               </h2>
               <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
                 Direct, grounded legal and survey answers synthesized specifically from this property&apos;s submitted instruments, beacon coordinates, and statutory Nigerian conveyancing jurisprudence.
@@ -1070,10 +1069,10 @@ export default function PropertyCaseHubPage() {
                     <div className="max-w-3xl space-y-2 w-full">
                       <div className="flex items-center justify-between text-[10px] text-slate-500 font-semibold px-1">
                         <div className="flex items-center gap-1.5">
-                          <Bot className="w-3.5 h-3.5 text-brand-blue" />
-                          <span className="font-bold text-slate-700">LandIntel AI Legal Counsel</span>
+                          <Scale className="w-3.5 h-3.5 text-brand-blue" />
+                          <span className="font-bold text-slate-700">LandIntel Legal Counsel</span>
                           <span className="px-1.5 py-0.2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded font-mono text-[9px]">
-                            Grounded
+                            Verified
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -1442,15 +1441,15 @@ export default function PropertyCaseHubPage() {
             </Card>
           </div>
 
-          {/* AI Case Assistant */}
+          {/* Case Counsel */}
           <div className="space-y-4">
             <Card className="h-full flex flex-col justify-between">
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <Bot className="w-5 h-5 text-brand-blue" />
+                  <Scale className="w-5 h-5 text-brand-blue" />
                   <div>
-                    <CardTitle>Case AI Assistant</CardTitle>
-                    <CardDescription>Grounded strictly in this property&apos;s records</CardDescription>
+                    <CardTitle>Case Counsel &amp; Legal Advisor</CardTitle>
+                    <CardDescription>Grounded strictly in this property&apos;s verified records</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -1461,16 +1460,13 @@ export default function PropertyCaseHubPage() {
                   <p className="font-semibold text-brand-textPrimary">Suggested Due-Diligence Inquiries:</p>
                   <div className="flex flex-wrap gap-1.5">
                     {[
-                      "👋 Say Hello",
-                      "🤖 Who are you?",
-                      "🌐 What is LandIntel?",
                       "Is this land safe to buy or pay deposit?",
-                      "What do the survey beacons mean?",
-                      "What does 'Excision in Progress' mean?",
+                      "What do the survey beacons indicate?",
+                      "Does this parcel intersect committed government acquisition?",
                       "What should my lawyer search at Lands Registry?",
                       "What should the surveyor chart?",
-                      "Which documents conflict?",
-                      "What packages does LandIntel offer?",
+                      "Which documents or covenants conflict?",
+                      "What are the statutory title requirements?",
                     ].map((promptText) => (
                       <button
                         key={promptText}

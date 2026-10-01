@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     const report: SecurityReport = {
       id: `REP_SEC_${Date.now()}`,
-      title: "DiasporaLand SOC Statutory Security & Threat Compliance Report",
+      title: "LandIntel SOC Statutory Security & Threat Compliance Report",
       period: "WEEKLY",
       startDate: new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString(),
       endDate: new Date().toISOString(),

@@ -151,7 +151,7 @@ export const RiskScoreMeter: React.FC<RiskScoreMeterProps> = ({
         <div className="flex items-center justify-between border-b border-slate-200 pb-2">
           <span className="font-bold text-brand-textPrimary text-xs flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-brand-blue" />
-            AI Cross-Document Due-Diligence Synthesis
+            Cadastral &amp; Statutory Due-Diligence Synthesis
           </span>
           <span className="text-[11px] text-slate-400 font-medium">Audited in Real-Time</span>
         </div>

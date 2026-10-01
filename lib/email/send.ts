@@ -13,6 +13,8 @@ import { PasswordResetEmail } from "./templates/password-reset";
 import { ReportDeliveryEmail, ReportDeliveryEmailProps } from "./templates/report-delivery";
 import { PaymentReceiptEmail, PaymentReceiptEmailProps } from "./templates/receipt";
 import crypto from "crypto";
+import fs from "fs";
+import path from "path";
 
 /**
  * Generate a cryptographically secure 6-digit OTP code.
@@ -91,16 +93,10 @@ async function dispatchEmail({
 
   const deliverabilityHeaders: Record<string, string> = {
     "X-Entity-Ref-ID": entityRefId,
-    "X-Auto-Response-Suppress": "OOF, AutoReply",
   };
 
-  if (isTransactional) {
-    // Transactional security notices must NOT have marketing List-Unsubscribe headers
-    deliverabilityHeaders["X-Priority"] = "1";
-    deliverabilityHeaders["Priority"] = "urgent";
-    deliverabilityHeaders["Importance"] = "high";
-  } else if (!isGmailRelay) {
-    // Only non-transactional emails with custom domains carry unsubscribe headers
+  if (!isTransactional && !isGmailRelay) {
+    // Only non-transactional marketing emails carry unsubscribe headers
     deliverabilityHeaders["List-Unsubscribe"] = "<mailto:support@landintel.ai?subject=unsubscribe>";
     deliverabilityHeaders["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click";
   }
@@ -110,14 +106,30 @@ async function dispatchEmail({
   // 1. Try SMTP if transporter is initialized
   if (smtpTransporter) {
     try {
+      // Look for local logo PNG to attach as CID inline attachment for 100% email client support
+      const logoPath = path.join(process.cwd(), "public", "logo-email.png");
+      const hasLogo = fs.existsSync(logoPath);
+      const smtpHtml = hasLogo
+        ? html.replace(/https:\/\/land-intel-omega\.vercel\.app\/logo-email\.png/g, "cid:brand-logo")
+        : html;
+
       await smtpTransporter.sendMail({
         from: SMTP_FROM,
         to,
         replyTo: smtpReplyTo,
         subject,
-        html,
+        html: smtpHtml,
         text: plainText,
         headers: deliverabilityHeaders,
+        attachments: hasLogo
+          ? [
+              {
+                filename: "logo-email.png",
+                path: logoPath,
+                cid: "brand-logo",
+              },
+            ]
+          : [],
       });
       console.log(`[EMAIL] ${label} sent successfully via SMTP to ${to}`);
       return { success: true };

@@ -273,7 +273,7 @@ export default function SecurityOperationsCenterPage() {
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-amber-500 font-mono text-xs uppercase tracking-widest font-bold">
               <Shield className="w-4 h-4" />
-              <span>DiasporaLand Security Operations Center (SOC)</span>
+              <span>LandIntel Security Operations Center (SOC)</span>
               <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px]">
                 LIVE RADAR
               </span>
@@ -936,7 +936,7 @@ export default function SecurityOperationsCenterPage() {
             <div className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-2 text-xs font-mono">
               <div className="text-amber-400 font-bold uppercase">Executive Audit Summary</div>
               <p className="text-slate-300">
-                DiasporaLand SOC automated compliance monitoring active. Zero unmitigated critical incidents recorded.
+                LandIntel SOC automated compliance monitoring active. Zero unmitigated critical incidents recorded.
                 Statutory customer erasures are isolated and processed within SLA. All financial webhooks cryptographically validated.
               </p>
             </div>

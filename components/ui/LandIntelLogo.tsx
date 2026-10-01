@@ -20,12 +20,12 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
   iconOnly = false,
   href,
 }) => {
-  // Size dimensions
+  // Responsive size dimensions tailored for mobile and desktop screens
   const sizeMap = {
-    sm: { icon: 30, text: "text-base", subText: "text-[7.5px]", gap: "gap-2.5" },
-    md: { icon: 40, text: "text-lg", subText: "text-[8.5px]", gap: "gap-3" },
-    lg: { icon: 48, text: "text-xl", subText: "text-[9.5px]", gap: "gap-3.5" },
-    xl: { icon: 60, text: "text-2xl", subText: "text-[11px]", gap: "gap-4" },
+    sm: { iconClass: "w-7 h-7", text: "text-sm sm:text-base", subText: "text-[7px]", gap: "gap-2" },
+    md: { iconClass: "w-8 h-8 sm:w-10 sm:h-10", text: "text-[15px] sm:text-lg", subText: "text-[8px]", gap: "gap-2 sm:gap-2.5" },
+    lg: { iconClass: "w-10 h-10 sm:w-12 sm:h-12", text: "text-lg sm:text-xl", subText: "text-[9px]", gap: "gap-2.5 sm:gap-3" },
+    xl: { iconClass: "w-12 h-12 sm:w-14 sm:h-14", text: "text-xl sm:text-2xl", subText: "text-[10px]", gap: "gap-3 sm:gap-4" },
   };
 
   const currentSize = sizeMap[size] || sizeMap.md;
@@ -39,17 +39,16 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
   const gridFill = isDark ? "#0F172A" : "#F8FAFC";
 
   const content = (
-    <div className={`inline-flex items-center ${currentSize.gap} group select-none ${href ? "" : className}`}>
+    <div className={`inline-flex items-center shrink-0 ${currentSize.gap} group select-none ${href ? "" : className}`}>
       {/* ── Brand Architectural Pin & Cadastral Grid SVG Icon (Concept 5) ── */}
       <div
-        className="relative shrink-0 transition-transform duration-300 group-hover:scale-105"
-        style={{ width: currentSize.icon, height: currentSize.icon }}
+        className={`relative shrink-0 transition-transform duration-300 group-hover:scale-105 ${currentSize.iconClass}`}
       >
         <svg
           viewBox="0 0 64 64"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full drop-shadow-sm"
+          className="w-full h-full drop-shadow-sm overflow-visible"
         >
           <defs>
             <linearGradient id="liPinLeftEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -138,7 +137,7 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
     return (
       <Link
         href={href}
-        className={`inline-flex items-center shrink-0 min-w-0 focus:outline-none ${className}`}
+        className={`inline-flex items-center shrink-0 focus:outline-none ${className}`}
       >
         {content}
       </Link>
