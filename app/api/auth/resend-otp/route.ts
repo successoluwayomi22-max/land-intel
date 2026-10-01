@@ -59,15 +59,18 @@ export async function POST(request: NextRequest) {
     });
 
     // Send OTP email
-    await sendOTPEmail({
+    const emailResult = await sendOTPEmail({
       email: user.email,
       name: user.name,
       otpCode,
     });
 
+    if (!emailResult.success) {
+      console.error(`[RESEND_OTP] Email dispatch failed for ${user.email}:`, emailResult.error);
+    }
+
     return NextResponse.json({
       message: "A new verification code has been sent to your email.",
-      devOtpCode: otpCode,
     });
   } catch (error) {
     console.error("[RESEND_OTP_ERROR]", error);

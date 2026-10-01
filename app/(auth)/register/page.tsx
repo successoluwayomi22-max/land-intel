@@ -175,8 +175,7 @@ export default function RegisterPage() {
 
       // If email verification is required, redirect to OTP page
       if (data.requiresVerification) {
-        const devParam = data.devOtpCode ? `&devCode=${encodeURIComponent(data.devOtpCode)}` : "";
-        router.push(`/verify-email?email=${encodeURIComponent(email)}${devParam}`);
+        router.push(`/verify-email?email=${encodeURIComponent(email.trim().toLowerCase())}`);
       } else {
         router.push("/dashboard");
       }

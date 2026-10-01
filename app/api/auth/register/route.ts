@@ -118,12 +118,12 @@ export async function POST(request: NextRequest) {
     // Send OTP verification email directly to registered address
     // Note: Welcome email is sent after the user successfully verifies their OTP in /api/auth/verify-otp
     if (emailEnabled) {
-      try {
-        console.log(`[REGISTER] Dispatching OTP verification email to: ${user.email}`);
-        await sendOTPEmail({ email: user.email, name: user.name, otpCode });
-        console.log(`[REGISTER] OTP email dispatched for ${user.email}`);
-      } catch (err) {
-        console.error("[REGISTER] Email dispatch error:", err);
+      console.log(`[REGISTER] Dispatching OTP verification email to: ${user.email}`);
+      const emailResult = await sendOTPEmail({ email: user.email, name: user.name, otpCode });
+      if (!emailResult.success) {
+        console.error(`[REGISTER] OTP email dispatch failed for ${user.email}:`, emailResult.error);
+      } else {
+        console.log(`[REGISTER] OTP email dispatched successfully for ${user.email}`);
       }
     }
 
@@ -146,7 +146,6 @@ export async function POST(request: NextRequest) {
         },
         token,
         requiresVerification: emailEnabled,
-        devOtpCode: otpCode,
       },
       { status: 201 }
     );

@@ -14,25 +14,40 @@ const apiKey = RESEND_API_KEY;
 
 export const resend = apiKey ? new Resend(apiKey) : null;
 
+// Brand recipient for replies and administrative alerts
+const isGmailSmtp =
+  (SMTP_HOST || "").toLowerCase().includes("gmail.com") ||
+  (SMTP_USER || "").toLowerCase().includes("@gmail.com");
+
 // SMTP transporter (e.g. Gmail SMTP, cPanel / Webmail, or custom SMTP)
 export const smtpTransporter =
-  SMTP_HOST && SMTP_USER && SMTP_PASS
-    ? nodemailer.createTransport({
-        host: SMTP_HOST,
-        port: SMTP_PORT,
-        secure: SMTP_SECURE,
-        auth: {
-          user: SMTP_USER,
-          pass: SMTP_PASS,
-        },
-        connectionTimeout: 5000,
-        greetingTimeout: 5000,
-        socketTimeout: 8000,
-      })
+  SMTP_USER && SMTP_PASS
+    ? nodemailer.createTransport(
+        isGmailSmtp
+          ? {
+              service: "gmail",
+              auth: {
+                user: SMTP_USER,
+                pass: SMTP_PASS,
+              },
+              connectionTimeout: 15000,
+              greetingTimeout: 15000,
+              socketTimeout: 20000,
+            }
+          : {
+              host: SMTP_HOST || "smtp.gmail.com",
+              port: SMTP_PORT || 465,
+              secure: SMTP_SECURE,
+              auth: {
+                user: SMTP_USER,
+                pass: SMTP_PASS,
+              },
+              connectionTimeout: 15000,
+              greetingTimeout: 15000,
+              socketTimeout: 20000,
+            }
+      )
     : null;
-
-// Brand recipient for replies and administrative alerts
-const isGmailSmtp = (SMTP_USER || "").toLowerCase().includes("@gmail.com");
 
 export const BRAND_EMAIL =
   process.env.BRAND_EMAIL || (isGmailSmtp && SMTP_USER ? SMTP_USER : "support@landintel.ai");
@@ -51,7 +66,7 @@ export const RESEND_FROM =
   process.env.RESEND_FROM ||
   (process.env.EMAIL_FROM && !process.env.EMAIL_FROM.includes("@gmail.com") && !process.env.EMAIL_FROM.includes("@yahoo.com")
     ? process.env.EMAIL_FROM
-    : "LandIntel <notifications@landintel.ai>");
+    : "LandIntel <onboarding@resend.dev>");
 
 // Default sender for backward compatibility
 export const EMAIL_FROM = process.env.EMAIL_FROM || (isGmailSmtp && SMTP_USER ? `LandIntel <${SMTP_USER}>` : RESEND_FROM);

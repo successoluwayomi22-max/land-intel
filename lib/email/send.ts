@@ -108,10 +108,25 @@ async function dispatchEmail({
     try {
       // Look for local logo PNG to attach as CID inline attachment for 100% email client support
       const logoPath = path.join(process.cwd(), "public", "logo-email.png");
-      const hasLogo = fs.existsSync(logoPath);
-      const smtpHtml = hasLogo
-        ? html.replace(/https:\/\/land-intel-omega\.vercel\.app\/logo-email\.png/g, "cid:brand-logo")
-        : html;
+      let logoAttachment: any[] = [];
+      let smtpHtml = html;
+
+      if (fs.existsSync(logoPath)) {
+        try {
+          const logoBuffer = fs.readFileSync(logoPath);
+          smtpHtml = html.replace(/https:\/\/land-intel-omega\.vercel\.app\/logo-email\.png/g, "cid:brand-logo");
+          logoAttachment = [
+            {
+              filename: "logo-email.png",
+              content: logoBuffer,
+              cid: "brand-logo",
+            },
+          ];
+        } catch {
+          logoAttachment = [];
+          smtpHtml = html;
+        }
+      }
 
       await smtpTransporter.sendMail({
         from: SMTP_FROM,
@@ -121,15 +136,7 @@ async function dispatchEmail({
         html: smtpHtml,
         text: plainText,
         headers: deliverabilityHeaders,
-        attachments: hasLogo
-          ? [
-              {
-                filename: "logo-email.png",
-                path: logoPath,
-                cid: "brand-logo",
-              },
-            ]
-          : [],
+        attachments: logoAttachment,
       });
       console.log(`[EMAIL] ${label} sent successfully via SMTP to ${to}`);
       return { success: true };
