@@ -3267,6 +3267,8 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     ha: "ha",
   };
 
+  let activeTranslateTimer: any = null;
+
   const syncGoogleTranslate = (l: SupportedLanguage) => {
     if (typeof window === "undefined" || typeof document === "undefined") return;
     try {
@@ -3275,7 +3277,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname.includes(":");
 
       if (l === "en") {
-        // Clear root cookies
+        // Clear root cookies across all domain hierarchies
         document.cookie = "googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; max-age=0;";
         if (!isLocal) {
           document.cookie = `googtrans=; path=/; domain=${hostname}; expires=Thu, 01 Jan 1970 00:00:00 UTC; max-age=0;`;
@@ -3287,55 +3289,69 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             document.cookie = `googtrans=; path=/; domain=${domainPart}; expires=Thu, 01 Jan 1970 00:00:00 UTC; max-age=0;`;
           }
         }
-      } else {
-        const transVal = `/en/${googleCode}`;
-        document.cookie = `googtrans=${transVal}; path=/; max-age=31536000; SameSite=Lax;`;
-        if (!isLocal) {
-          document.cookie = `googtrans=${transVal}; path=/; domain=${hostname}; max-age=31536000; SameSite=Lax;`;
-          document.cookie = `googtrans=${transVal}; path=/; domain=.${hostname}; max-age=31536000; SameSite=Lax;`;
+
+        // Restore Google Translate banner / iframe if active
+        try {
+          const banner = document.querySelector(".goog-te-banner-frame") as HTMLIFrameElement | null;
+          if (banner?.contentWindow) {
+            const restoreBtn = banner.contentWindow.document.querySelector("button") as HTMLElement | null;
+            if (restoreBtn) restoreBtn.click();
+          }
+        } catch {}
+
+        const combo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
+        if (combo) {
+          combo.value = "";
+          if (typeof (combo as any).onchange === "function") {
+            try { (combo as any).onchange(); } catch {}
+          }
+          combo.dispatchEvent(new Event("change", { bubbles: true }));
+          combo.dispatchEvent(new Event("input", { bubbles: true }));
         }
+
+        const wasTranslated =
+          document.documentElement.classList.contains("translated-ltr") ||
+          document.documentElement.classList.contains("translated-rtl") ||
+          !!document.querySelector("font[style*='vertical-align']");
+
+        document.documentElement.classList.remove("translated-ltr", "translated-rtl");
+        document.documentElement.dir = "ltr";
+        document.body.style.top = "0px";
+
+        if (wasTranslated) {
+          window.location.reload();
+        }
+        return;
+      }
+
+      // Setting non-English target language
+      const transVal = `/en/${googleCode}`;
+      document.cookie = `googtrans=${transVal}; path=/; max-age=31536000; SameSite=Lax;`;
+      if (!isLocal) {
+        document.cookie = `googtrans=${transVal}; path=/; domain=${hostname}; max-age=31536000; SameSite=Lax;`;
+        document.cookie = `googtrans=${transVal}; path=/; domain=.${hostname}; max-age=31536000; SameSite=Lax;`;
       }
 
       const applyToCombo = (): boolean => {
         const combo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
         if (!combo) return false;
 
-        // If options are not populated yet, keep waiting
-        if (combo.options.length <= 1 && l !== "en") return false;
-
-        if (l === "en") {
-          const englishOption = Array.from(combo.options).find(
-            (opt) => opt.value === "" || opt.value === "en"
-          );
-          if (englishOption) {
-            if (combo.value !== englishOption.value) {
-              combo.value = englishOption.value;
-              if (typeof (combo as any).onchange === "function") {
-                try { (combo as any).onchange(); } catch {}
-              }
-              combo.dispatchEvent(new Event("change", { bubbles: true }));
-              combo.dispatchEvent(new Event("input", { bubbles: true }));
-            }
-          }
-          document.documentElement.classList.remove("translated-ltr", "translated-rtl");
-          document.documentElement.dir = "ltr";
-          document.body.style.top = "0px";
-          const banner = document.querySelector(".goog-te-banner-frame") as HTMLElement | null;
-          if (banner) banner.style.display = "none";
-          return true;
-        }
-
         const targetVal = googleCode;
-        const targetOption = Array.from(combo.options).find(
+        let targetOption = Array.from(combo.options).find(
           (opt) =>
             opt.value === targetVal ||
             opt.value.toLowerCase() === targetVal.toLowerCase() ||
             (targetVal.includes("-") && opt.value === targetVal.split("-")[0]) ||
             opt.value.startsWith(targetVal + "-")
         );
+
+        // Force-inject option if Google's async language dictionary hasn't loaded yet
         if (!targetOption) {
-          // Option not yet in select, keep retrying
-          return false;
+          const forceOpt = document.createElement("option");
+          forceOpt.value = targetVal;
+          forceOpt.text = targetVal;
+          combo.appendChild(forceOpt);
+          targetOption = forceOpt;
         }
 
         if (combo.value !== targetOption.value) {
@@ -3349,15 +3365,21 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return true;
       };
 
-      // 1. Immediate trigger (0ms)
+      // 1. Instant execution (0ms)
       if (applyToCombo()) return;
 
-      // 2. Ultra-fast adaptive pulse: retry every 25ms up to 120 times (3,000ms max)
+      // 2. Clear any active pulse to avoid duplicate background hammering
+      if (activeTranslateTimer) {
+        clearInterval(activeTranslateTimer);
+        activeTranslateTimer = null;
+      }
+
       let attempts = 0;
-      const pulse = setInterval(() => {
+      activeTranslateTimer = setInterval(() => {
         attempts++;
-        if (applyToCombo() || attempts >= 120) {
-          clearInterval(pulse);
+        if (applyToCombo() || attempts >= 40) {
+          clearInterval(activeTranslateTimer);
+          activeTranslateTimer = null;
         }
       }, 25);
     } catch {}
@@ -3384,8 +3406,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         syncGoogleTranslate(lang as SupportedLanguage);
       };
     }
-    syncGoogleTranslate(language);
-  }, [language]);
+  }, []);
 
   const isRtl = language === "ar" || language === "ur";
 

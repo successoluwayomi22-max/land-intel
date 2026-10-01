@@ -34,6 +34,7 @@ export const LocaleSelector: React.FC<{
   const [activeTab, setActiveTab] = useState<"languages" | "currency">("languages");
   const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState<string>("All");
+  const [switchingLang, setSwitchingLang] = useState<string | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -455,11 +456,15 @@ export const LocaleSelector: React.FC<{
                           key={lKey}
                           type="button"
                           onClick={() => {
+                            setSwitchingLang(lKey);
                             setLanguage(lKey);
-                            setOpen(false);
+                            setTimeout(() => {
+                              setOpen(false);
+                              setSwitchingLang(null);
+                            }, 100);
                           }}
                           className={`flex items-start gap-2 p-2 sm:p-2.5 rounded-xl text-left transition-all border cursor-pointer min-h-[44px] ${
-                            isSelected
+                            isSelected || switchingLang === lKey
                               ? isDark
                                 ? "bg-emerald-950/40 border-emerald-500/60 text-white ring-1 ring-emerald-500/50 shadow-xs"
                                 : "bg-emerald-50/90 border-emerald-500/50 text-emerald-950 ring-1 ring-emerald-500/30 shadow-xs"
@@ -476,11 +481,13 @@ export const LocaleSelector: React.FC<{
                               <span className="font-bold text-xs truncate leading-tight">
                                 {l.nativeName}
                               </span>
-                              {isSelected && (
+                              {switchingLang === lKey ? (
+                                <span className="w-3.5 h-3.5 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin shrink-0" />
+                              ) : isSelected ? (
                                 <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
                                   <Check className="w-2 h-2 stroke-[3]" />
                                 </span>
-                              )}
+                              ) : null}
                             </div>
                             <span className="text-[10px] text-slate-500 dark:text-slate-400 block truncate font-medium">
                               {l.label}

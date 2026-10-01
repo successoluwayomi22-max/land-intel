@@ -99,51 +99,35 @@ export function GoogleTranslateIntegration() {
       initWidget();
     }
 
-    // High-speed MutationObserver: instantly detect when .goog-te-combo is inserted
+    // Ultra-lightweight scoped MutationObserver: only observe the hidden widget container
     let observer: MutationObserver | null = null;
-    if (typeof window !== "undefined" && window.MutationObserver) {
+    const container = document.getElementById("google_translate_element");
+
+    if (container && typeof window !== "undefined" && window.MutationObserver) {
       observer = new MutationObserver(() => {
-        const combo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
-        if (combo && combo.options.length > 1 && window.__landintel_sync_translate) {
+        const combo = container.querySelector(".goog-te-combo") as HTMLSelectElement | null;
+        if (combo) {
+          if (!combo.id) combo.id = "google-translate-select";
+          if (!combo.name) combo.name = "google-translate-select";
+          if (!combo.getAttribute("aria-label")) combo.setAttribute("aria-label", "Language Selector");
+
           const savedLang =
             localStorage.getItem("landintel_lang") ||
             localStorage.getItem("diasporaland_lang") ||
             "en";
-          if (savedLang !== "en") {
+          if (savedLang !== "en" && window.__landintel_sync_translate) {
             window.__landintel_sync_translate(savedLang);
           }
+          // Disconnect immediately once combo is discovered - zero background CPU overhead
+          observer?.disconnect();
         }
-
-        // Continuously hide injected artifacts and fix form fields
-        hideTranslateArtifacts();
       });
 
-      observer.observe(document.body, { childList: true, subtree: true });
+      observer.observe(container, { childList: true, subtree: true });
     }
-
-    // Fast initial polling pulse (every 40ms for 2 seconds) to guarantee instant activation
-    let pollCount = 0;
-    const fastPoll = setInterval(() => {
-      pollCount++;
-      hideTranslateArtifacts();
-      const combo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
-      if (combo && combo.options.length > 1) {
-        const savedLang =
-          localStorage.getItem("landintel_lang") ||
-          localStorage.getItem("diasporaland_lang") ||
-          "en";
-        if (savedLang !== "en" && window.__landintel_sync_translate) {
-          window.__landintel_sync_translate(savedLang);
-        }
-      }
-      if (pollCount >= 50) {
-        clearInterval(fastPoll);
-      }
-    }, 40);
 
     return () => {
       observer?.disconnect();
-      clearInterval(fastPoll);
     };
   }, [shouldLoadScript]);
 
@@ -166,76 +150,12 @@ export function GoogleTranslateIntegration() {
 }
 
 /**
- * Aggressively hides Google Translate injected DOM elements
- * that cause layout shifts (banners, spinners, iframes).
+ * Lightweight helper to ensure body positioning is intact
  */
 function hideTranslateArtifacts() {
   try {
-    // Force body.top = 0 (Google Translate pushes body down for its banner)
-    if (document.body.style.top && document.body.style.top !== "0px") {
+    if (typeof document !== "undefined" && document.body.style.top && document.body.style.top !== "0px") {
       document.body.style.top = "0px";
     }
-
-    // Hide the banner iframe
-    const bannerFrame = document.querySelector(".goog-te-banner-frame") as HTMLElement | null;
-    if (bannerFrame) {
-      bannerFrame.style.display = "none";
-      bannerFrame.style.height = "0";
-    }
-
-    // Hide the spinner/loading overlay
-    const selectors = [
-      ".VIpgJd-ZVi9od-aZ2wEe-wOHMyf",
-      "[class*='VIpgJd-ZVi9od']",
-      ".goog-te-spinner-pos",
-    ];
-    for (const sel of selectors) {
-      const els = document.querySelectorAll(sel);
-      els.forEach((el) => {
-        const htmlEl = el as HTMLElement;
-        htmlEl.style.display = "none";
-        htmlEl.style.height = "0";
-        htmlEl.style.width = "0";
-        htmlEl.style.overflow = "hidden";
-        htmlEl.style.position = "absolute";
-      });
-    }
-
-    // Hide top-level skiptranslate divs (but not our hidden widget container)
-    document.querySelectorAll("body > .skiptranslate").forEach((el) => {
-      const htmlEl = el as HTMLElement;
-      if (htmlEl.id !== "google_translate_element") {
-        htmlEl.style.display = "none";
-        htmlEl.style.height = "0";
-        htmlEl.style.overflow = "hidden";
-      }
-    });
-
-    // Fix Lighthouse: "[aria-hidden="true"] elements contain focusable descendants"
-    document.querySelectorAll('[aria-hidden="true"]').forEach((hiddenEl) => {
-      const focusables = hiddenEl.querySelectorAll(
-        'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
-      );
-      focusables.forEach((f) => {
-        f.setAttribute("tabindex", "-1");
-        f.setAttribute("aria-hidden", "true");
-      });
-    });
-
-    // Fix Lighthouse / DevTools: "A form field element should have an id or name attribute"
-    const combos = document.querySelectorAll<HTMLSelectElement>('.goog-te-combo, select:not([id]):not([name])');
-    combos.forEach((el) => {
-      if (!el.id) el.id = 'google-translate-select';
-      if (!el.name) el.name = 'google-translate-select';
-      if (!el.getAttribute('autocomplete')) el.setAttribute('autocomplete', 'off');
-      if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', 'Language Selector');
-    });
-
-    document.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
-      'input:not([id]):not([name]), textarea:not([id]):not([name])'
-    ).forEach((el, idx) => {
-      if (!el.id) el.id = `form-field-${idx}`;
-      if (!el.name) el.name = `form-field-${idx}`;
-    });
   } catch {}
 }
