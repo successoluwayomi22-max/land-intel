@@ -25,13 +25,22 @@ export async function GET() {
   const now = Date.now();
 
   if (cachedData && now - cachedData.timestamp < CACHE_TTL_MS) {
-    return NextResponse.json({
-      base: "USD",
-      ratesFromUsd: cachedData.ratesFromUsd,
-      rates: cachedData.rates,
-      source: "cache",
-      updatedAt: new Date(cachedData.timestamp).toISOString(),
-    });
+    return NextResponse.json(
+      {
+        base: "USD",
+        ratesFromUsd: cachedData.ratesFromUsd,
+        rates: cachedData.rates,
+        source: "cache",
+        updatedAt: new Date(cachedData.timestamp).toISOString(),
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
+          "CDN-Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
+          "Vercel-CDN-Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
+        },
+      }
+    );
   }
 
   try {
@@ -80,13 +89,22 @@ export async function GET() {
           timestamp: now,
         };
 
-        return NextResponse.json({
-          base: "USD",
-          ratesFromUsd: liveRatesFromUsd,
-          rates: legacyRatesToNgn,
-          source: "live_forex",
-          updatedAt: new Date(now).toISOString(),
-        });
+        return NextResponse.json(
+          {
+            base: "USD",
+            ratesFromUsd: liveRatesFromUsd,
+            rates: legacyRatesToNgn,
+            source: "live_forex",
+            updatedAt: new Date(now).toISOString(),
+          },
+          {
+            headers: {
+              "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
+              "CDN-Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
+              "Vercel-CDN-Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
+            },
+          }
+        );
       }
     }
   } catch (err) {
@@ -113,11 +131,20 @@ export async function GET() {
         timestamp: now,
       };
 
-  return NextResponse.json({
-    base: "USD",
-    ratesFromUsd: fallbackRates.ratesFromUsd,
-    rates: fallbackRates.rates,
-    source: "fallback",
-    updatedAt: new Date(now).toISOString(),
-  });
+  return NextResponse.json(
+    {
+      base: "USD",
+      ratesFromUsd: fallbackRates.ratesFromUsd,
+      rates: fallbackRates.rates,
+      source: "fallback",
+      updatedAt: new Date(now).toISOString(),
+    },
+    {
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
+        "CDN-Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
+        "Vercel-CDN-Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
+      },
+    }
+  );
 }

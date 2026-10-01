@@ -103,6 +103,12 @@ export async function runCaseIntelligencePipeline(caseId: string): Promise<void>
 
   if (!propertyCase) throw new Error("Property case not found");
 
+  // Mark status as ANALYZING so live progress tracking is visible to user
+  await db.propertyCase.update({
+    where: { id: caseId },
+    data: { status: "ANALYZING" },
+  });
+
   // Run heuristics / AI risk analysis
   const analysis = analyzeCrossDocumentRisks(
     {
