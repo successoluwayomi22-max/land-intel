@@ -168,8 +168,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://translate.google.com" />
+        <link rel="preconnect" href="https://translate.googleapis.com" crossOrigin="" />
+        <link rel="preconnect" href="https://translate-pa.googleapis.com" crossOrigin="" />
         <link rel="dns-prefetch" href="https://translate.google.com" />
         <link rel="dns-prefetch" href="https://translate.googleapis.com" />
+        <link rel="dns-prefetch" href="https://translate-pa.googleapis.com" />
         <meta name="google-site-verification" content="googlef8411a63fb4c6533" />
         <meta name="google-site-verification" content="googlef8411a63fb4c6533.html" />
         <meta name="google-site-verification" content="googled610769079a4ec09" />

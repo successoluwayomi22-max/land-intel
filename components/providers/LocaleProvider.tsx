@@ -3352,14 +3352,14 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       // 1. Immediate trigger (0ms)
       if (applyToCombo()) return;
 
-      // 2. Resilient adaptive pulse: retry every 50ms up to 60 times (3,000ms max)
+      // 2. Ultra-fast adaptive pulse: retry every 25ms up to 120 times (3,000ms max)
       let attempts = 0;
       const pulse = setInterval(() => {
         attempts++;
-        if (applyToCombo() || attempts >= 60) {
+        if (applyToCombo() || attempts >= 120) {
           clearInterval(pulse);
         }
-      }, 50);
+      }, 25);
     } catch {}
   };
 

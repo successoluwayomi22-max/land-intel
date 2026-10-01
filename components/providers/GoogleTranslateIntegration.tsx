@@ -15,22 +15,19 @@ declare global {
 /**
  * GoogleTranslateIntegration
  * 
- * Invisible widget that powers real page translation via Google Translate.
- * The visible UI is the custom LocaleSelector; this component handles
- * the actual DOM translation by managing the hidden Google Translate widget.
+ * High-performance invisible widget powering instant page translation via Google Translate.
  * 
- * Key behaviors:
- * 1. Pre-sets the googtrans cookie from localStorage BEFORE the script loads.
- * 2. Defers loading for default English visitors until interaction or idle, saving CPU & eliminating cookie warnings.
- * 3. Initializes the widget into a hidden container.
- * 4. Ensures all injected form elements have valid id, name, and aria-labels.
- * 5. Uses MutationObserver + polling to ensure the combo select is populated.
- * 6. Aggressively hides all injected Google Translate UI artifacts.
+ * Key optimizations for blazing-fast translation:
+ * 1. Loads immediately after interactive (0s artificial deferral removed).
+ * 2. Pre-sets googtrans cookie on mount for instantaneous rendering if a non-English language was saved.
+ * 3. Proactively mounts and initializes Google Translate into a hidden container.
+ * 4. Microsecond MutationObserver connects as soon as the Google select combo mounts.
+ * 5. Aggressively hides all Google UI banners, iframes, and spinners with 0 layout shift.
  */
 export function GoogleTranslateIntegration() {
-  const [shouldLoadScript, setShouldLoadScript] = React.useState(false);
+  const [shouldLoadScript, setShouldLoadScript] = React.useState(true);
 
-  // Check if translation is needed immediately or can be deferred
+  // Pre-set translation cookie immediately from storage so Google's engine translates on initial parse
   useEffect(() => {
     try {
       const savedLang =
@@ -38,32 +35,22 @@ export function GoogleTranslateIntegration() {
         localStorage.getItem("diasporaland_lang") ||
         "en";
       
+      const GOOGLE_MAP: Record<string, string> = {
+        zh: "zh-CN",
+        pcm: "pcm",
+      };
+      const googleCode = GOOGLE_MAP[savedLang] || savedLang;
+
       if (savedLang && savedLang !== "en") {
-        setShouldLoadScript(true);
-        // Map our codes to Google's codes
-        const GOOGLE_MAP: Record<string, string> = {
-          zh: "zh-CN", pcm: "en",
-        };
-        const googleCode = GOOGLE_MAP[savedLang] || savedLang;
         const transVal = `/en/${googleCode}`;
-        
-        // Set cookie immediately so the script picks it up on load
         document.cookie = `googtrans=${transVal}; path=/; max-age=31536000; SameSite=Lax;`;
         const hostname = window.location.hostname;
         if (hostname !== "localhost" && hostname !== "127.0.0.1") {
           document.cookie = `googtrans=${transVal}; path=/; domain=.${hostname}; max-age=31536000; SameSite=Lax;`;
         }
-      } else {
-        // For default English users, register prefetch hook and delay load
-        window.__landintel_load_translate = () => setShouldLoadScript(true);
-
-        // Defer until browser is completely idle (4 seconds)
-        const timer = setTimeout(() => {
-          setShouldLoadScript(true);
-        }, 4000);
-
-        return () => clearTimeout(timer);
       }
+
+      window.__landintel_load_translate = () => setShouldLoadScript(true);
     } catch {}
   }, []);
 
@@ -75,6 +62,7 @@ export function GoogleTranslateIntegration() {
         if (window.google?.translate?.TranslateElement) {
           const container = document.getElementById("google_translate_element");
           if (!container) return;
+
           // Avoid re-initialization if already mounted
           if (container.querySelector(".goog-te-combo")) {
             hideTranslateArtifacts();
@@ -85,20 +73,19 @@ export function GoogleTranslateIntegration() {
             {
               pageLanguage: "en",
               autoDisplay: false,
+              multilanguagePage: true,
             },
             "google_translate_element"
           );
 
-          // After widget initializes, sync saved language
+          // Fast-sync current or saved language immediately
           const savedLang =
             localStorage.getItem("landintel_lang") ||
             localStorage.getItem("diasporaland_lang") ||
             "en";
+
           if (savedLang && savedLang !== "en" && window.__landintel_sync_translate) {
-            // Give the widget time to populate options
-            setTimeout(() => {
-              window.__landintel_sync_translate?.(savedLang);
-            }, 300);
+            window.__landintel_sync_translate(savedLang);
           }
           hideTranslateArtifacts();
         }
@@ -107,12 +94,12 @@ export function GoogleTranslateIntegration() {
 
     window.googleTranslateElementInit = initWidget;
 
-    // In case script already loaded before useEffect
+    // If script was already evaluated or cached
     if (window.google?.translate?.TranslateElement) {
       initWidget();
     }
 
-    // MutationObserver: sync as soon as the combo select is in DOM and populated
+    // High-speed MutationObserver: instantly detect when .goog-te-combo is inserted
     let observer: MutationObserver | null = null;
     if (typeof window !== "undefined" && window.MutationObserver) {
       observer = new MutationObserver(() => {
@@ -125,28 +112,38 @@ export function GoogleTranslateIntegration() {
           if (savedLang !== "en") {
             window.__landintel_sync_translate(savedLang);
           }
-          observer?.disconnect();
         }
 
         // Continuously hide injected artifacts and fix form fields
         hideTranslateArtifacts();
       });
+
       observer.observe(document.body, { childList: true, subtree: true });
     }
 
-    // Polling fallback: check every 500ms for 10s in case MutationObserver misses it
+    // Fast initial polling pulse (every 40ms for 2 seconds) to guarantee instant activation
     let pollCount = 0;
-    const pollInterval = setInterval(() => {
+    const fastPoll = setInterval(() => {
       pollCount++;
       hideTranslateArtifacts();
-      if (pollCount >= 20) {
-        clearInterval(pollInterval);
+      const combo = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
+      if (combo && combo.options.length > 1) {
+        const savedLang =
+          localStorage.getItem("landintel_lang") ||
+          localStorage.getItem("diasporaland_lang") ||
+          "en";
+        if (savedLang !== "en" && window.__landintel_sync_translate) {
+          window.__landintel_sync_translate(savedLang);
+        }
       }
-    }, 500);
+      if (pollCount >= 50) {
+        clearInterval(fastPoll);
+      }
+    }, 40);
 
     return () => {
       observer?.disconnect();
-      clearInterval(pollInterval);
+      clearInterval(fastPoll);
     };
   }, [shouldLoadScript]);
 
@@ -155,12 +152,13 @@ export function GoogleTranslateIntegration() {
       <div
         id="google_translate_element"
         style={{ display: "none" }}
+        className="notranslate"
       />
       {shouldLoadScript && (
         <Script
           id="google-translate-script"
           src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
         />
       )}
     </>
@@ -214,7 +212,6 @@ function hideTranslateArtifacts() {
     });
 
     // Fix Lighthouse: "[aria-hidden="true"] elements contain focusable descendants"
-    // Neutralizes any focusable children injected into aria-hidden containers by external scripts
     document.querySelectorAll('[aria-hidden="true"]').forEach((hiddenEl) => {
       const focusables = hiddenEl.querySelectorAll(
         'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
