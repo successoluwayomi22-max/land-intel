@@ -92,14 +92,15 @@ export const APP_CONFIG = {
     { id: "UNKNOWN", label: "Unknown / Unclassified", description: "Document requires classification" },
   ] as const,
 
-  // Nigerian Property Types
+  // Property Types (Supported Globally and Locally)
   propertyTypes: [
     { id: "LAND", label: "Bare Land / Plot" },
     { id: "RESIDENTIAL", label: "Residential (House / Apartment / Duplex)" },
     { id: "COMMERCIAL", label: "Commercial (Office / Plaza / Retail)" },
+    { id: "INDUSTRIAL", label: "Industrial (Warehouse / Factory / Logistics)" },
     { id: "AGRICULTURAL", label: "Agricultural / Farmland" },
-    { id: "MIXED_USE", label: "Mixed-Use" },
-    { id: "OTHER", label: "Other" },
+    { id: "MIXED_USE", label: "Mixed-Use Development" },
+    { id: "OTHER", label: "Other / Unclassified" },
   ] as const,
 
   // Nigerian States

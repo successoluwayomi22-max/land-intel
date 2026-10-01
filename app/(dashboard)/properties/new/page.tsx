@@ -60,26 +60,48 @@ export default function NewPropertyCasePage() {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const addr = params.get("address");
-      if (addr) {
-        // Detect country from address string
-        const lower = addr.toLowerCase();
-        let matchedCode = "NG";
-        if (lower.includes("united kingdom") || lower.includes("london") || lower.includes(" uk")) matchedCode = "GB";
-        else if (lower.includes("united states") || lower.includes("texas") || lower.includes("usa") || lower.includes("houston")) matchedCode = "US";
-        else if (lower.includes("canada") || lower.includes("toronto") || lower.includes("ontario")) matchedCode = "CA";
-        else if (lower.includes("dubai") || lower.includes("emirates") || lower.includes("uae") || lower.includes("abu dhabi")) matchedCode = "AE";
-        else if (lower.includes("kenya") || lower.includes("nairobi")) matchedCode = "KE";
-        else if (lower.includes("south africa") || lower.includes("johannesburg") || lower.includes("sandton")) matchedCode = "ZA";
-        else if (lower.includes("ghana") || lower.includes("accra")) matchedCode = "GH";
+      const paramCountryCode = params.get("countryCode");
+      const paramPropertyType = params.get("propertyType");
+      const paramLat = params.get("lat");
+      const paramLng = params.get("lng");
+
+      if (addr || paramLat) {
+        // Detect country from explicit param or address string
+        const lower = (addr || "").toLowerCase();
+        let matchedCode = paramCountryCode || "NG";
+        if (!paramCountryCode) {
+          if (lower.includes("united kingdom") || lower.includes("london") || lower.includes(" uk")) matchedCode = "GB";
+          else if (lower.includes("united states") || lower.includes("texas") || lower.includes("usa") || lower.includes("houston")) matchedCode = "US";
+          else if (lower.includes("canada") || lower.includes("toronto") || lower.includes("ontario")) matchedCode = "CA";
+          else if (lower.includes("dubai") || lower.includes("emirates") || lower.includes("uae") || lower.includes("abu dhabi")) matchedCode = "AE";
+          else if (lower.includes("kenya") || lower.includes("nairobi")) matchedCode = "KE";
+          else if (lower.includes("south africa") || lower.includes("johannesburg") || lower.includes("sandton")) matchedCode = "ZA";
+          else if (lower.includes("ghana") || lower.includes("accra")) matchedCode = "GH";
+          else if (lower.includes("australia") || lower.includes("sydney")) matchedCode = "AU";
+        }
 
         setCountryCode(matchedCode);
         const cObj = COUNTRIES.find((c) => c.code === matchedCode) || COUNTRIES[0];
 
+        const parsedLat = paramLat ? parseFloat(paramLat) : undefined;
+        const parsedLng = paramLng ? parseFloat(paramLng) : undefined;
+
+        if (parsedLat && parsedLng && !isNaN(parsedLat) && !isNaN(parsedLng)) {
+          setResolvedLocation({
+            lat: parsedLat,
+            lng: parsedLng,
+            formattedAddress: addr || `${parsedLat.toFixed(4)}, ${parsedLng.toFixed(4)}`,
+          });
+        }
+
         setFormData((prev) => ({
           ...prev,
-          address: addr,
-          title: prev.title || `Verification - ${addr.split(",")[0].trim()}`,
+          address: addr || prev.address,
+          title: prev.title || (addr ? `Verification - ${addr.split(",")[0].trim()}` : "Cadastral Audit"),
           state: prev.state || cObj.defaultRegion || "",
+          propertyType: paramPropertyType || prev.propertyType,
+          latitude: parsedLat ? String(parsedLat) : prev.latitude,
+          longitude: parsedLng ? String(parsedLng) : prev.longitude,
         }));
       }
     }
