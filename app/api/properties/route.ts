@@ -77,7 +77,8 @@ export async function POST(request: NextRequest) {
         address: data.address,
         lga: data.lga,
         state: data.state,
-        country: data.country || "Nigeria",
+        country: data.country,
+        countryCode: data.countryCode,
       });
       if (geo.found && geo.lat && geo.lng) {
         latitude = geo.lat;

@@ -94,7 +94,8 @@ export async function GET(
             address: propertyCase.address,
             lga: propertyCase.lga,
             state: propertyCase.state,
-            country: propertyCase.country || "Nigeria",
+            country: propertyCase.country || undefined,
+            countryCode: propertyCase.countryCode || undefined,
           });
           if (geo.found && geo.lat && geo.lng) {
             latitude = geo.lat;

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Building2, MapPin, CheckCircle2, ChevronDown } from "lucide-react";
+import { ArrowLeft, Building2, MapPin, CheckCircle2, ChevronDown, Search, RefreshCw, AlertCircle } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -32,6 +32,12 @@ export default function NewPropertyCasePage() {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [countryCode, setCountryCode] = useState("NG");
+  const [isResolvingLocation, setIsResolvingLocation] = useState(false);
+  const [resolvedLocation, setResolvedLocation] = useState<{
+    lat: number;
+    lng: number;
+    formattedAddress: string;
+  } | null>(null);
 
   const selectedCountry = COUNTRIES.find((c) => c.code === countryCode) || COUNTRIES[0];
 
@@ -48,6 +54,36 @@ export default function NewPropertyCasePage() {
     longitude: "",
     description: "",
   });
+
+  // Pre-populate if arriving with ?address= parameter
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const addr = params.get("address");
+      if (addr) {
+        // Detect country from address string
+        const lower = addr.toLowerCase();
+        let matchedCode = "NG";
+        if (lower.includes("united kingdom") || lower.includes("london") || lower.includes(" uk")) matchedCode = "GB";
+        else if (lower.includes("united states") || lower.includes("texas") || lower.includes("usa") || lower.includes("houston")) matchedCode = "US";
+        else if (lower.includes("canada") || lower.includes("toronto") || lower.includes("ontario")) matchedCode = "CA";
+        else if (lower.includes("dubai") || lower.includes("emirates") || lower.includes("uae") || lower.includes("abu dhabi")) matchedCode = "AE";
+        else if (lower.includes("kenya") || lower.includes("nairobi")) matchedCode = "KE";
+        else if (lower.includes("south africa") || lower.includes("johannesburg") || lower.includes("sandton")) matchedCode = "ZA";
+        else if (lower.includes("ghana") || lower.includes("accra")) matchedCode = "GH";
+
+        setCountryCode(matchedCode);
+        const cObj = COUNTRIES.find((c) => c.code === matchedCode) || COUNTRIES[0];
+
+        setFormData((prev) => ({
+          ...prev,
+          address: addr,
+          title: prev.title || `Verification - ${addr.split(",")[0].trim()}`,
+          state: prev.state || cObj.defaultRegion || "",
+        }));
+      }
+    }
+  }, []);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -94,6 +130,48 @@ export default function NewPropertyCasePage() {
   const { currency } = useLocale();
   const activeCurrConfig = CURRENCIES[currency] || CURRENCIES.NGN;
 
+  const handleLocateAddress = async () => {
+    if (!formData.address.trim()) {
+      toast("Please enter an address or location to pinpoint", "info");
+      return;
+    }
+    setIsResolvingLocation(true);
+    try {
+      const cleanCountry = selectedCountry.name.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, "").trim();
+      const res = await fetch("/api/geo/geocode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          address: formData.address,
+          lga: formData.lga,
+          state: formData.state,
+          country: cleanCountry,
+          countryCode: selectedCountry.code,
+        }),
+      });
+      const data = await res.json();
+      if (data.found && data.lat && data.lng) {
+        setFormData((prev) => ({
+          ...prev,
+          latitude: String(data.lat),
+          longitude: String(data.lng),
+        }));
+        setResolvedLocation({
+          lat: data.lat,
+          lng: data.lng,
+          formattedAddress: data.formattedAddress || formData.address,
+        });
+        toast(`Location verified: ${data.lat.toFixed(4)}, ${data.lng.toFixed(4)}`, "success");
+      } else {
+        toast("Could not pinpoint exact parcel. Try adding city/area details or enter GPS coordinates manually.", "info");
+      }
+    } catch {
+      toast("Failed to connect to cadastral geocoding engine", "error");
+    } finally {
+      setIsResolvingLocation(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -103,13 +181,14 @@ export default function NewPropertyCasePage() {
       const rawPrice = formData.purchasePrice ? parseFloat(formData.purchasePrice) : null;
       // Convert to NGN standard baseline for backend risk engine if entered in foreign currency
       const priceInNgn = rawPrice ? (currency === "NGN" ? rawPrice : rawPrice * activeCurrConfig.rateToNgn) : null;
+      const cleanCountry = selectedCountry.name.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, "").trim();
 
       const res = await fetch("/api/properties", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          country: selectedCountry.name,
+          country: cleanCountry,
           countryCode: selectedCountry.code,
           purchasePrice: priceInNgn,
           currency,
@@ -235,15 +314,51 @@ export default function NewPropertyCasePage() {
               />
             </div>
 
-            <Input
-              label="Full Address / Location Description"
-              placeholder="e.g. Parcel 42, Block 8, Outer Perimeter Way"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              error={errors.address}
-              required
-            />
+            <div>
+              <Input
+                label="Full Address / Location Description"
+                placeholder="e.g. Parcel 42, Block 8, Outer Perimeter Way"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                error={errors.address}
+                required
+              />
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={handleLocateAddress}
+                  disabled={isResolvingLocation || !formData.address.trim()}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 font-bold text-xs transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {isResolvingLocation ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-600" />
+                      <span>Pinpointing on Cadastre...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Search className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Locate &amp; Verify on Map</span>
+                    </>
+                  )}
+                </button>
+
+                {resolvedLocation ? (
+                  <div className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 font-medium">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>
+                      Verified: {resolvedLocation.lat.toFixed(4)}, {resolvedLocation.lng.toFixed(4)}
+                    </span>
+                  </div>
+                ) : formData.latitude && formData.longitude ? (
+                  <div className="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md font-mono">
+                    <MapPin className="w-3 h-3 text-slate-500" />
+                    <span>Coordinates Provided ({Number(formData.latitude).toFixed(4)}, {Number(formData.longitude).toFixed(4)})</span>
+                  </div>
+                ) : null}
+              </div>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
