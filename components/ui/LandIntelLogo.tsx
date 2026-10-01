@@ -20,12 +20,38 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
   iconOnly = false,
   href,
 }) => {
+  const rawId = React.useId();
+  const safeId = rawId.replace(/[^a-zA-Z0-9_-]/g, "");
+  const leftEmeraldId = `liPinLeft-${safeId}`;
+  const rightGoldId = `liPinRight-${safeId}`;
+  const centerSphereId = `liSphere-${safeId}`;
+
   // Responsive size dimensions tailored for mobile and desktop screens
   const sizeMap = {
-    sm: { iconClass: "w-7 h-7", text: "text-sm sm:text-base", subText: "text-[7px]", gap: "gap-2" },
-    md: { iconClass: "w-8 h-8 sm:w-10 sm:h-10", text: "text-[15px] sm:text-lg", subText: "text-[8px]", gap: "gap-2 sm:gap-2.5" },
-    lg: { iconClass: "w-10 h-10 sm:w-12 sm:h-12", text: "text-lg sm:text-xl", subText: "text-[9px]", gap: "gap-2.5 sm:gap-3" },
-    xl: { iconClass: "w-12 h-12 sm:w-14 sm:h-14", text: "text-xl sm:text-2xl", subText: "text-[10px]", gap: "gap-3 sm:gap-4" },
+    sm: {
+      iconClass: "w-7 h-7 min-w-[28px] min-h-[28px]",
+      text: "text-sm sm:text-base",
+      subText: "text-[7px]",
+      gap: "gap-2",
+    },
+    md: {
+      iconClass: "w-[34px] h-[34px] min-w-[34px] min-h-[34px] sm:w-10 sm:h-10 sm:min-w-[40px] sm:min-h-[40px]",
+      text: "text-[15px] sm:text-lg",
+      subText: "text-[8px]",
+      gap: "gap-2 sm:gap-2.5",
+    },
+    lg: {
+      iconClass: "w-11 h-11 min-w-[44px] min-h-[44px] sm:w-12 sm:h-12 sm:min-w-[48px] sm:min-h-[48px]",
+      text: "text-lg sm:text-xl",
+      subText: "text-[9px]",
+      gap: "gap-2.5 sm:gap-3",
+    },
+    xl: {
+      iconClass: "w-12 h-12 min-w-[48px] min-h-[48px] sm:w-14 sm:h-14 sm:min-w-[56px] sm:min-h-[56px]",
+      text: "text-xl sm:text-2xl",
+      subText: "text-[10px]",
+      gap: "gap-3 sm:gap-4",
+    },
   };
 
   const currentSize = sizeMap[size] || sizeMap.md;
@@ -48,30 +74,26 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
           viewBox="0 0 64 64"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full drop-shadow-sm overflow-visible"
+          className="w-full h-full drop-shadow-sm overflow-visible shrink-0"
         >
           <defs>
-            <linearGradient id="liPinLeftEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id={leftEmeraldId} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#047857" />
               <stop offset="60%" stopColor="#059669" />
               <stop offset="100%" stopColor="#10B981" />
             </linearGradient>
 
-            <linearGradient id="liPinRightGold" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id={rightGoldId} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#F59E0B" />
               <stop offset="50%" stopColor="#D97706" />
               <stop offset="100%" stopColor="#B45309" />
             </linearGradient>
 
-            <radialGradient id="liCenterSphere" cx="35%" cy="35%" r="65%">
+            <radialGradient id={centerSphereId} cx="35%" cy="35%" r="65%">
               <stop offset="0%" stopColor="#34D399" />
               <stop offset="40%" stopColor="#059669" />
               <stop offset="100%" stopColor="#064E3B" />
             </radialGradient>
-
-            <filter id="liShadowFilter" x="-20%" y="-10%" width="140%" height="150%">
-              <feDropShadow dx="0" dy="3" stdDeviation="2.5" floodColor="#0F172A" floodOpacity="0.22" />
-            </filter>
           </defs>
 
           {/* Architectural Cadastral Wireframe Grid */}
@@ -96,27 +118,27 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
           </g>
 
           {/* Ground Contact Target Shadow */}
-          <ellipse cx="32" cy="46" rx="4" ry="1.8" fill="#0F172A" fillOpacity="0.3" />
+          <ellipse cx="32" cy="46" rx="4.5" ry="2" fill="#0F172A" fillOpacity="0.32" />
 
-          {/* 3D Dual-Tone Pin */}
-          <g filter="url(#liShadowFilter)">
+          {/* 3D Dual-Tone Pin: Always rendered cleanly with fallback fills */}
+          <g>
             {/* Left Half (Emerald Green) */}
             <path
               d="M32 7C24.268 7 18 13.268 18 21C18 28.5 28.5 38.5 32 42V7Z"
-              fill="url(#liPinLeftEmerald)"
+              fill={`url(#${leftEmeraldId}) #059669`}
             />
 
             {/* Right Half (Champagne Gold) */}
             <path
               d="M32 7V42C35.5 38.5 46 28.5 46 21C46 13.268 39.732 7 32 7Z"
-              fill="url(#liPinRightGold)"
+              fill={`url(#${rightGoldId}) #D97706`}
             />
 
             {/* Center Outer Rim */}
             <circle cx="32" cy="21" r="7.5" fill="#FFFFFF" />
 
             {/* Central Floating Sphere */}
-            <circle cx="32" cy="21" r="4.8" fill="url(#liCenterSphere)" />
+            <circle cx="32" cy="21" r="4.8" fill={`url(#${centerSphereId}) #059669`} />
             <circle cx="30.5" cy="19.5" r="1.3" fill="#FFFFFF" fillOpacity="0.85" />
           </g>
         </svg>

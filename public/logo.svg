@@ -21,9 +21,6 @@
       <stop offset="100%" stop-color="#064E3B" />
     </radialGradient>
 
-    <filter id="lockupPinShadow" x="-20%" y="-10%" width="140%" height="150%">
-      <feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#0F172A" flood-opacity="0.22" />
-    </filter>
   </defs>
 
   <!-- ICON (Centered at x=32, y=32) -->
@@ -49,24 +46,24 @@
     </g>
 
     <!-- Ground shadow -->
-    <ellipse cx="32" cy="46" rx="4" ry="1.8" fill="#0F172A" fill-opacity="0.35" />
+    <ellipse cx="32" cy="46" rx="4.5" ry="2" fill="#0F172A" fill-opacity="0.32" />
 
     <!-- 3D Dual-Tone Pin -->
-    <g filter="url(#lockupPinShadow)">
+    <g>
       <!-- Left (Emerald) -->
       <path
         d="M32 7C24.268 7 18 13.268 18 21C18 28.5 28.5 38.5 32 42V7Z"
-        fill="url(#lockupLeftEmerald)"
+        fill="url(#lockupLeftEmerald) #059669"
       />
       <!-- Right (Gold) -->
       <path
         d="M32 7V42C35.5 38.5 46 28.5 46 21C46 13.268 39.732 7 32 7Z"
-        fill="url(#lockupRightGold)"
+        fill="url(#lockupRightGold) #D97706"
       />
       <!-- Center ring -->
       <circle cx="32" cy="21" r="7.5" fill="#FFFFFF" />
-      <circle cx="32" cy="21" r="4.8" fill="url(#lockupCenterSphere)" />
-      <circle cx="30.5" cy="19.5" r="1.3" fill="#FFFFFF" fill-opacity="0.8" />
+      <circle cx="32" cy="21" r="4.8" fill="url(#lockupCenterSphere) #059669" />
+      <circle cx="30.5" cy="19.5" r="1.3" fill="#FFFFFF" fill-opacity="0.85" />
     </g>
   </g>
 
