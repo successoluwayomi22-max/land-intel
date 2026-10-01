@@ -27,12 +27,12 @@ export const ReCaptcha: React.FC<ReCaptchaProps> = ({
 }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [googleVerified, setGoogleVerified] = useState(false);
+  const [isError, setIsError] = useState(false);
   const siteKey = RECAPTCHA_SITE_KEY;
   const verifiedRef = useRef(false);
 
-  // Attempt Google reCAPTCHA v3 background execution
-  const executeGoogleV3 = useCallback(async () => {
+  // Execute Google reCAPTCHA v3 in the background
+  const executeGoogleV3 = useCallback(async (): Promise<boolean> => {
     if (!siteKey || typeof window === "undefined" || !window.grecaptcha?.execute) {
       return false;
     }
@@ -52,12 +52,12 @@ export const ReCaptcha: React.FC<ReCaptchaProps> = ({
       if (token && !verifiedRef.current) {
         verifiedRef.current = true;
         setIsChecked(true);
-        setGoogleVerified(true);
+        setIsError(false);
         onVerify(token);
         return true;
       }
     } catch (err) {
-      console.warn("[RECAPTCHA v3] Background execution notice:", err);
+      console.warn("[RECAPTCHA v3] Execution failed:", err);
     }
     return false;
   }, [siteKey, onVerify]);
@@ -91,32 +91,40 @@ export const ReCaptcha: React.FC<ReCaptchaProps> = ({
     };
   }, [siteKey, executeGoogleV3]);
 
-  // Interactive user click handler (guarantees verification even if Google is blocked)
+  // Interactive click handler — ONLY uses real Google reCAPTCHA
   const handleToggle = () => {
     if (isChecked) return;
 
     setIsVerifying(true);
+    setIsError(false);
+
     setTimeout(async () => {
-      // Try Google v3 first
       const v3Success = await executeGoogleV3();
       if (!v3Success && !verifiedRef.current) {
-        // Safe human presence fallback token
-        const fallbackToken = `fallback-human-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-        verifiedRef.current = true;
-        setIsChecked(true);
-        onVerify(fallbackToken);
+        // Google reCAPTCHA failed — show error, do NOT issue fallback token
+        setIsError(true);
+        console.warn("[RECAPTCHA] Google verification unavailable. User must retry.");
       }
       setIsVerifying(false);
     }, 400);
   };
 
+  // Allow retry after an error
+  const handleRetry = () => {
+    setIsError(false);
+    verifiedRef.current = false;
+    handleToggle();
+  };
+
   return (
     <div className={`recaptcha-widget my-3 ${className}`}>
       <div
-        onClick={handleToggle}
+        onClick={isError ? handleRetry : handleToggle}
         className={`w-full max-w-[320px] p-3.5 rounded-lg border transition-all duration-200 cursor-pointer select-none flex items-center justify-between shadow-2xs ${
           isChecked
             ? "bg-emerald-50/70 border-emerald-300 ring-1 ring-emerald-400/20"
+            : isError
+            ? "bg-red-50/70 border-red-300 ring-1 ring-red-400/20"
             : "bg-white hover:bg-slate-50/80 border-slate-200 hover:border-slate-300"
         }`}
       >
@@ -125,6 +133,8 @@ export const ReCaptcha: React.FC<ReCaptchaProps> = ({
             className={`w-6 h-6 rounded flex items-center justify-center transition-all duration-200 border ${
               isChecked
                 ? "bg-emerald-600 border-emerald-600 text-white"
+                : isError
+                ? "bg-red-100 border-red-300"
                 : isVerifying
                 ? "bg-slate-100 border-slate-300"
                 : "bg-white border-slate-300 hover:border-slate-400"
@@ -134,22 +144,24 @@ export const ReCaptcha: React.FC<ReCaptchaProps> = ({
               <Check className="w-4 h-4 stroke-[3]" />
             ) : isVerifying ? (
               <RefreshCw className="w-3.5 h-3.5 text-brand-blue animate-spin" />
+            ) : isError ? (
+              <span className="text-red-500 text-xs font-bold">!</span>
             ) : null}
           </div>
 
           <div className="text-left">
             <span
               className={`text-xs font-semibold block ${
-                isChecked ? "text-emerald-900" : "text-slate-800"
+                isChecked ? "text-emerald-900" : isError ? "text-red-800" : "text-slate-800"
               }`}
             >
-              {isChecked ? "I am not a robot" : "I am not a robot"}
+              {isError ? "Verification failed" : "I am not a robot"}
             </span>
             <span className="text-[10px] text-slate-400 block">
               {isChecked
-                ? googleVerified
-                  ? "Google reCAPTCHA Verified"
-                  : "Security Verified"
+                ? "Google reCAPTCHA Verified"
+                : isError
+                ? "Click to retry verification"
                 : "Click to verify human presence"}
             </span>
           </div>

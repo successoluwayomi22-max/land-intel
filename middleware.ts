@@ -9,12 +9,42 @@ const JWT_SECRET = new TextEncoder().encode(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. Enforce strict server-side protection on all /admin routes
-  if (pathname.startsWith("/admin")) {
-    const token =
-      request.cookies.get("landintel_session")?.value ||
-      request.cookies.get("diasporaland_session")?.value;
+  const token =
+    request.cookies.get("landintel_session")?.value ||
+    request.cookies.get("diasporaland_session")?.value;
 
+  // 1. Protect /dashboard — require authenticated AND verified user
+  if (pathname.startsWith("/dashboard")) {
+    if (!token) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    try {
+      const { payload } = await jwtVerify(token, JWT_SECRET);
+      const isVerified = (payload as any)?.isVerified;
+      const email = (payload as any)?.email;
+
+      // Block unverified users from dashboard — force them to verify email first
+      if (isVerified === false) {
+        const verifyUrl = new URL("/verify-email", request.url);
+        if (email) verifyUrl.searchParams.set("email", email);
+        return NextResponse.redirect(verifyUrl);
+      }
+    } catch {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      loginUrl.searchParams.set("auth_error", "session_invalid");
+      const res = NextResponse.redirect(loginUrl);
+      res.cookies.delete("landintel_session");
+      res.cookies.delete("diasporaland_session");
+      return res;
+    }
+  }
+
+  // 2. Enforce strict server-side protection on all /admin routes
+  if (pathname.startsWith("/admin")) {
     // If not authenticated, redirect to /login
     if (!token) {
       const loginUrl = new URL("/login", request.url);

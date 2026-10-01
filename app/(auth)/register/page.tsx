@@ -136,7 +136,11 @@ export default function RegisterPage() {
       return;
     }
 
-    const tokenToSend = captchaToken || `fallback-human-${Date.now()}`;
+    // SECURITY: Require the real reCAPTCHA token — no fallback
+    if (!captchaToken) {
+      setError("Please complete the security verification (reCAPTCHA) before registering.");
+      return;
+    }
 
     setLoading(true);
 
@@ -148,7 +152,7 @@ export default function RegisterPage() {
           name: name.trim(),
           email: email.trim().toLowerCase(),
           password,
-          captchaToken: tokenToSend,
+          captchaToken,
         }),
       });
 
@@ -163,20 +167,22 @@ export default function RegisterPage() {
         return;
       }
 
-      toast("Account registered successfully! Welcome to LandIntel.", "success");
-      if (typeof window !== "undefined") {
-        if (data.token) {
-          localStorage.setItem("landintel_token", data.token);
-        }
-        if (data.user) {
-          localStorage.setItem("landintel_user", JSON.stringify(data.user));
-        }
-      }
-
-      // If email verification is required, redirect to OTP page
+      // If email verification is required, only redirect — do NOT store session.
+      // The user must verify their email first to get a session token.
       if (data.requiresVerification) {
+        toast("Account created! Please check your email for a verification code.", "success");
         router.push(`/verify-email?email=${encodeURIComponent(email.trim().toLowerCase())}`);
       } else {
+        // No email verification required (dev mode) — store session and go to dashboard
+        toast("Account registered successfully! Welcome to LandIntel.", "success");
+        if (typeof window !== "undefined") {
+          if (data.token) {
+            localStorage.setItem("landintel_token", data.token);
+          }
+          if (data.user) {
+            localStorage.setItem("landintel_user", JSON.stringify(data.user));
+          }
+        }
         router.push("/dashboard");
       }
     } catch {

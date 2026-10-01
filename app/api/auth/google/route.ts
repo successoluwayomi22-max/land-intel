@@ -259,6 +259,7 @@ export async function POST(request: NextRequest) {
       email: user.email,
       role: user.role,
       name: user.name,
+      isVerified: true,
     });
 
     await logAudit({

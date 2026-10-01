@@ -125,6 +125,7 @@ export async function GET(request: NextRequest) {
       email: user.email,
       role: user.role,
       name: user.name,
+      isVerified: true,
     });
 
     await logAudit({

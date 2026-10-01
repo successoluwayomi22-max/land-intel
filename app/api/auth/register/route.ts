@@ -127,12 +127,32 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create session token
+    // SECURITY: Only issue a session token AFTER email verification is complete.
+    // If email verification is required, do NOT create a session — the user
+    // must complete OTP verification first via /api/auth/verify-otp.
+    if (emailEnabled) {
+      return NextResponse.json(
+        {
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            isVerified: false,
+          },
+          requiresVerification: true,
+        },
+        { status: 201 }
+      );
+    }
+
+    // Dev/no-email mode: auto-verified, issue session immediately
     const token = await createSessionToken({
       userId: user.id,
       email: user.email,
       role: user.role,
       name: user.name,
+      isVerified: true,
     });
 
     const response = NextResponse.json(
@@ -142,10 +162,10 @@ export async function POST(request: NextRequest) {
           name: user.name,
           email: user.email,
           role: user.role,
-          isVerified: user.isVerified,
+          isVerified: true,
         },
         token,
-        requiresVerification: emailEnabled,
+        requiresVerification: false,
       },
       { status: 201 }
     );
