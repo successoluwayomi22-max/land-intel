@@ -17,6 +17,27 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Invalid role specified" }, { status: 400 });
     }
 
+    const targetUser = await db.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true, email: true, role: true },
+    });
+
+    if (!targetUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Protect main/seed admin
+    if (
+      targetUser.email === "admin@diasporaland.ai" ||
+      targetUser.email === "admin@landintel.ai" ||
+      targetUser.role === "SUPER_ADMIN"
+    ) {
+      return NextResponse.json(
+        { error: "The primary platform administrator account cannot be demoted or modified." },
+        { status: 403 }
+      );
+    }
+
     const updatedUser = await db.user.update({
       where: { id: userId },
       data: { role },
@@ -61,6 +82,18 @@ export async function DELETE(request: NextRequest) {
 
     if (!targetUser) {
       return NextResponse.json({ error: "User not found or has already been deleted" }, { status: 404 });
+    }
+
+    // Protect main/seed admin
+    if (
+      targetUser.email === "admin@diasporaland.ai" ||
+      targetUser.email === "admin@landintel.ai" ||
+      targetUser.role === "SUPER_ADMIN"
+    ) {
+      return NextResponse.json(
+        { error: "The primary platform administrator account cannot be deleted." },
+        { status: 403 }
+      );
     }
 
     // Protect self-deletion: Admin cannot delete their own active account

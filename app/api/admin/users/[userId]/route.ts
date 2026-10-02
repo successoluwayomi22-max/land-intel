@@ -23,6 +23,18 @@ export async function DELETE(
       return NextResponse.json({ error: "User not found or has already been deleted" }, { status: 404 });
     }
 
+    // Protect main/seed admin
+    if (
+      targetUser.email === "admin@diasporaland.ai" ||
+      targetUser.email === "admin@landintel.ai" ||
+      targetUser.role === "SUPER_ADMIN"
+    ) {
+      return NextResponse.json(
+        { error: "The primary platform administrator account cannot be deleted." },
+        { status: 403 }
+      );
+    }
+
     if (targetUser.id === admin.id) {
       return NextResponse.json(
         { error: "You cannot delete your own active administrator account" },

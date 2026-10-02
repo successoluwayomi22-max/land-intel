@@ -157,6 +157,13 @@ export default function AdminProDashboardPage() {
 
   // Change user role
   const handleRoleChange = async (userId: string, newRole: string) => {
+    const targetUser = allUsers.find((u: any) => u.id === userId);
+    if (newRole === "FREE" && targetUser?.role === "ADMIN") {
+      if (!confirm(`REVOKE ADMIN ACCESS:\nAre you sure you want to remove administrator privileges from ${targetUser.email} (${targetUser.name})? They will become a standard Free customer.`)) {
+        return;
+      }
+    }
+
     setActionLoading(true);
     try {
       const res = await fetch("/api/admin/users", {
@@ -166,7 +173,11 @@ export default function AdminProDashboardPage() {
       });
       const result = await res.json();
       if (res.ok && result.success) {
-        showToast(`User role successfully changed to ${newRole}`);
+        showToast(
+          newRole === "FREE" && targetUser?.role === "ADMIN"
+            ? `Administrator privileges revoked for ${targetUser.email}.`
+            : `User role successfully changed to ${newRole}`
+        );
         fetchData();
       } else {
         showToast(`Failed: ${result.error || "Could not change role"}`);
@@ -329,7 +340,13 @@ export default function AdminProDashboardPage() {
     LOW: 0,
   };
 
-  const allUsers = data?.allUsers || [];
+  // Exclude the primary/first platform administrator from customer accounts list
+  const allUsers = (data?.allUsers || []).filter(
+    (u: any) =>
+      u.email !== "admin@diasporaland.ai" &&
+      u.email !== "admin@landintel.ai" &&
+      u.role !== "SUPER_ADMIN"
+  );
   const recentCases = data?.recentCases || [];
   const payments = data?.payments || [];
   const recentAuditLogs = data?.recentAuditLogs || [];
@@ -1295,17 +1312,25 @@ export default function AdminProDashboardPage() {
                         >
                           Grant Paid
                         </button>
-                        <button
-                          onClick={() => handleRoleChange(u.id, "ADMIN")}
-                          disabled={actionLoading || u.role === "ADMIN"}
-                          className={`px-2 py-1 rounded text-[10px] font-semibold transition-all ${
-                            u.role === "ADMIN"
-                              ? "bg-amber-900/40 text-amber-400 opacity-40 cursor-not-allowed"
-                              : "bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold cursor-pointer"
-                          }`}
-                        >
-                          Promote Admin
-                        </button>
+                        {u.role === "ADMIN" ? (
+                          <button
+                            onClick={() => handleRoleChange(u.id, "FREE")}
+                            disabled={actionLoading}
+                            title={`Revoke administrator access from ${u.email}`}
+                            className="px-2 py-1 rounded text-[10px] font-semibold transition-all bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 border border-amber-500/40 cursor-pointer"
+                          >
+                            Remove Admin
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleRoleChange(u.id, "ADMIN")}
+                            disabled={actionLoading}
+                            title={`Promote ${u.email} to Administrator`}
+                            className="px-2 py-1 rounded text-[10px] font-semibold transition-all bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold cursor-pointer"
+                          >
+                            Promote Admin
+                          </button>
+                        )}
                         <button
                           onClick={() => handleDeleteUser(u.id, u.email, u.name)}
                           disabled={actionLoading}

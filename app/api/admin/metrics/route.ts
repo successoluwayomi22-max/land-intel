@@ -30,7 +30,14 @@ export async function GET() {
       aiLedgers,
       allReports,
     ] = await Promise.all([
-      db.user.count(),
+      db.user.count({
+        where: {
+          AND: [
+            { email: { notIn: ["admin@diasporaland.ai", "admin@landintel.ai"] } },
+            { role: { not: "SUPER_ADMIN" } },
+          ],
+        },
+      }),
       db.propertyCase.count(),
       db.propertyDocument.count(),
       db.propertyReport.count(),
@@ -57,8 +64,14 @@ export async function GET() {
         },
       }),
       db.user.findMany({
+        where: {
+          AND: [
+            { email: { notIn: ["admin@diasporaland.ai", "admin@landintel.ai"] } },
+            { role: { not: "SUPER_ADMIN" } },
+          ],
+        },
         orderBy: { createdAt: "desc" },
-        take: 50,
+        take: 100,
         select: {
           id: true,
           name: true,
