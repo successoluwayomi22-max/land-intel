@@ -41,6 +41,8 @@ import {
   Copy,
   Edit3,
   X,
+  Smartphone,
+  Lock,
   Save,
   Trash2,
   UserX,
@@ -72,6 +74,17 @@ export default function AdminProDashboardPage() {
   const [manualReasonInput, setManualReasonInput] = useState("");
   const [manualHoursInput, setManualHoursInput] = useState(24);
   const [manualPermanent, setManualPermanent] = useState(false);
+
+  // Admin 2FA Enforcement State
+  const [adminMfaStatus, setAdminMfaStatus] = useState<{ mfaEnabled: boolean; recoveryCodesRemaining: number } | null>(null);
+  const [isMfaModalOpen, setIsMfaModalOpen] = useState(false);
+  const [mfaSetupData, setMfaSetupData] = useState<{ secret: string; totpUri: string; recoveryCodes: string[] } | null>(null);
+  const [mfaVerifyCode, setMfaVerifyCode] = useState("");
+  const [mfaLoading, setMfaLoading] = useState(false);
+  const [mfaError, setMfaError] = useState<string | null>(null);
+  const [mfaSuccess, setMfaSuccess] = useState(false);
+  const [mfaBackupCodesRevealed, setMfaBackupCodesRevealed] = useState(false);
+  const [mfaStep, setMfaStep] = useState<"intro" | "scan" | "verify" | "backup" | "done">("intro");
 
   // Manual payment verify state
   const [manualRef, setManualRef] = useState("");
@@ -155,6 +168,20 @@ export default function AdminProDashboardPage() {
         }
       } catch (e) {
         console.error("Could not fetch security threats:", e);
+      }
+
+      // Fetch Admin 2FA / MFA status
+      try {
+        const mfaRes = await fetch("/api/auth/mfa");
+        const mfaData = await mfaRes.json();
+        if (mfaData.success) {
+          setAdminMfaStatus({
+            mfaEnabled: !!mfaData.mfaEnabled,
+            recoveryCodesRemaining: mfaData.recoveryCodesRemaining || 0,
+          });
+        }
+      } catch (e) {
+        console.error("Could not fetch MFA status:", e);
       }
     } catch (err) {
       console.error("Failed to load admin telemetry:", err);
@@ -248,6 +275,90 @@ export default function AdminProDashboardPage() {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  // Admin 2FA / MFA Setup Handlers
+  const handleStartMfaSetup = async () => {
+    setMfaLoading(true);
+    setMfaError(null);
+    setMfaSuccess(false);
+    setMfaBackupCodesRevealed(false);
+    setMfaVerifyCode("");
+    try {
+      const res = await fetch("/api/auth/mfa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "GENERATE_SETUP" }),
+      });
+      const d = await res.json();
+      if (res.ok && d.success) {
+        setMfaSetupData({
+          secret: d.secret,
+          totpUri: d.totpUri,
+          recoveryCodes: d.recoveryCodes || [],
+        });
+        setMfaStep("scan");
+      } else {
+        setMfaError(d.error || "Failed to generate MFA setup data");
+      }
+    } catch (e: any) {
+      setMfaError(`Network error: ${e.message}`);
+    } finally {
+      setMfaLoading(false);
+    }
+  };
+
+  const handleVerifyAndActivateMfa = async () => {
+    if (!mfaVerifyCode || mfaVerifyCode.length !== 6) {
+      setMfaError("Please enter the 6-digit code from your authenticator app.");
+      return;
+    }
+    if (!mfaSetupData) return;
+    setMfaLoading(true);
+    setMfaError(null);
+    try {
+      const res = await fetch("/api/auth/mfa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "VERIFY_AND_ENABLE",
+          code: mfaVerifyCode,
+          secret: mfaSetupData.secret,
+          backupCodes: mfaSetupData.recoveryCodes,
+        }),
+      });
+      const d = await res.json();
+      if (res.ok && d.success && d.verified) {
+        setMfaSuccess(true);
+        setMfaStep("backup");
+        setAdminMfaStatus({ mfaEnabled: true, recoveryCodesRemaining: mfaSetupData.recoveryCodes.length });
+        showToast("Two-Factor Authentication (TOTP) successfully activated for your admin account!");
+      } else {
+        setMfaError(d.error || "Verification failed. Check the code and try again.");
+      }
+    } catch (e: any) {
+      setMfaError(`Network error: ${e.message}`);
+    } finally {
+      setMfaLoading(false);
+    }
+  };
+
+  const handleCopyMfaBackupCodes = () => {
+    if (!mfaSetupData?.recoveryCodes) return;
+    const text = mfaSetupData.recoveryCodes.join("\n");
+    navigator.clipboard.writeText(text).then(() => {
+      showToast("Backup recovery codes copied to clipboard.");
+    });
+  };
+
+  const handleCloseMfaModal = () => {
+    setIsMfaModalOpen(false);
+    setMfaStep("intro");
+    setMfaSetupData(null);
+    setMfaVerifyCode("");
+    setMfaError(null);
+    setMfaSuccess(false);
+    setMfaBackupCodesRevealed(false);
   };
 
 
@@ -524,6 +635,38 @@ export default function AdminProDashboardPage() {
             className="px-4 py-2 rounded-lg bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold text-xs transition-colors shrink-0 shadow-sm cursor-pointer flex items-center gap-1.5"
           >
             <span>Review Deletion Queue ({data.pendingDeletionRequests.length})</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Admin 2FA Enforcement Banner */}
+      {adminMfaStatus && !adminMfaStatus.mfaEnabled && (
+        <div className="p-4 rounded-xl bg-gradient-to-r from-amber-950/90 via-amber-900/40 to-slate-900 border border-amber-500/50 shadow-xl shadow-amber-950/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fadeIn">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
+              <Lock className="w-5 h-5 text-amber-400 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-300">
+                  Admin 2FA Required
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-200 text-[10px] font-mono font-bold">
+                  NOT ACTIVE
+                </span>
+              </div>
+              <p className="text-xs text-amber-200/90 mt-0.5">
+                Your administrator account does not have Two-Factor Authentication enabled. This is a mandatory security requirement for all platform administrators. Enable TOTP 2FA now to protect against unauthorized access.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => { setMfaStep("intro"); setIsMfaModalOpen(true); }}
+            className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors shrink-0 shadow-sm cursor-pointer flex items-center gap-1.5"
+          >
+            <Key className="w-3.5 h-3.5" />
+            <span>Enable 2FA Now</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -2532,6 +2675,238 @@ export default function AdminProDashboardPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Admin 2FA / MFA Setup Modal */}
+      {isMfaModalOpen && (
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-5 border-b border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-emerald-500/10 border border-amber-500/30 flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-black text-white">Administrator Two-Factor Authentication</h2>
+                  <p className="text-[10px] text-slate-400 font-mono mt-0.5">RFC 6238 TOTP · AES-256 Protected</p>
+                </div>
+              </div>
+              <button onClick={handleCloseMfaModal} className="text-slate-500 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 space-y-5">
+              {/* Error */}
+              {mfaError && (
+                <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{mfaError}</span>
+                </div>
+              )}
+
+              {/* STEP: INTRO */}
+              {mfaStep === "intro" && (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700">
+                    <h3 className="text-xs font-bold text-white mb-2 flex items-center gap-2">
+                      <Smartphone className="w-4 h-4 text-amber-400" />
+                      Why Two-Factor Authentication?
+                    </h3>
+                    <ul className="space-y-2 text-[11px] text-slate-300">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                        <span>Prevents unauthorized access even if your password is compromised</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                        <span>Uses time-based one-time passwords (TOTP) compatible with Google Authenticator, Authy, and 1Password</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                        <span>8 backup recovery codes generated for account recovery</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                        <span>Mandatory for administrator accounts to protect customer data</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <button
+                    onClick={handleStartMfaSetup}
+                    disabled={mfaLoading}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    {mfaLoading ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Generating Secure Secret...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Key className="w-4 h-4" />
+                        <span>Begin 2FA Setup</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {/* STEP: SCAN QR / ENTER SECRET */}
+              {mfaStep === "scan" && mfaSetupData && (
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <p className="text-xs text-slate-300 mb-3">
+                      Scan the QR code below with your authenticator app, or manually enter the secret key.
+                    </p>
+                    {/* QR Code via Google Charts API */}
+                    <div className="inline-block p-3 bg-white rounded-xl shadow-lg">
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(mfaSetupData.totpUri)}`}
+                        alt="TOTP QR Code"
+                        width={200}
+                        height={200}
+                        className="rounded"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Manual Secret Key */}
+                  <div className="p-3 rounded-lg bg-slate-900 border border-slate-700">
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mb-1.5">Manual Secret Key</p>
+                    <div className="flex items-center gap-2">
+                      <code className="flex-1 text-xs font-mono text-amber-300 bg-slate-950 px-3 py-2 rounded-lg border border-slate-800 break-all select-all">
+                        {mfaSetupData.secret}
+                      </code>
+                      <button
+                        onClick={() => { navigator.clipboard.writeText(mfaSetupData.secret); showToast("Secret key copied!"); }}
+                        className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors shrink-0"
+                        title="Copy secret key"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setMfaStep("verify")}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white font-bold text-xs transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>I&apos;ve Scanned the QR Code — Continue</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
+              {/* STEP: VERIFY CODE */}
+              {mfaStep === "verify" && mfaSetupData && (
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <Smartphone className="w-10 h-10 text-indigo-400 mx-auto mb-2" />
+                    <h3 className="text-sm font-bold text-white">Enter Verification Code</h3>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Open your authenticator app and enter the 6-digit code displayed for <span className="text-amber-300 font-semibold">LandIntel</span>.
+                    </p>
+                  </div>
+
+                  <div className="flex justify-center">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      value={mfaVerifyCode}
+                      onChange={(e) => setMfaVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      placeholder="000000"
+                      className="w-48 text-center text-2xl font-mono font-black tracking-[0.4em] bg-slate-900 border-2 border-slate-700 focus:border-amber-500 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition-colors"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setMfaStep("scan")}
+                      className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      Back to QR Code
+                    </button>
+                    <button
+                      onClick={handleVerifyAndActivateMfa}
+                      disabled={mfaLoading || mfaVerifyCode.length !== 6}
+                      className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold text-xs transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      {mfaLoading ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>Verifying...</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShieldCheck className="w-4 h-4" />
+                          <span>Verify & Activate</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP: BACKUP CODES */}
+              {(mfaStep === "backup" || mfaStep === "done") && mfaSetupData && (
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <div className="w-14 h-14 rounded-full bg-emerald-500/20 border-2 border-emerald-500/40 flex items-center justify-center mx-auto mb-3">
+                      <ShieldCheck className="w-7 h-7 text-emerald-400" />
+                    </div>
+                    <h3 className="text-sm font-black text-emerald-300">2FA Successfully Activated!</h3>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Your admin account is now protected with Two-Factor Authentication.
+                    </p>
+                  </div>
+
+                  {/* Backup Codes */}
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-xs font-bold text-white flex items-center gap-2">
+                        <Key className="w-3.5 h-3.5 text-amber-400" />
+                        Emergency Recovery Codes
+                      </h4>
+                      <button
+                        onClick={handleCopyMfaBackupCodes}
+                        className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold transition-colors cursor-pointer"
+                      >
+                        <Copy className="w-3 h-3" />
+                        <span>Copy All</span>
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-amber-300/80 mb-2">
+                      ⚠️ Save these codes somewhere safe. Each code can only be used once. If you lose access to your authenticator app, these codes are the only way to regain access.
+                    </p>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {mfaSetupData.recoveryCodes.map((code, i) => (
+                        <code
+                          key={i}
+                          className="text-[11px] font-mono text-emerald-300 bg-slate-950 px-2.5 py-1.5 rounded-md border border-slate-800 text-center select-all"
+                        >
+                          {code}
+                        </code>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleCloseMfaModal}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold text-xs transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>I&apos;ve Saved My Codes — Done</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

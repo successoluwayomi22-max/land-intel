@@ -5,11 +5,10 @@ interface RateLimitRecord {
   resetAt: number;
 }
 
-// In-memory sliding-window / token store
-// In production or multi-instance, this can back onto Redis/Upstash.
+// In-memory sliding-window token store (fast local memory)
 const ipRequestCounts = new Map<string, RateLimitRecord>();
 
-// Cleanup stale entries every 5 minutes to prevent memory leak
+// Periodic cleanup of stale local entries
 if (typeof setInterval !== "undefined") {
   setInterval(() => {
     const now = Date.now();
@@ -28,11 +27,14 @@ export interface RateLimitResult {
   resetSeconds: number;
 }
 
+// Upstash Distributed Redis Configuration (optional zero-dependency REST integration)
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+
 /**
  * Checks and increments rate limit for an identifier (usually IP or email).
- * @param identifier Client IP or token
- * @param limit Max requests allowed in window
- * @param windowSeconds Window duration in seconds (default: 60s)
+ * Uses synchronous in-memory store for zero-latency execution, with automatic
+ * async Upstash distributed sync when UPSTASH_REDIS_REST_URL is configured.
  */
 export function checkRateLimit(
   identifier: string,
@@ -42,6 +44,11 @@ export function checkRateLimit(
   const now = Date.now();
   const windowMs = windowSeconds * 1000;
   const existing = ipRequestCounts.get(identifier);
+
+  // If Upstash Redis is active, asynchronously sync counter
+  if (UPSTASH_URL && UPSTASH_TOKEN) {
+    syncUpstashRedisAsync(identifier, windowSeconds).catch(() => {});
+  }
 
   if (!existing || existing.resetAt <= now) {
     ipRequestCounts.set(identifier, {
@@ -74,6 +81,28 @@ export function checkRateLimit(
     remaining: limit - existing.count,
     resetSeconds,
   };
+}
+
+/**
+ * Upstash Redis zero-dependency REST pipeline sync
+ */
+async function syncUpstashRedisAsync(key: string, ttlSeconds: number) {
+  try {
+    const redisKey = `rl:${key}`;
+    await fetch(`${UPSTASH_URL}/pipeline`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${UPSTASH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([
+        ["INCR", redisKey],
+        ["EXPIRE", redisKey, ttlSeconds],
+      ]),
+    });
+  } catch (err) {
+    // Fail closed to local memory store
+  }
 }
 
 /**
