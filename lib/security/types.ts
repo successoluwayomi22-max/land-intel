@@ -15,6 +15,9 @@ export type SecurityEventType =
   | "SUSPICIOUS_ADMIN_ACTIVITY"
   | "PRIVILEGE_ESCALATION"
   | "PROBING_ATTACK"
+  | "REGISTRATION_SPAM"
+  | "DISPOSABLE_EMAIL_ABUSE"
+  | "SQLI_PROBE"
   | "CSRF_VIOLATION";
 
 export type IPSecurityState =

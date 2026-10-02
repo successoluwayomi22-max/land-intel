@@ -50,7 +50,7 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import { APP_CONFIG } from "@/lib/config";
 import { usePlatformContact } from "@/components/providers/PlatformContactProvider";
 
-type AdminTab = "overview" | "users" | "cases" | "payments" | "audit" | "system" | "support";
+type AdminTab = "overview" | "users" | "security" | "cases" | "payments" | "audit" | "system" | "support";
 
 export default function AdminProDashboardPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>("overview");
@@ -65,6 +65,13 @@ export default function AdminProDashboardPage() {
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [userStatusFilter, setUserStatusFilter] = useState<"ALL" | "VERIFIED" | "UNVERIFIED">("ALL");
+
+  // Cyber Defense Threat Radar State
+  const [securityData, setSecurityData] = useState<any | null>(null);
+  const [manualIpInput, setManualIpInput] = useState("");
+  const [manualReasonInput, setManualReasonInput] = useState("");
+  const [manualHoursInput, setManualHoursInput] = useState(24);
+  const [manualPermanent, setManualPermanent] = useState(false);
 
   // Manual payment verify state
   const [manualRef, setManualRef] = useState("");
@@ -138,6 +145,17 @@ export default function AdminProDashboardPage() {
       } catch (e) {
         console.error("Could not fetch support tickets:", e);
       }
+
+      // Fetch cyber defense & threat telemetry
+      try {
+        const secRes = await fetch("/api/admin/security/threats");
+        const secData = await secRes.json();
+        if (secData.success) {
+          setSecurityData(secData);
+        }
+      } catch (e) {
+        console.error("Could not fetch security threats:", e);
+      }
     } catch (err) {
       console.error("Failed to load admin telemetry:", err);
     } finally {
@@ -154,6 +172,84 @@ export default function AdminProDashboardPage() {
     setActionNotice(msg);
     setTimeout(() => setActionNotice(null), 4000);
   };
+
+  // Security Radar Action Handlers
+  const handleUnbanIp = async (ip: string) => {
+    setActionLoading(true);
+    try {
+      const res = await fetch("/api/admin/security/threats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "UNBAN", ip }),
+      });
+      const d = await res.json();
+      if (res.ok && d.success) {
+        showToast(d.message || `IP ${ip} successfully unbanned.`);
+        fetchData();
+      } else {
+        showToast(`Failed: ${d.error || "Could not unban IP"}`);
+      }
+    } catch (e: any) {
+      showToast(`Error: ${e.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleManualBanIp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualIpInput.trim()) return;
+    setActionLoading(true);
+    try {
+      const res = await fetch("/api/admin/security/threats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "MANUAL_BAN",
+          ip: manualIpInput.trim(),
+          reason: manualReasonInput.trim() || "Manual security ban enforced from admin dashboard",
+          durationHours: manualHoursInput,
+          isPermanent: manualPermanent,
+        }),
+      });
+      const d = await res.json();
+      if (res.ok && d.success) {
+        showToast(d.message || `IP ${manualIpInput} blocked.`);
+        setManualIpInput("");
+        setManualReasonInput("");
+        fetchData();
+      } else {
+        showToast(`Failed: ${d.error || "Could not ban IP"}`);
+      }
+    } catch (e: any) {
+      showToast(`Error: ${e.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleSendTestAlert = async () => {
+    setActionLoading(true);
+    try {
+      showToast("Dispatching test cyber defense alert to successoluwayomi22@gmail.com...");
+      const res = await fetch("/api/admin/security/threats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "TEST_ALERT" }),
+      });
+      const d = await res.json();
+      if (res.ok && d.success) {
+        showToast("Test security incident email successfully delivered to successoluwayomi22@gmail.com!");
+      } else {
+        showToast(`Alert failed: ${d.error || "Could not dispatch alert"}`);
+      }
+    } catch (e: any) {
+      showToast(`Network error: ${e.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
 
   // Change user role
   const handleRoleChange = async (userId: string, newRole: string) => {
@@ -469,6 +565,12 @@ export default function AdminProDashboardPage() {
             label: `User Management (${allUsers.length})`,
             icon: Users,
             badge: data?.pendingDeletionRequests?.length > 0 ? `${data.pendingDeletionRequests.length} DEL` : null,
+          },
+          {
+            id: "security",
+            label: `Cyber Defense & Threat Radar (${securityData?.activeBans?.length || 0})`,
+            icon: ShieldAlert,
+            badge: securityData?.activeBans?.length > 0 ? `${securityData.activeBans.length} BLOCKED` : null,
           },
           { id: "payments", label: `Paystack Transactions (${payments.length})`, icon: CreditCard, badge: null },
           { id: "support", label: `Support Desk (${supportTickets.length})`, icon: MessageSquare, badge: null },
@@ -1346,6 +1448,243 @@ export default function AdminProDashboardPage() {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: CYBER DEFENSE & THREAT RADAR */}
+      {activeTab === "security" && (
+        <div className="space-y-6">
+          {/* Header Banner */}
+          <div className="bg-gradient-to-br from-slate-900 via-rose-950/20 to-slate-950 border border-slate-800 rounded-xl p-5 shadow-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start sm:items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 border border-rose-500/30">
+                  <ShieldAlert className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white font-heading flex items-center gap-2">
+                    <span>Adaptive Cyber Defense & Threat Radar</span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-mono font-bold">
+                      ACTIVE &bull; LEARNING ENGINE
+                    </span>
+                  </h3>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    Automatically learns from spam, OTP floods, and exploit probes. Applies progressive strike multipliers and emails incident reports directly to{" "}
+                    <strong className="text-amber-300">successoluwayomi22@gmail.com</strong>.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleSendTestAlert}
+                  disabled={actionLoading}
+                  className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-sm"
+                  title="Verify security email delivery to successoluwayomi22@gmail.com"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Send Test Alert to Email</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Defense KPI Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <span className="text-[11px] font-bold text-slate-400 uppercase">Neutralized Attacks</span>
+              <span className="text-2xl font-black font-heading text-white block mt-1">
+                {securityData?.totalNeutralizedAttacks || 0}
+              </span>
+              <span className="text-[10px] text-emerald-400 block mt-1 font-mono">
+                Mitigated via Adaptive Firewalls
+              </span>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <span className="text-[11px] font-bold text-slate-400 uppercase">Active IP Bans</span>
+              <span className="text-2xl font-black font-heading text-rose-400 block mt-1">
+                {securityData?.activeBans?.length || 0}
+              </span>
+              <span className="text-[10px] text-rose-300/80 block mt-1 font-mono">
+                Currently Restricted Inbound
+              </span>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <span className="text-[11px] font-bold text-slate-400 uppercase">Permanent Blacklists</span>
+              <span className="text-2xl font-black font-heading text-amber-400 block mt-1">
+                {securityData?.permanentBansCount || 0}
+              </span>
+              <span className="text-[10px] text-slate-400 block mt-1 font-mono">
+                Repeat Hostile Networks
+              </span>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+              <span className="text-[11px] font-bold text-slate-400 uppercase">Alert Destination</span>
+              <span className="text-xs font-mono font-bold text-white block mt-2 truncate">
+                successoluwayomi22@gmail.com
+              </span>
+              <span className="text-[10px] text-emerald-400 block mt-1 font-mono">
+                ✓ Verified Incident Relay
+              </span>
+            </div>
+          </div>
+
+          {/* Manual IP Blacklist Control */}
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-amber-400" />
+              <span>Enforce Manual IP Blacklist</span>
+            </h4>
+            <form onSubmit={handleManualBanIp} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+              <div className="sm:col-span-4 space-y-1">
+                <label className="text-[11px] font-semibold text-slate-300">Target IP Address</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. 197.210.65.184"
+                  value={manualIpInput}
+                  onChange={(e) => setManualIpInput(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono placeholder-slate-600 focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div className="sm:col-span-4 space-y-1">
+                <label className="text-[11px] font-semibold text-slate-300">Security Reason / Note</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Suspicious automated registration flood"
+                  value={manualReasonInput}
+                  onChange={(e) => setManualReasonInput(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div className="sm:col-span-2 space-y-1">
+                <label className="text-[11px] font-semibold text-slate-300">Duration</label>
+                <select
+                  value={manualPermanent ? "PERM" : manualHoursInput}
+                  onChange={(e) => {
+                    if (e.target.value === "PERM") {
+                      setManualPermanent(true);
+                    } else {
+                      setManualPermanent(false);
+                      setManualHoursInput(Number(e.target.value));
+                    }
+                  }}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer"
+                >
+                  <option value={1}>1 Hour</option>
+                  <option value={6}>6 Hours</option>
+                  <option value={24}>24 Hours</option>
+                  <option value={72}>72 Hours (3 Days)</option>
+                  <option value="PERM">Permanent Ban</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-2">
+                <button
+                  type="submit"
+                  disabled={actionLoading || !manualIpInput.trim()}
+                  className="w-full py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  Enforce Block
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Active Bans Table */}
+          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+            <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-rose-400" />
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+                  Active Restricted IPs ({securityData?.activeBans?.length || 0})
+                </h4>
+              </div>
+              <span className="text-[11px] text-slate-400 font-mono">
+                Progressive Strike Penalties Active
+              </span>
+            </div>
+
+            {securityData?.activeBans && securityData.activeBans.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-950 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider font-mono">
+                    <tr>
+                      <th className="py-3 px-4">Attacker IP</th>
+                      <th className="py-3 px-4">Threat Score</th>
+                      <th className="py-3 px-4">Strike Level</th>
+                      <th className="py-3 px-4">Detected Reasons</th>
+                      <th className="py-3 px-4">Ban Status / Remaining</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60">
+                    {securityData.activeBans.map((ban: any) => (
+                      <tr key={ban.ip} className="hover:bg-slate-950/60 transition-colors">
+                        <td className="py-3 px-4 font-mono font-bold text-rose-300">
+                          {ban.ip}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono ${
+                              ban.threatScore >= 30
+                                ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                                : "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                            }`}
+                          >
+                            {ban.threatScore} / 100
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 font-mono text-white">
+                          <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 text-[10px] font-bold">
+                            Strike {ban.strikeCount}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 max-w-xs text-slate-300 text-[11px]">
+                          {ban.reasons?.join("; ") || "Repeated suspicious requests"}
+                        </td>
+                        <td className="py-3 px-4 font-mono">
+                          {ban.isPermanent ? (
+                            <span className="text-rose-400 font-bold text-[11px]">Permanent Blacklist</span>
+                          ) : ban.remainingMinutes ? (
+                            <span className="text-amber-300 text-[11px]">
+                              {ban.remainingMinutes > 60
+                                ? `${Math.ceil(ban.remainingMinutes / 60)} hrs remaining`
+                                : `${ban.remainingMinutes} mins remaining`}
+                            </span>
+                          ) : (
+                            <span className="text-slate-400 text-[11px]">Active</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-right space-x-2">
+                          <button
+                            onClick={() => handleUnbanIp(ban.ip)}
+                            disabled={actionLoading}
+                            className="px-2.5 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 text-[10px] font-bold transition-all cursor-pointer disabled:opacity-40"
+                          >
+                            Unban IP
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="p-8 text-center text-xs text-slate-400 space-y-2">
+                <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto" />
+                <p className="font-semibold text-slate-200">Perimeter Clean & Secure</p>
+                <p className="text-[11px] text-slate-500 max-w-md mx-auto">
+                  Zero active IP restrictions. The Adaptive Threat Engine is actively analyzing incoming traffic, blocking spam floods, and routing incident alerts to successoluwayomi22@gmail.com.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -12,6 +12,7 @@ import { OTPEmail } from "./templates/otp";
 import { PasswordResetEmail } from "./templates/password-reset";
 import { ReportDeliveryEmail, ReportDeliveryEmailProps } from "./templates/report-delivery";
 import { PaymentReceiptEmail, PaymentReceiptEmailProps } from "./templates/receipt";
+import { SecurityAlertEmail, SecurityAlertProps } from "./templates/security-alert";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
@@ -360,4 +361,29 @@ export async function sendPaymentReceiptEmail(
     return { success: false, error: err?.message };
   }
 }
+
+/**
+ * Dispatch real-time cybersecurity incident alert to platform administrator.
+ * Notifies the platform owner whenever an attacking IP is banned or high-threat spam is blocked.
+ */
+export async function sendSecurityThreatAlertEmail(
+  props: SecurityAlertProps,
+  recipientEmail: string = "successoluwayomi22@gmail.com"
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const html = SecurityAlertEmail(props);
+    const subject = `🚨 [Security Alert] Hostile IP Auto-Banned: ${props.attackerIp} (${props.attackType})`;
+    return await dispatchEmail({
+      to: recipientEmail,
+      subject,
+      html,
+      label: "Cyber defense threat alert",
+      isTransactional: true,
+    });
+  } catch (err: any) {
+    console.error("[EMAIL] sendSecurityThreatAlertEmail unexpected error:", err);
+    return { success: false, error: err?.message };
+  }
+}
+
 

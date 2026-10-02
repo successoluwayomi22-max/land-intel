@@ -8,6 +8,7 @@ import { generateOTP, hashOTP, sendWelcomeEmail, sendOTPEmail } from "@/lib/emai
 import { isEmailEnabled } from "@/lib/email/client";
 import { verifyRecaptcha } from "@/lib/security/recaptcha";
 import { validateEmailDeliverability } from "@/lib/security/email-validator";
+import { evaluateRequest, recordThreatEvent } from "@/lib/security/threat-engine";
 
 const RegisterSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters"),
@@ -18,10 +19,32 @@ const RegisterSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // 0. Adaptive Cyber Defense Check: Block hostile/banned IPs immediately
+    const threatCheck = await evaluateRequest(request);
+    if (!threatCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: threatCheck.reason || "Access restricted by LandIntel Security Firewall.",
+          code: "IP_BANNED",
+          bannedUntil: threatCheck.bannedUntil,
+        },
+        { status: threatCheck.status || 403 }
+      );
+    }
+
     const ip = getClientIp(request);
+    const userAgent = request.headers.get("user-agent") || "";
+
     // Rate limit: 10 account creations per 10 minutes per IP
     const rateCheck = checkRateLimit(`register-${ip}`, 10, 600);
     if (!rateCheck.success) {
+      await recordThreatEvent(ip, {
+        type: "REGISTRATION_FLOOD",
+        score: 12,
+        reason: "High-frequency registration flood exceeding rate limits",
+        path: "/api/auth/register",
+        userAgent,
+      });
       return rateLimitResponse(rateCheck);
     }
 
@@ -38,6 +61,13 @@ export async function POST(request: NextRequest) {
     // Verify Google reCAPTCHA
     const recaptchaResult = await verifyRecaptcha(parsed.data.captchaToken, ip);
     if (!recaptchaResult.success) {
+      await recordThreatEvent(ip, {
+        type: "BOT_CAPTCHA_FAILED",
+        score: 10,
+        reason: "Automated bot registration probe - failed reCAPTCHA verification",
+        path: "/api/auth/register",
+        userAgent,
+      });
       return NextResponse.json(
         { error: recaptchaResult.error || "Security verification failed." },
         { status: 400 }
@@ -51,6 +81,13 @@ export async function POST(request: NextRequest) {
     // Validate email deliverability (check MX records, real domain, block disposable/fake domains)
     const deliverability = await validateEmailDeliverability(email);
     if (!deliverability.isValid) {
+      await recordThreatEvent(ip, {
+        type: "DISPOSABLE_EMAIL_ABUSE",
+        score: 10,
+        reason: `Attempted registration with disposable or fake email domain: ${email}`,
+        path: "/api/auth/register",
+        userAgent,
+      });
       return NextResponse.json(
         { error: deliverability.reason || "Invalid email address or unreachable mail domain." },
         { status: 400 }

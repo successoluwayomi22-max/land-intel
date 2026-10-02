@@ -5,6 +5,7 @@ import {
   IPSecurityState,
   SecurityEvent,
 } from "./types";
+import { sendSecurityThreatAlertEmail } from "@/lib/email/send";
 
 interface RequestEvaluationContext {
   ip: string;
@@ -182,9 +183,18 @@ export class ThreatDetectionEngine {
         if (targetAction === "TEMP_BLOCK" || targetAction === "RATE_LIMIT") {
           // Protect loopback from permanent damage
           if (ctx.ip !== "127.0.0.1" && ctx.ip !== "::1") {
-            const durationMinutes = severity === "CRITICAL" ? 60 : 30;
+            const existingRecord = await securityStore.getIPRecord(ctx.ip);
+            // Progressive learning: calculate strike level based on past violation history
+            const strike = Math.max(1, (existingRecord?.threatScore ? Math.floor(existingRecord.threatScore / 15) : 0) + 1);
+
+            // Escalating multiplier:
+            // Strike 1: 30 minutes
+            // Strike 2: 2 hours (120 min)
+            // Strike 3: 24 hours (1440 min)
+            // Strike 4+: 72 hours (4320 min)
+            const durationMinutes = strike === 1 ? 30 : strike === 2 ? 120 : strike === 3 ? 1440 : 4320;
             const expiresAt = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString();
-            const reason = `Automated enforcement: ${matchingRule?.name || eventType} triggered (${counter.count} occurrences in ${windowSec}s)`;
+            const reason = `Automated enforcement (Strike ${strike}): ${matchingRule?.name || eventType} triggered (${counter.count} occurrences in ${windowSec}s)`;
 
             await securityStore.setIPStatus(
               ctx.ip,
@@ -194,8 +204,28 @@ export class ThreatDetectionEngine {
               "SECURITY_ENGINE"
             );
 
-            actionTaken = `TEMPORARY_BLOCK_${durationMinutes}M`;
+            actionTaken = `TEMPORARY_BLOCK_${durationMinutes >= 60 ? `${durationMinutes / 60}H` : `${durationMinutes}M`}`;
             isBlocked = true;
+
+            // Dispatch instant email alert to platform administrator
+            sendSecurityThreatAlertEmail(
+              {
+                attackerIp: ctx.ip,
+                attackType: eventType.replace(/_/g, " "),
+                threatScore: (existingRecord?.threatScore || 15) + (severity === "CRITICAL" ? 25 : 15),
+                strikeCount: strike,
+                actionTaken: `AUTOMATIC IP BAN (${durationMinutes >= 60 ? `${durationMinutes / 60} Hours` : `${durationMinutes} Minutes`})`,
+                bannedUntil: `${durationMinutes >= 60 ? `${durationMinutes / 60} Hours` : `${durationMinutes} Minutes`} (Progressive Escalation Active)`,
+                details: `Automated detection triggered by ${matchingRule?.name || eventType}. Encountered ${counter.count} occurrences in ${windowSec} seconds. Target account(s): ${Array.from(counter.accounts).join(", ") || "N/A"}.`,
+                targetEndpoint: ctx.endpoint || "/api/auth/*",
+                userAgent: ctx.userAgent || "Automated client script",
+                timestamp: new Date().toUTCString(),
+                adminDashboardUrl: "https://landintel.ai/admin",
+              },
+              "successoluwayomi22@gmail.com"
+            ).catch((mailErr) => {
+              console.error("[SECURITY_ENGINE] Threat email dispatch failed:", mailErr);
+            });
 
             // Open incident if high or critical
             if (severity === "HIGH" || severity === "CRITICAL") {
@@ -212,7 +242,7 @@ export class ThreatDetectionEngine {
                 timeline: [
                   {
                     timestamp: new Date().toISOString(),
-                    description: `Threshold exceeded: ${counter.count}/${threshold} events. Applied temporary block for ${durationMinutes}m.`,
+                    description: `Threshold exceeded: ${counter.count}/${threshold} events. Applied Strike ${strike} temporary block for ${durationMinutes}m.`,
                     actor: "SECURITY_ENGINE",
                   },
                 ],
