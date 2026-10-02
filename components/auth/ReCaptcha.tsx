@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { RECAPTCHA_SITE_KEY } from "@/lib/security/public-credentials";
-import { ShieldCheck, Check, RefreshCw } from "lucide-react";
 
 interface ReCaptchaProps {
   onVerify: (token: string) => void;
   onExpire?: () => void;
   className?: string;
+  hasError?: boolean;
 }
 
 declare global {
@@ -24,49 +24,21 @@ export const ReCaptcha: React.FC<ReCaptchaProps> = ({
   onVerify,
   onExpire,
   className = "",
+  hasError = false,
 }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
   const siteKey = RECAPTCHA_SITE_KEY;
   const verifiedRef = useRef(false);
+  const expiryTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Execute Google reCAPTCHA v3 in the background
-  const executeGoogleV3 = useCallback(async (): Promise<boolean> => {
-    if (!siteKey || typeof window === "undefined" || !window.grecaptcha?.execute) {
-      return false;
-    }
-
-    try {
-      const token = await new Promise<string>((resolve, reject) => {
-        window.grecaptcha!.ready(async () => {
-          try {
-            const res = await window.grecaptcha!.execute(siteKey, { action: "register" });
-            resolve(res);
-          } catch (err) {
-            reject(err);
-          }
-        });
-      });
-
-      if (token && !verifiedRef.current) {
-        verifiedRef.current = true;
-        setIsChecked(true);
-        setIsError(false);
-        onVerify(token);
-        return true;
-      }
-    } catch (err) {
-      console.warn("[RECAPTCHA v3] Execution failed:", err);
-    }
-    return false;
-  }, [siteKey, onVerify]);
-
-  // Load Google reCAPTCHA v3 script dynamically
+  // Pre-load Google reCAPTCHA v3 script silently in the background
+  // NOTE: We do NOT auto-execute or auto-verify here. The checkbox must remain UNCHECKED
+  // until the user physically clicks it, just like authentic Google reCAPTCHA.
   useEffect(() => {
     if (!siteKey || typeof window === "undefined") return;
 
-    let isMounted = true;
     const scriptId = "google-recaptcha-script";
     const existing = document.getElementById(scriptId);
 
@@ -76,121 +48,201 @@ export const ReCaptcha: React.FC<ReCaptchaProps> = ({
       script.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`;
       script.async = true;
       script.defer = true;
-      script.onload = () => {
-        if (isMounted) {
-          executeGoogleV3();
-        }
-      };
       document.head.appendChild(script);
-    } else if (window.grecaptcha?.execute) {
-      executeGoogleV3();
     }
 
     return () => {
-      isMounted = false;
-    };
-  }, [siteKey, executeGoogleV3]);
-
-  // Interactive click handler — ONLY uses real Google reCAPTCHA
-  const handleToggle = () => {
-    if (isChecked) return;
-
-    setIsVerifying(true);
-    setIsError(false);
-
-    setTimeout(async () => {
-      const v3Success = await executeGoogleV3();
-      if (!v3Success && !verifiedRef.current) {
-        // Google reCAPTCHA failed — show error, do NOT issue fallback token
-        setIsError(true);
-        console.warn("[RECAPTCHA] Google verification unavailable. User must retry.");
+      if (expiryTimerRef.current) {
+        clearTimeout(expiryTimerRef.current);
       }
-      setIsVerifying(false);
-    }, 400);
-  };
+    };
+  }, [siteKey]);
 
-  // Allow retry after an error
-  const handleRetry = () => {
-    setIsError(false);
-    verifiedRef.current = false;
-    handleToggle();
-  };
+  // Execute Google reCAPTCHA when user interacts
+  const handleUserClick = useCallback(async () => {
+    // If already verified or currently spinning, ignore clicks
+    if (isChecked || isVerifying) return;
+
+    setIsFailed(false);
+    setIsVerifying(true);
+
+    try {
+      // 1. Wait for Google reCAPTCHA script to be ready
+      const tokenPromise = new Promise<string>((resolve, reject) => {
+        if (!siteKey || typeof window === "undefined" || !window.grecaptcha) {
+          // Retry waiting up to 3 seconds if script is still loading
+          let attempts = 0;
+          const interval = setInterval(() => {
+            attempts++;
+            if (window.grecaptcha?.execute) {
+              clearInterval(interval);
+              window.grecaptcha.ready(async () => {
+                try {
+                  const res = await window.grecaptcha!.execute(siteKey, { action: "register" });
+                  resolve(res);
+                } catch (e) {
+                  reject(e);
+                }
+              });
+            } else if (attempts >= 15) {
+              clearInterval(interval);
+              reject(new Error("reCAPTCHA script load timeout"));
+            }
+          }, 200);
+        } else {
+          window.grecaptcha.ready(async () => {
+            try {
+              const res = await window.grecaptcha!.execute(siteKey, { action: "register" });
+              resolve(res);
+            } catch (err) {
+              reject(err);
+            }
+          });
+        }
+      });
+
+      // 2. Realistic human verification delay (Google reCAPTCHA v2 spinner spins for 600-800ms)
+      const delayPromise = new Promise((resolve) => setTimeout(resolve, 750));
+
+      const [token] = await Promise.all([tokenPromise, delayPromise]);
+
+      if (token && typeof token === "string" && token.length > 20) {
+        verifiedRef.current = true;
+        setIsVerifying(false);
+        setIsChecked(true);
+        setIsFailed(false);
+        onVerify(token);
+
+        // Google tokens expire after 2 minutes (120s). Set expiry warning at 110s.
+        if (expiryTimerRef.current) clearTimeout(expiryTimerRef.current);
+        expiryTimerRef.current = setTimeout(() => {
+          verifiedRef.current = false;
+          setIsChecked(false);
+          if (onExpire) onExpire();
+        }, 110 * 1000);
+      } else {
+        throw new Error("Invalid token received");
+      }
+    } catch (err) {
+      console.warn("[RECAPTCHA] Verification error on user interaction:", err);
+      setIsVerifying(false);
+      setIsFailed(true);
+      verifiedRef.current = false;
+    }
+  }, [isChecked, isVerifying, siteKey, onVerify, onExpire]);
 
   return (
-    <div className={`recaptcha-widget my-3 ${className}`}>
+    <div className={`recaptcha-widget my-3 select-none ${className}`}>
       <div
-        onClick={isError ? handleRetry : handleToggle}
-        className={`w-full max-w-[320px] p-3.5 rounded-lg border transition-all duration-200 cursor-pointer select-none flex items-center justify-between shadow-2xs ${
-          isChecked
-            ? "bg-emerald-50/70 border-emerald-300 ring-1 ring-emerald-400/20"
-            : isError
-            ? "bg-red-50/70 border-red-300 ring-1 ring-red-400/20"
-            : "bg-white hover:bg-slate-50/80 border-slate-200 hover:border-slate-300"
+        role="checkbox"
+        aria-checked={isChecked}
+        tabIndex={0}
+        onClick={handleUserClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleUserClick();
+          }
+        }}
+        className={`w-[304px] h-[78px] bg-[#f9f9f9] border rounded-[3px] p-[10px_12px] flex items-center justify-between shadow-[0_0_4px_1px_rgba(0,0,0,0.08)] cursor-pointer transition-colors duration-150 ${
+          hasError && !isChecked
+            ? "border-rose-400 ring-1 ring-rose-400/40"
+            : isFailed
+            ? "border-red-400 bg-red-50/50"
+            : "border-[#d3d3d3] hover:border-[#b2b2b2]"
         }`}
       >
-        <div className="flex items-center gap-3">
+        {/* Left: Checkbox + Authentic Label */}
+        <div className="flex items-center gap-[14px]">
+          {/* Checkbox Square */}
           <div
-            className={`w-6 h-6 rounded flex items-center justify-center transition-all duration-200 border ${
+            className={`w-[28px] h-[28px] rounded-[2px] flex items-center justify-center transition-all duration-150 ${
               isChecked
-                ? "bg-emerald-600 border-emerald-600 text-white"
-                : isError
-                ? "bg-red-100 border-red-300"
+                ? "bg-transparent border-none"
                 : isVerifying
-                ? "bg-slate-100 border-slate-300"
-                : "bg-white border-slate-300 hover:border-slate-400"
+                ? "bg-transparent border-none"
+                : isFailed
+                ? "bg-white border-2 border-red-400"
+                : "bg-white border-2 border-[#c1c1c1] hover:border-[#b2b2b2]"
             }`}
           >
             {isChecked ? (
-              <Check className="w-4 h-4 stroke-[3]" />
+              /* Google Green Checkmark */
+              <svg
+                viewBox="0 0 48 48"
+                className="w-[32px] h-[32px] text-[#0f9d58] transition-all transform scale-100 animate-in fade-in zoom-in-75 duration-200"
+              >
+                <path
+                  fill="none"
+                  stroke="#0f9d58"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10 24l10 10 18-20"
+                />
+              </svg>
             ) : isVerifying ? (
-              <RefreshCw className="w-3.5 h-3.5 text-brand-blue animate-spin" />
-            ) : isError ? (
-              <span className="text-red-500 text-xs font-bold">!</span>
+              /* Authentic Blue Spinning Ring */
+              <div className="w-[24px] h-[24px] rounded-full border-[3px] border-[#4285f4]/20 border-t-[#4285f4] animate-spin" />
+            ) : isFailed ? (
+              /* Error exclamation */
+              <span className="text-red-500 font-bold text-xs">!</span>
             ) : null}
           </div>
 
-          <div className="text-left">
+          {/* Label */}
+          <div className="flex flex-col">
             <span
-              className={`text-xs font-semibold block ${
-                isChecked ? "text-emerald-900" : isError ? "text-red-800" : "text-slate-800"
+              className={`text-[14px] leading-tight select-none ${
+                isFailed ? "text-red-700 font-medium" : "text-[#282727] font-normal"
               }`}
+              style={{ fontFamily: "Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif" }}
             >
-              {isError ? "Verification failed" : "I am not a robot"}
+              {isFailed ? "Verification failed" : "I'm not a robot"}
             </span>
-            <span className="text-[10px] text-slate-400 block">
-              {isChecked
-                ? "Google reCAPTCHA Verified"
-                : isError
-                ? "Click to retry verification"
-                : "Click to verify human presence"}
-            </span>
+            {isFailed && (
+              <span className="text-[10px] text-red-500 mt-0.5">Click to retry</span>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center pl-3 border-l border-slate-100 text-center">
-          <div className="w-6 h-6 text-[#1a73e8] flex items-center justify-center">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+        {/* Right: Google reCAPTCHA Badge */}
+        <div className="flex flex-col items-center justify-center text-center pl-2 select-none">
+          {/* Authentic 3-arrow logo */}
+          <div className="w-[32px] h-[32px] flex items-center justify-center">
+            <svg viewBox="0 0 48 48" className="w-[28px] h-[28px]">
+              {/* Google reCAPTCHA 3-arrow icon */}
+              <path
+                fill="#1a73e8"
+                d="M24 4C12.95 4 4 12.95 4 24c0 3.82 1.07 7.4 2.93 10.45l4.36-2.52C9.87 29.69 9.17 26.94 9.17 24c0-8.19 6.64-14.83 14.83-14.83h1.83l-3.32-3.32L24.69 4 32 11.31l-7.31 7.31-2.18-2.18 3.32-3.32H24c-5.42 0-9.83 4.41-9.83 9.88 0 1.94.57 3.75 1.55 5.28l-4.36 2.52C9.8 28.53 9 26.35 9 24 9 15.72 15.72 9 24 9v4l6-6-6-6v3z"
+                opacity="0.9"
+              />
+              <path
+                fill="#4285f4"
+                d="M44 24c0-3.82-1.07-7.4-2.93-10.45l-4.36 2.52c1.42 2.24 2.12 4.99 2.12 7.93 0 8.19-6.64 14.83-14.83 14.83h-1.83l3.32 3.32L23.31 44 16 36.69l7.31-7.31 2.18 2.18-3.32 3.32H24c5.42 0 9.83-4.41 9.83-9.88 0-1.94-.57-3.75-1.55-5.28l4.36-2.52C38.2 19.47 39 21.65 39 24c0 8.28-6.72 15-15 15v-4l-6 6 6 6v-3c11.05 0 20-8.95 20-20z"
+              />
             </svg>
           </div>
-          <span className="text-[9px] font-bold text-slate-600 leading-none mt-0.5">reCAPTCHA</span>
-          <div className="flex gap-1 text-[8px] text-slate-400 mt-0.5">
+          <span className="text-[10px] font-bold text-[#555] leading-none mt-0.5 tracking-tight">
+            reCAPTCHA
+          </span>
+          <div className="flex items-center gap-[3px] text-[8px] text-[#555] mt-[2px] leading-none">
             <a
-              href="https://policies.google.com/privacy"
+              href="https://www.google.com/intl/en/policies/privacy/"
               target="_blank"
               rel="noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="hover:underline hover:text-slate-600"
+              className="hover:underline text-[#555]"
             >
               Privacy
             </a>
-            <span>•</span>
+            <span>-</span>
             <a
-              href="https://policies.google.com/terms"
+              href="https://www.google.com/intl/en/policies/terms/"
               target="_blank"
               rel="noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="hover:underline hover:text-slate-600"
+              className="hover:underline text-[#555]"
             >
               Terms
             </a>

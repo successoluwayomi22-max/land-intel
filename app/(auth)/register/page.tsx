@@ -138,7 +138,7 @@ export default function RegisterPage() {
 
     // SECURITY: Require the real reCAPTCHA token — no fallback
     if (!captchaToken) {
-      setError("Please complete the security verification (reCAPTCHA) before registering.");
+      setError("Please check the 'I'm not a robot' reCAPTCHA box to continue.");
       return;
     }
 
@@ -360,6 +360,7 @@ export default function RegisterPage() {
 
             <div className="pt-1 flex justify-center">
               <ReCaptcha
+                hasError={!!error && !captchaToken}
                 onVerify={(token) => {
                   setCaptchaToken(token);
                   setError("");
