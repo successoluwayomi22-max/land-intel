@@ -7,6 +7,7 @@ import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit
 import { generateOTP, hashOTP, sendWelcomeEmail, sendOTPEmail } from "@/lib/email/send";
 import { isEmailEnabled } from "@/lib/email/client";
 import { verifyRecaptcha } from "@/lib/security/recaptcha";
+import { validateEmailDeliverability } from "@/lib/security/email-validator";
 
 const RegisterSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters"),
@@ -47,6 +48,15 @@ export async function POST(request: NextRequest) {
     const email = parsed.data.email.trim().toLowerCase();
     const password = parsed.data.password;
 
+    // Validate email deliverability (check MX records, real domain, block disposable/fake domains)
+    const deliverability = await validateEmailDeliverability(email);
+    if (!deliverability.isValid) {
+      return NextResponse.json(
+        { error: deliverability.reason || "Invalid email address or unreachable mail domain." },
+        { status: 400 }
+      );
+    }
+
     // Validate password strength and reject weak/duplicate patterns wisely
     const strengthResult = validatePasswordStrength(password, { name, email });
     if (!strengthResult.isValid) {
@@ -61,7 +71,7 @@ export async function POST(request: NextRequest) {
       where: { email },
     });
 
-    if (existing) {
+    if (existing && existing.isVerified) {
       return NextResponse.json(
         {
           error: "An account with this email already exists. Please sign in or reset your password.",
@@ -81,22 +91,40 @@ export async function POST(request: NextRequest) {
     // If email service is available, require verification; otherwise auto-verify for dev
     const emailEnabled = isEmailEnabled();
 
-    const user = await db.user.create({
-      data: {
-        name,
-        email: email.toLowerCase(),
-        passwordHash,
-        role: "FREE",
-        isVerified: !emailEnabled, // Auto-verify only when email is disabled (dev mode)
-        otpHash: emailEnabled ? otpHashValue : null,
-        otpExpiresAt: emailEnabled ? otpExpiresAt : null,
-      },
-    });
+    let user;
+    let isReattempt = false;
+
+    if (existing && !existing.isVerified) {
+      // User registered previously but did not complete OTP verification.
+      // Update their account credentials and issue fresh OTP instead of throwing an error.
+      isReattempt = true;
+      user = await db.user.update({
+        where: { id: existing.id },
+        data: {
+          name,
+          passwordHash,
+          otpHash: emailEnabled ? otpHashValue : null,
+          otpExpiresAt: emailEnabled ? otpExpiresAt : null,
+        },
+      });
+    } else {
+      user = await db.user.create({
+        data: {
+          name,
+          email: email.toLowerCase(),
+          passwordHash,
+          role: "FREE",
+          isVerified: !emailEnabled, // Auto-verify only when email is disabled (dev mode)
+          otpHash: emailEnabled ? otpHashValue : null,
+          otpExpiresAt: emailEnabled ? otpExpiresAt : null,
+        },
+      });
+    }
 
     try {
       await logAudit({
         userId: user.id,
-        action: "USER_REGISTER",
+        action: isReattempt ? "USER_REGISTER_RESUME" : "USER_REGISTER",
         resourceType: "User",
         resourceId: user.id,
         details: { email: user.email },
@@ -105,15 +133,17 @@ export async function POST(request: NextRequest) {
       console.warn("[REGISTER_AUDIT_WARN]", auditErr);
     }
 
-    // Create immediate in-app Welcome Notification
-    await db.notification.create({
-      data: {
-        userId: user.id,
-        title: "Welcome to LandIntel! 🎉",
-        message: `Welcome aboard, ${user.name}! Your property due diligence workspace is ready. Perform cadastral checks, coordinate audits, and title verifications with confidence.`,
-        type: "INFO",
-      },
-    }).catch((err) => console.error("[REGISTER_NOTIF_ERROR]", err));
+    // Create immediate in-app Welcome Notification if brand new
+    if (!isReattempt) {
+      await db.notification.create({
+        data: {
+          userId: user.id,
+          title: "Welcome to LandIntel! 🎉",
+          message: `Welcome aboard, ${user.name}! Your property due diligence workspace is ready. Perform cadastral checks, coordinate audits, and title verifications with confidence.`,
+          type: "INFO",
+        },
+      }).catch((err) => console.error("[REGISTER_NOTIF_ERROR]", err));
+    }
 
     // Send OTP verification email directly to registered address
     // Note: Welcome email is sent after the user successfully verifies their OTP in /api/auth/verify-otp
@@ -122,6 +152,20 @@ export async function POST(request: NextRequest) {
       const emailResult = await sendOTPEmail({ email: user.email, name: user.name, otpCode });
       if (!emailResult.success) {
         console.error(`[REGISTER] OTP email dispatch failed for ${user.email}:`, emailResult.error);
+
+        // CRITICAL ROLLBACK: If this was a new unverified registration and email dispatch failed,
+        // delete the user record immediately so phantom/fake accounts do not persist in the database!
+        if (!isReattempt) {
+          await db.user.delete({ where: { id: user.id } }).catch(() => {});
+        }
+
+        return NextResponse.json(
+          {
+            error: "We could not deliver the verification code to this email address. Please make sure your email is active, valid, and able to receive messages.",
+            code: "EMAIL_DELIVERY_FAILED",
+          },
+          { status: 400 }
+        );
       } else {
         console.log(`[REGISTER] OTP email dispatched successfully for ${user.email}`);
       }
@@ -145,6 +189,7 @@ export async function POST(request: NextRequest) {
         { status: 201 }
       );
     }
+
 
     // Dev/no-email mode: auto-verified, issue session immediately
     const token = await createSessionToken({

@@ -42,6 +42,8 @@ import {
   Edit3,
   X,
   Save,
+  Trash2,
+  UserX,
 } from "lucide-react";
 import { RiskBadge } from "@/components/ui/RiskBadge";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -62,6 +64,7 @@ export default function AdminProDashboardPage() {
   const [selectedAuditModal, setSelectedAuditModal] = useState<any | null>(null);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [userStatusFilter, setUserStatusFilter] = useState<"ALL" | "VERIFIED" | "UNVERIFIED">("ALL");
 
   // Manual payment verify state
   const [manualRef, setManualRef] = useState("");
@@ -167,6 +170,62 @@ export default function AdminProDashboardPage() {
         fetchData();
       } else {
         showToast(`Failed: ${result.error || "Could not change role"}`);
+      }
+    } catch (e: any) {
+      showToast(`Error: ${e.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Permanently delete a customer / user account
+  const handleDeleteUser = async (userId: string, email: string, name: string) => {
+    if (
+      !confirm(
+        `PERMANENT ACCOUNT DELETION:\nAre you sure you want to permanently delete customer account for "${email}" (${name || "Unnamed"})?\n\nThis will permanently delete their account, properties, due-diligence reports, and all related data. This action cannot be undone.`
+      )
+    ) {
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/admin/users?userId=${encodeURIComponent(userId)}`, {
+        method: "DELETE",
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        showToast(`User account for ${email} permanently deleted.`);
+        fetchData();
+      } else {
+        showToast(`Delete failed: ${result.error || "Could not delete user"}`);
+      }
+    } catch (e: any) {
+      showToast(`Error: ${e.message}`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Purge all unverified / fake accounts in batch
+  const handlePurgeUnverified = async () => {
+    if (
+      !confirm(
+        `PURGE UNVERIFIED ACCOUNTS:\nAre you sure you want to delete all pending/unverified customer accounts?\n\nThis will remove all registrations created with unconfirmed or fake email addresses that never completed OTP verification.`
+      )
+    ) {
+      return;
+    }
+    setActionLoading(true);
+    try {
+      const res = await fetch("/api/admin/users/purge-unverified", {
+        method: "POST",
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        showToast(result.message || "All unverified accounts successfully purged.");
+        fetchData();
+      } else {
+        showToast(`Purge failed: ${result.error || "Could not purge accounts"}`);
       }
     } catch (e: any) {
       showToast(`Error: ${e.message}`);
@@ -286,13 +345,20 @@ export default function AdminProDashboardPage() {
     return matchesSearch && matchesRisk;
   });
 
+  const verifiedUsersCount = allUsers.filter((u: any) => u.isVerified).length;
+  const unverifiedUsersCount = allUsers.filter((u: any) => !u.isVerified).length;
+
   // Filtered users
   const filteredUsers = allUsers.filter((u: any) => {
-    return (
+    const matchesSearch =
       u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      u.role.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+      u.role.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus =
+      userStatusFilter === "ALL" ||
+      (userStatusFilter === "VERIFIED" && u.isVerified) ||
+      (userStatusFilter === "UNVERIFIED" && !u.isVerified);
+    return matchesSearch && matchesStatus;
   });
 
   if (loading && !data) {
@@ -1088,20 +1154,70 @@ export default function AdminProDashboardPage() {
             )}
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
-            <div className="relative w-full sm:w-80">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search users by name, email, or role..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
-              />
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <div className="relative w-full sm:w-80">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search users by name, email, or role..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              {/* Status Filter Tabs */}
+              <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800 text-[11px]">
+                <button
+                  onClick={() => setUserStatusFilter("ALL")}
+                  className={`px-2.5 py-1 rounded-md font-semibold transition-colors cursor-pointer ${
+                    userStatusFilter === "ALL"
+                      ? "bg-slate-800 text-white"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  All ({allUsers.length})
+                </button>
+                <button
+                  onClick={() => setUserStatusFilter("VERIFIED")}
+                  className={`px-2.5 py-1 rounded-md font-semibold transition-colors cursor-pointer ${
+                    userStatusFilter === "VERIFIED"
+                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  Verified ({verifiedUsersCount})
+                </button>
+                <button
+                  onClick={() => setUserStatusFilter("UNVERIFIED")}
+                  className={`px-2.5 py-1 rounded-md font-semibold transition-colors cursor-pointer ${
+                    userStatusFilter === "UNVERIFIED"
+                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  Pending / Fake ({unverifiedUsersCount})
+                </button>
+              </div>
             </div>
-            <span className="text-xs text-slate-400 font-mono">
-              Total Accounts: {allUsers.length}
-            </span>
+
+            <div className="flex items-center gap-3">
+              {unverifiedUsersCount > 0 && (
+                <button
+                  onClick={handlePurgeUnverified}
+                  disabled={actionLoading}
+                  className="px-3 py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 text-xs font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  title="Purge all accounts that never completed email verification"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Purge Unverified ({unverifiedUsersCount})</span>
+                </button>
+              )}
+              <span className="text-xs text-slate-400 font-mono">
+                Showing: {filteredUsers.length} of {allUsers.length}
+              </span>
+            </div>
           </div>
 
           <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
@@ -1114,7 +1230,7 @@ export default function AdminProDashboardPage() {
                     <th className="py-3 px-4">Verified</th>
                     <th className="py-3 px-4">Cases Created</th>
                     <th className="py-3 px-4">Registered</th>
-                    <th className="py-3 px-4 text-right">Modify Access Tier</th>
+                    <th className="py-3 px-4 text-right">Manage Access & Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60">
@@ -1144,7 +1260,10 @@ export default function AdminProDashboardPage() {
                             <span>Verified</span>
                           </span>
                         ) : (
-                          <span className="text-slate-500 text-[11px]">Pending</span>
+                          <span className="text-amber-400/90 flex items-center gap-1 text-[11px]">
+                            <Clock className="w-3 h-3 text-amber-400" />
+                            <span>Pending / Unverified</span>
+                          </span>
                         )}
                       </td>
                       <td className="py-3 px-4 font-mono font-bold text-white">
@@ -1186,6 +1305,15 @@ export default function AdminProDashboardPage() {
                           }`}
                         >
                           Promote Admin
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(u.id, u.email, u.name)}
+                          disabled={actionLoading}
+                          title={`Permanently delete ${u.email}`}
+                          className="px-2.5 py-1 rounded bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/30 text-[10px] font-bold transition-all inline-flex items-center gap-1 cursor-pointer disabled:opacity-40"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Delete</span>
                         </button>
                       </td>
                     </tr>
