@@ -48,6 +48,8 @@ cloudflared.exe
 
 # Scratch & local temporary files
 scratch/
+test-*.html
+test*.html
 *.bak
 *.log
 *.pdf
