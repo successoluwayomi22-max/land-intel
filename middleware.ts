@@ -9,6 +9,31 @@ const JWT_SECRET = new TextEncoder().encode(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // 0. Edge Firewall: Immediately terminate exploit scanners hunting for .env, .git, or server configs
+  const lowerPath = pathname.toLowerCase();
+  if (
+    lowerPath.includes(".env") ||
+    lowerPath.includes(".git") ||
+    lowerPath.includes(".aws") ||
+    lowerPath.includes(".vscode") ||
+    lowerPath.includes("wp-admin") ||
+    lowerPath.includes("wp-login") ||
+    lowerPath.includes("phpmyadmin") ||
+    lowerPath.includes("xmlrpc") ||
+    lowerPath.includes("actuator") ||
+    lowerPath.includes("shell.php") ||
+    lowerPath.includes("telescope")
+  ) {
+    return new NextResponse("Access Denied by LandIntel Security Firewall.", {
+      status: 403,
+      headers: {
+        "Content-Type": "text/plain",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+      },
+    });
+  }
+
   const token =
     request.cookies.get("landintel_session")?.value ||
     request.cookies.get("diasporaland_session")?.value;
@@ -85,6 +110,10 @@ export async function middleware(request: NextRequest) {
   });
 
   response.headers.set("Content-Security-Policy", cspHeader);
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(self)");
   return response;
 }
 
