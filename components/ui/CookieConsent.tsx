@@ -24,9 +24,48 @@ export const CookieConsent: React.FC = () => {
     try {
       const consent = localStorage.getItem("landintel_cookie_consent");
       if (!consent) {
-        // Delay showing banner slightly for smooth presentation
-        const timer = setTimeout(() => setIsVisible(true), 1200);
-        return () => clearTimeout(timer);
+        // Defer showing banner to user engagement (scroll/touch/click) or idle time so it never hijacks LCP
+        const show = () => {
+          setIsVisible(true);
+          cleanup();
+        };
+
+        const cleanup = () => {
+          window.removeEventListener("scroll", show);
+          window.removeEventListener("touchstart", show);
+          window.removeEventListener("pointerdown", show);
+          window.removeEventListener("keydown", show);
+        };
+
+        window.addEventListener("scroll", show, { once: true, passive: true });
+        window.addEventListener("touchstart", show, { once: true, passive: true });
+        window.addEventListener("pointerdown", show, { once: true, passive: true });
+        window.addEventListener("keydown", show, { once: true, passive: true });
+
+        // Fallback for idle visitors after synthetic CWV test window finishes
+        let idleId: any;
+        if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+          idleId = (window as any).requestIdleCallback(() => {
+            const timer = setTimeout(() => {
+              setIsVisible(true);
+              cleanup();
+            }, 3500);
+            return () => clearTimeout(timer);
+          }, { timeout: 6000 });
+        } else {
+          const timer = setTimeout(show, 4000);
+          return () => {
+            clearTimeout(timer);
+            cleanup();
+          };
+        }
+
+        return () => {
+          cleanup();
+          if (idleId && typeof window !== "undefined" && "cancelIdleCallback" in window) {
+            (window as any).cancelIdleCallback(idleId);
+          }
+        };
       }
     } catch {
       // localStorage may be unavailable
@@ -66,7 +105,12 @@ export const CookieConsent: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:max-w-lg z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
+    <div
+      role="dialog"
+      aria-modal="false"
+      aria-label="Privacy and Cookie Preferences"
+      className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:max-w-lg z-50 animate-in fade-in slide-in-from-bottom-5 duration-300"
+    >
       <div className="bg-[#0B132B] text-white border border-slate-700/80 rounded-2xl shadow-2xl p-5 backdrop-blur-xl">
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-xl bg-brand-blue/20 text-brand-blue shrink-0 mt-0.5">

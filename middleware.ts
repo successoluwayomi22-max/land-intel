@@ -96,11 +96,13 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 2. Robust Content Security Policy (CSP)
-  // Secures assets while ensuring Next.js client-side bundles and hydration execute smoothly
-  const cspHeader = `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://maps.googleapis.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.google.com https://www.gstatic.com https://accounts.google.com https://js.paystack.co https://checkout.paystack.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com https://accounts.google.com; img-src 'self' blob: data: https://www.google-analytics.com https://*.google-analytics.com https://maps.googleapis.com https://maps.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.gstatic.com https://www.google.com https://lh3.googleusercontent.com https://checkout.paystack.com https://fonts.gstatic.com; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; frame-src 'self' https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://checkout.paystack.com https://www.google.com https://recaptcha.google.com https://accounts.google.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://translate.googleapis.com https://translate-pa.googleapis.com https://translate.google.com https://maps.googleapis.com https://api.paystack.co https://checkout.paystack.com https://accounts.google.com https://open.er-api.com; upgrade-insecure-requests;`.replace(/\s{2,}/g, " ").trim();
+  // 2. Mozilla Observatory Grade A+ Content Security Policy (CSP)
+  // Utilizes cryptographic nonce & strict-dynamic to eliminate unsafe-inline penalties while allowing Next.js hydration
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const cspHeader = `default-src 'self'; script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://www.googletagmanager.com https://maps.googleapis.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.google.com https://www.gstatic.com https://accounts.google.com https://js.paystack.co https://checkout.paystack.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com https://accounts.google.com; img-src 'self' blob: data: https://www.google-analytics.com https://*.google-analytics.com https://maps.googleapis.com https://maps.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.gstatic.com https://www.google.com https://lh3.googleusercontent.com https://checkout.paystack.com https://fonts.gstatic.com; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; frame-src 'self' https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://checkout.paystack.com https://www.google.com https://recaptcha.google.com https://accounts.google.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://translate.googleapis.com https://translate-pa.googleapis.com https://translate.google.com https://maps.googleapis.com https://api.paystack.co https://checkout.paystack.com https://accounts.google.com https://open.er-api.com; upgrade-insecure-requests;`.replace(/\s{2,}/g, " ").trim();
 
   const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", cspHeader);
 
   const response = NextResponse.next({
@@ -110,9 +112,12 @@ export async function middleware(request: NextRequest) {
   });
 
   response.headers.set("Content-Security-Policy", cspHeader);
+  response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
   response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(self)");
   return response;
 }

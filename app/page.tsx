@@ -293,7 +293,7 @@ export default function LandingPage() {
         <section className="py-14 sm:py-20 lg:py-24 bg-slate-50/70 border-b border-brand-border">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-3">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700">
                 Forensic Due Diligence Audits
               </span>
               <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
@@ -336,6 +336,7 @@ export default function LandingPage() {
                   <div
                     id={cs.id}
                     role="tabpanel"
+                    tabIndex={0}
                     aria-labelledby={`tab-${cs.id}`}
                     className="bg-white border border-brand-border rounded-xl sm:rounded-2xl p-4 sm:p-8 shadow-card space-y-4 sm:space-y-6 relative overflow-hidden"
                   >
@@ -419,7 +420,7 @@ export default function LandingPage() {
         <section className="py-14 sm:py-20 bg-white border-b border-brand-border">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
                 Decision Framework
               </span>
               <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
@@ -431,7 +432,7 @@ export default function LandingPage() {
             </div>
 
             <div className="max-w-5xl mx-auto bg-white border border-brand-border rounded-xl sm:rounded-2xl shadow-card overflow-hidden">
-              <div className="sm:hidden px-4 py-2 bg-slate-50 border-b border-brand-border text-center text-[10px] text-slate-500 font-semibold flex items-center justify-center gap-1.5">
+              <div className="sm:hidden px-4 py-2 bg-slate-50 border-b border-brand-border text-center text-[10px] text-slate-700 font-semibold flex items-center justify-center gap-1.5">
                 <span>← Swipe horizontally to compare all features →</span>
               </div>
               <div className="overflow-x-auto">
@@ -478,7 +479,7 @@ export default function LandingPage() {
         <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border" id="how-it-works">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
                 Proprietary Technology
               </span>
               <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
@@ -545,7 +546,7 @@ export default function LandingPage() {
         <section className="py-14 sm:py-20 bg-white border-b border-brand-border" id="what-we-analyze">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
                 Document Scrutiny
               </span>
               <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
@@ -580,7 +581,7 @@ export default function LandingPage() {
         <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-3">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
                 {t("scamEngineTag") || "Scam Prevention Engine"}
               </span>
               <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
@@ -613,7 +614,7 @@ export default function LandingPage() {
                         <h3 className="text-sm sm:text-base font-bold text-brand-darkNavy font-heading">
                           {trap.title}
                         </h3>
-                        <p className="text-[11px] font-semibold text-slate-500">{trap.subtitle}</p>
+                        <p className="text-[11px] font-semibold text-slate-700">{trap.subtitle}</p>
                       </div>
 
                       <p className="text-xs text-slate-600 leading-relaxed">
@@ -639,7 +640,7 @@ export default function LandingPage() {
         <section className="py-14 sm:py-20 bg-white border-b border-brand-border" id="pricing">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
                 Transparent Pricing
               </span>
               <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
@@ -658,7 +659,7 @@ export default function LandingPage() {
         <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border" id="faq">
           <div className="max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
             <div className="text-center space-y-2.5 sm:space-y-3">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
                 Transparent Intelligence
               </span>
               <h2 className="text-2xl xs:text-3xl sm:text-4xl font-extrabold text-brand-darkNavy font-heading tracking-tight">
@@ -745,7 +746,7 @@ export default function LandingPage() {
         {/* 10. FINAL CALL TO ACTION */}
         <section className="py-14 sm:py-20 bg-slate-50 text-brand-darkNavy relative overflow-hidden border-t border-brand-border">
           <div className="max-w-4xl mx-auto px-3.5 sm:px-4 text-center space-y-3.5 sm:space-y-4 relative z-10">
-            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-brand-blue">
+            <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
               Independent Due Diligence
             </span>
 

@@ -71,6 +71,8 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
         className={`relative shrink-0 transition-transform duration-300 group-hover:scale-105 ${currentSize.iconClass}`}
       >
         <svg
+          aria-hidden="true"
+          focusable="false"
           viewBox="0 0 64 64"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -159,6 +161,7 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
     return (
       <Link
         href={href}
+        aria-label="LandIntel Home"
         className={`inline-flex items-center shrink-0 focus:outline-none ${className}`}
       >
         {content}

@@ -25,7 +25,7 @@ declare global {
  * 5. Aggressively hides all Google UI banners, iframes, and spinners with 0 layout shift.
  */
 export function GoogleTranslateIntegration() {
-  const [shouldLoadScript, setShouldLoadScript] = React.useState(true);
+  const [shouldLoadScript, setShouldLoadScript] = React.useState(false);
 
   // Pre-set translation cookie immediately from storage so Google's engine translates on initial parse
   useEffect(() => {
@@ -48,6 +48,7 @@ export function GoogleTranslateIntegration() {
         if (hostname !== "localhost" && hostname !== "127.0.0.1") {
           document.cookie = `googtrans=${transVal}; path=/; domain=.${hostname}; max-age=31536000; SameSite=Lax;`;
         }
+        setShouldLoadScript(true);
       }
 
       window.__landintel_load_translate = () => setShouldLoadScript(true);
@@ -142,7 +143,7 @@ export function GoogleTranslateIntegration() {
         <Script
           id="google-translate-script"
           src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       )}
     </>

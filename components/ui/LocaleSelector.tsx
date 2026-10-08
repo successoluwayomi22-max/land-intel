@@ -156,6 +156,9 @@ export const LocaleSelector: React.FC<{
       {/* Modern High-End Trigger Button */}
       <button
         type="button"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-label={`Select currency and language. Currently ${currency}, ${activeLanguage.label}`}
         onClick={() => {
           if (typeof window !== "undefined") {
             (window as any).__landintel_load_translate?.();
@@ -381,6 +384,11 @@ export const LocaleSelector: React.FC<{
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label={
+                    activeTab === "languages"
+                      ? t("searchLanguages") || "Search languages"
+                      : t("searchCurrencies") || "Search currencies"
+                  }
                   placeholder={
                     activeTab === "languages"
                       ? t("searchLanguages") || "Search languages, countries..."
@@ -392,6 +400,7 @@ export const LocaleSelector: React.FC<{
                   <button
                     type="button"
                     onClick={() => setSearchQuery("")}
+                    aria-label="Clear search query"
                     className="absolute right-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
                   >
                     <X className="w-3 h-3" />

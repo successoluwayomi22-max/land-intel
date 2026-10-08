@@ -244,6 +244,7 @@ export const Navbar: React.FC = () => {
             onClick={() => setMobileOpen(!mobileOpen)}
             className="p-1.5 text-brand-textPrimary rounded-md hover:bg-slate-100 cursor-pointer"
             aria-label="Toggle Navigation"
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -269,7 +270,7 @@ export const Navbar: React.FC = () => {
 
           <div className="pt-3 border-t border-brand-border flex flex-col gap-2">
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs font-semibold text-slate-500">Currency &amp; Language</span>
+              <span className="text-xs font-semibold text-slate-700">Currency &amp; Language</span>
               <LocaleSelector variant="light" />
             </div>
 
@@ -282,7 +283,7 @@ export const Navbar: React.FC = () => {
                       {user.name || user.email}
                     </span>
                   </div>
-                  <span className="text-[10px] text-slate-500 block truncate mt-0.5">
+                  <span className="text-[10px] text-slate-600 block truncate mt-0.5">
                     {user.email} ({user.role})
                   </span>
                 </div>

@@ -113,7 +113,7 @@ export const HeroSection: React.FC = () => {
             <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">{t("proof2Subtitle") || "SURCON Sub-Meter Coordinate Grid"}</div>
           </div>
           <div className="p-2 sm:p-0">
-            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-emerald-600 font-heading tracking-tight">{t("proof3Title") || "Gazette Overlay"}</div>
+            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-emerald-700 font-heading tracking-tight">{t("proof3Title") || "Gazette Overlay"}</div>
             <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">{t("proof3Subtitle") || "Committed Acquisition & Setback Screening"}</div>
           </div>
           <div className="p-2 sm:p-0">
