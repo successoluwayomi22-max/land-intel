@@ -33,7 +33,6 @@ export const PricingCards: React.FC = () => {
               type="button"
               onClick={() => setCurrency(cKey)}
               aria-pressed={isSelected}
-              aria-label={`Select ${c.name} (${c.code})`}
               className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                 isSelected
                   ? "bg-brand-blue text-white shadow-sm scale-105"
@@ -42,7 +41,7 @@ export const PricingCards: React.FC = () => {
             >
               <CountryFlag countryCode={c.countryCode} size={14} />
               <span>{c.code}</span>
-              <span className="text-[10px] sm:text-[11px] opacity-75 font-normal">({c.symbol})</span>
+              <span className={`text-[10px] sm:text-[11px] font-medium ${isSelected ? "text-blue-100" : "text-slate-600"}`}>({c.symbol})</span>
             </button>
           );
         })}

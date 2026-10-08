@@ -158,7 +158,6 @@ export const LocaleSelector: React.FC<{
         type="button"
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label={`Select currency and language. Currently ${currency}, ${activeLanguage.label}`}
         onClick={() => {
           if (typeof window !== "undefined") {
             (window as any).__landintel_load_translate?.();
