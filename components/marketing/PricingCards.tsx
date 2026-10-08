@@ -41,7 +41,7 @@ export const PricingCards: React.FC = () => {
             >
               <CountryFlag countryCode={c.countryCode} size={14} />
               <span>{c.code}</span>
-              <span className={`text-[10px] sm:text-[11px] font-medium ${isSelected ? "text-blue-100" : "text-slate-600"}`}>({c.symbol})</span>
+              <span className={`text-[10px] sm:text-[11px] font-medium ${isSelected ? "text-white font-bold" : "text-slate-600"}`}>({c.symbol})</span>
             </button>
           );
         })}
