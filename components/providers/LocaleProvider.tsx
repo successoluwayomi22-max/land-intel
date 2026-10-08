@@ -264,10 +264,33 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     };
 
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      (window as any).requestIdleCallback(syncNetworkData, { timeout: 3500 });
-    } else {
-      setTimeout(syncNetworkData, 2500);
+    // 2. Defer background network sync (forex rates & geo location) to user engagement or 10s idle
+    if (typeof window !== "undefined") {
+      let ran = false;
+      const runOnce = () => {
+        if (ran) return;
+        ran = true;
+        cleanup();
+        syncNetworkData();
+      };
+
+      const cleanup = () => {
+        window.removeEventListener("scroll", runOnce);
+        window.removeEventListener("pointerdown", runOnce);
+        window.removeEventListener("touchstart", runOnce);
+        window.removeEventListener("keydown", runOnce);
+      };
+
+      window.addEventListener("scroll", runOnce, { once: true, passive: true });
+      window.addEventListener("pointerdown", runOnce, { once: true, passive: true });
+      window.addEventListener("touchstart", runOnce, { once: true, passive: true });
+      window.addEventListener("keydown", runOnce, { once: true, passive: true });
+
+      const idleTimer = setTimeout(runOnce, 10000);
+      return () => {
+        cleanup();
+        clearTimeout(idleTimer);
+      };
     }
   }, []);
 

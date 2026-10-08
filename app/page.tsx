@@ -219,7 +219,7 @@ export default function LandingPage() {
         <HeroSection />
 
         {/* 2. INSTITUTIONAL METRICS & REGULATORY TRUST MARQUEE */}
-        <section className="py-8 sm:py-10 bg-white border-y border-brand-border">
+        <section className="py-8 sm:py-10 bg-white border-y border-brand-border content-auto">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6 lg:gap-8">
               <div className="text-center sm:text-left border-l-2 border-blue-600 pl-3 sm:pl-4 py-1">
@@ -287,7 +287,7 @@ export default function LandingPage() {
         </section>
 
         {/* 3. PERSUASIVE STORYTELLING: REAL-WORLD AUDIT SCENARIOS */}
-        <section className="py-14 sm:py-20 lg:py-24 bg-slate-50/70 border-b border-brand-border">
+        <section className="py-14 sm:py-20 lg:py-24 bg-slate-50/70 border-b border-brand-border content-auto">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-3">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700">
@@ -307,7 +307,7 @@ export default function LandingPage() {
         </section>
 
         {/* 4. COMPARISON MATRIX: WHATSAPP VS LANDINTEL */}
-        <section className="py-14 sm:py-20 bg-white border-b border-brand-border">
+        <section className="py-14 sm:py-20 bg-white border-b border-brand-border content-auto">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
@@ -366,7 +366,7 @@ export default function LandingPage() {
         </section>
 
         {/* 5. CADASTRAL ENGINE PILLARS */}
-        <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border" id="how-it-works">
+        <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border content-auto" id="how-it-works">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
@@ -433,7 +433,7 @@ export default function LandingPage() {
         </section>
 
         {/* 6. WHAT WE ANALYZE (DOCUMENT COVERAGE) */}
-        <section className="py-14 sm:py-20 bg-white border-b border-brand-border" id="what-we-analyze">
+        <section className="py-14 sm:py-20 bg-white border-b border-brand-border content-auto" id="what-we-analyze">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
@@ -468,7 +468,7 @@ export default function LandingPage() {
         </section>
 
         {/* 7. SCAM RED-FLAGS WE SCAN FOR */}
-        <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border">
+        <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border content-auto">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-3">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
@@ -527,7 +527,7 @@ export default function LandingPage() {
         </section>
 
         {/* 8. TRANSPARENT PRICING WITH MULTI-CURRENCY SUPPORT */}
-        <section className="py-14 sm:py-20 bg-white border-b border-brand-border" id="pricing">
+        <section className="py-14 sm:py-20 bg-white border-b border-brand-border content-auto" id="pricing">
           <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
             <div className="max-w-3xl mx-auto text-center space-y-2.5 sm:space-y-4">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
@@ -546,7 +546,7 @@ export default function LandingPage() {
         </section>
 
         {/* 9. FREQUENTLY ASKED QUESTIONS */}
-        <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border" id="faq">
+        <section className="py-14 sm:py-20 bg-slate-50/70 border-b border-brand-border content-auto" id="faq">
           <div className="max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
             <div className="text-center space-y-2.5 sm:space-y-3">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
@@ -634,7 +634,7 @@ export default function LandingPage() {
         </section>
 
         {/* 10. FINAL CALL TO ACTION */}
-        <section className="py-14 sm:py-20 bg-slate-50 text-brand-darkNavy relative overflow-hidden border-t border-brand-border">
+        <section className="py-14 sm:py-20 bg-slate-50 text-brand-darkNavy relative overflow-hidden border-t border-brand-border content-auto">
           <div className="max-w-4xl mx-auto px-3.5 sm:px-4 text-center space-y-3.5 sm:space-y-4 relative z-10">
             <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-700">
               Independent Due Diligence
@@ -649,7 +649,7 @@ export default function LandingPage() {
             </p>
 
             <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 w-full max-w-xs sm:max-w-none mx-auto">
-              <Link href="/register" className="w-full sm:w-auto">
+              <Link href="/register" prefetch={false} className="w-full sm:w-auto">
                 <Button
                   variant="primary"
                   size="lg"
@@ -688,7 +688,9 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <Footer />
+      <div className="content-auto">
+        <Footer />
+      </div>
     </div>
   );
 }

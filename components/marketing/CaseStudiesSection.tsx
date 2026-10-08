@@ -129,7 +129,7 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ caseStud
                 <span className="text-xs text-slate-700 font-mono font-medium leading-tight block">{cs.verdict}</span>
               </div>
             </div>
-            <Link href="/register" className="w-full sm:w-auto">
+            <Link href="/register" prefetch={false} className="w-full sm:w-auto">
               <Button variant="primary" size="sm" className="w-full sm:w-auto text-xs py-2.5 sm:py-2 px-4 shadow-sm font-bold flex items-center justify-center">
                 <span>Screen Your Property Now</span>
                 <ArrowRight className="w-3.5 h-3.5 ml-1.5" />

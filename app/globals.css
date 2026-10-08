@@ -68,6 +68,12 @@
   background: rgba(100, 116, 139, 0.6);
 }
 
+/* Offscreen content visibility optimization: skips style & layout calculation on initial paint */
+.content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
+}
+
 /* ==========================================================================
    Google Translate Artifact Suppression
    Hides ALL injected Google Translate DOM elements: banners, spinners,

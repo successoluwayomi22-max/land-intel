@@ -49,13 +49,13 @@ export const HeroSection: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3.5 pt-2 w-full max-w-xs sm:max-w-none mx-auto">
             {isLoggedIn ? (
               <>
-                <Link href="/properties/new" className="w-full sm:w-auto">
+                <Link href="/properties/new" prefetch={false} className="w-full sm:w-auto">
                   <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-md py-3 sm:py-3.5 px-6 font-bold text-xs sm:text-sm">
                     <PlusCircle className="w-4 h-4 mr-2" />
                     <span>{t("newCase") || "Start Property Verification"}</span>
                   </Button>
                 </Link>
-                <Link href="/dashboard" className="w-full sm:w-auto">
+                <Link href="/dashboard" prefetch={false} className="w-full sm:w-auto">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto bg-white border-slate-300 text-brand-darkNavy hover:bg-slate-50 py-3 sm:py-3.5 px-6 font-bold text-xs sm:text-sm shadow-xs">
                     <LayoutDashboard className="w-4 h-4 mr-2 text-brand-blue" />
                     <span>{t("dashboard") || "Go to Dashboard"}</span>
@@ -64,13 +64,13 @@ export const HeroSection: React.FC = () => {
               </>
             ) : (
               <>
-                <Link href="/register" className="w-full sm:w-auto">
+                <Link href="/register" prefetch={false} className="w-full sm:w-auto">
                   <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-md py-3 sm:py-3.5 px-6 sm:px-7 font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
                     <span>{t("analyzeProperty") || "Start Property Verification"}</span>
                     <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </Link>
-                <Link href="/how-it-works" className="w-full sm:w-auto">
+                <Link href="/how-it-works" prefetch={false} className="w-full sm:w-auto">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto bg-white border-slate-300 text-slate-700 hover:text-brand-darkNavy hover:bg-slate-50 py-3 sm:py-3.5 px-6 font-bold text-xs sm:text-sm shadow-xs">
                     <span>{t("howItWorks") || "See How It Works"}</span>
                   </Button>

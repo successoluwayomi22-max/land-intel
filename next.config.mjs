@@ -5,6 +5,10 @@ const nextConfig = {
   compress: true,
   productionBrowserSourceMaps: false,
 
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
+
   images: {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 86400,

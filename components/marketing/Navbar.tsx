@@ -119,7 +119,7 @@ export const Navbar: React.FC = () => {
             <Link
               key={link.href}
               href={link.href}
-              prefetch={true}
+              prefetch={false}
               className="px-2.5 py-1.5 rounded-lg text-slate-700 hover:text-emerald-700 hover:bg-slate-50 transition-all whitespace-nowrap"
             >
               {link.label}
@@ -136,7 +136,7 @@ export const Navbar: React.FC = () => {
               {/* New Property Case Action Button */}
               <Link
                 href="/properties/new"
-                prefetch={true}
+                prefetch={false}
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-all whitespace-nowrap"
               >
                 <PlusCircle className="w-3.5 h-3.5" />
@@ -183,7 +183,7 @@ export const Navbar: React.FC = () => {
                     <div className="py-1">
                       <Link
                         href={dashboardHref}
-                        prefetch={true}
+                        prefetch={false}
                         onClick={() => setUserMenuOpen(false)}
                         className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/50 transition-colors"
                       >
@@ -193,7 +193,7 @@ export const Navbar: React.FC = () => {
 
                       <Link
                         href="/dashboard"
-                        prefetch={true}
+                        prefetch={false}
                         onClick={() => setUserMenuOpen(false)}
                         className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/50 transition-colors"
                       >
@@ -203,7 +203,7 @@ export const Navbar: React.FC = () => {
 
                       <Link
                         href="/security"
-                        prefetch={true}
+                        prefetch={false}
                         onClick={() => setUserMenuOpen(false)}
                         className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/50 transition-colors"
                       >
@@ -233,14 +233,14 @@ export const Navbar: React.FC = () => {
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                prefetch={true}
+                prefetch={false}
                 className="text-xs font-bold text-slate-700 hover:text-emerald-700 px-3 py-2 transition-colors whitespace-nowrap"
               >
                 {t("logIn") || "Sign In"}
               </Link>
               <Link
                 href="/register"
-                prefetch={true}
+                prefetch={false}
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-all whitespace-nowrap"
               >
                 <span>{t("analyzeProperty") || "Analyze a Property"}</span>
@@ -272,7 +272,7 @@ export const Navbar: React.FC = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                prefetch={true}
+                prefetch={false}
                 onClick={() => setMobileOpen(false)}
                 className="py-1.5 hover:text-brand-blue transition-colors"
               >
@@ -303,14 +303,14 @@ export const Navbar: React.FC = () => {
 
                 <Link
                   href={dashboardHref}
-                  prefetch={true}
+                  prefetch={false}
                   onClick={() => setMobileOpen(false)}
                   className="block text-center py-2 text-xs font-bold text-white bg-brand-darkNavy rounded-lg hover:bg-slate-800 transition-colors"
                 >
                   {isAdmin ? (t("adminConsole") || "Admin Cockpit") : (t("dashboard") || "Investor Dashboard")}
                 </Link>
 
-                <Link href="/properties/new" prefetch={true} onClick={() => setMobileOpen(false)}>
+                <Link href="/properties/new" prefetch={false} onClick={() => setMobileOpen(false)}>
                   <Button variant="primary" size="md" className="w-full">
                     <PlusCircle className="w-4 h-4 mr-1.5" />
                     <span>{t("newCase") || "New Property Case"}</span>
@@ -332,13 +332,13 @@ export const Navbar: React.FC = () => {
               <>
                 <Link
                   href="/login"
-                  prefetch={true}
+                  prefetch={false}
                   onClick={() => setMobileOpen(false)}
                   className="text-center py-2 text-xs font-bold text-brand-textPrimary"
                 >
                   {t("logIn") || "Sign In"}
                 </Link>
-                <Link href="/register" prefetch={true} onClick={() => setMobileOpen(false)}>
+                <Link href="/register" prefetch={false} onClick={() => setMobileOpen(false)}>
                   <Button variant="primary" size="md" className="w-full">
                     {t("analyzeProperty") || "Analyze a Property"}
                   </Button>

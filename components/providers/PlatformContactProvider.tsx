@@ -61,10 +61,28 @@ export function PlatformContactProvider({ children }: { children: React.ReactNod
 
   useEffect(() => {
     let timer: any;
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      (window as any).requestIdleCallback(() => fetchContact(), { timeout: 4000 });
-    } else {
-      timer = setTimeout(() => fetchContact(), 2500);
+    let ran = false;
+
+    const runFetch = () => {
+      if (ran) return;
+      ran = true;
+      cleanupListeners();
+      fetchContact();
+    };
+
+    const cleanupListeners = () => {
+      window.removeEventListener("scroll", runFetch);
+      window.removeEventListener("pointerdown", runFetch);
+      window.removeEventListener("touchstart", runFetch);
+      window.removeEventListener("keydown", runFetch);
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", runFetch, { once: true, passive: true });
+      window.addEventListener("pointerdown", runFetch, { once: true, passive: true });
+      window.addEventListener("touchstart", runFetch, { once: true, passive: true });
+      window.addEventListener("keydown", runFetch, { once: true, passive: true });
+      timer = setTimeout(runFetch, 10000);
     }
 
     const handleUpdate = (e: CustomEvent<PlatformContactSettings>) => {
@@ -76,6 +94,7 @@ export function PlatformContactProvider({ children }: { children: React.ReactNod
     window.addEventListener("landintel:contact-updated" as any, handleUpdate as any);
     return () => {
       if (timer) clearTimeout(timer);
+      cleanupListeners();
       window.removeEventListener("landintel:contact-updated" as any, handleUpdate as any);
     };
   }, [fetchContact]);
