@@ -3163,22 +3163,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   useEffect(() => {
-    // 1. Fetch live global forex rates continuously
-    fetch("/api/exchange-rates")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data) {
-          if (data.ratesFromUsd) {
-            setRatesFromUsd((prev) => ({ ...prev, ...data.ratesFromUsd }));
-          }
-          if (data.rates) {
-            setLiveRates((prev) => ({ ...prev, ...data.rates }));
-          }
-        }
-      })
-      .catch(() => {});
-
-    // 2. Check if user previously made a manual override
+    // 1. Immediately apply any saved manual overrides from local storage
     const isManual = typeof window !== "undefined"
       ? localStorage.getItem("landintel_user_manual_override") === "true"
       : false;
@@ -3200,18 +3185,39 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setIsAutoDetected(false);
     }
 
-    // 3. If no manual override, execute real-time IP & device auto-tracking immediately
-    if (!isManual) {
-      performAutoDetect();
-    } else {
-      // Still fetch geo country for region indicator
-      fetch(`/api/geo?t=${Date.now()}`)
-        .then((res) => res.json())
+    // 2. Defer background network sync (forex rates & geo location) to idle time
+    const syncNetworkData = () => {
+      fetch("/api/exchange-rates")
+        .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (data.country) setDetectedCountry(data.country);
-          if (data.city) setDetectedCity(data.city);
+          if (data) {
+            if (data.ratesFromUsd) {
+              setRatesFromUsd((prev) => ({ ...prev, ...data.ratesFromUsd }));
+            }
+            if (data.rates) {
+              setLiveRates((prev) => ({ ...prev, ...data.rates }));
+            }
+          }
         })
         .catch(() => {});
+
+      if (!isManual) {
+        performAutoDetect();
+      } else {
+        fetch(`/api/geo?t=${Date.now()}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.country) setDetectedCountry(data.country);
+            if (data.city) setDetectedCity(data.city);
+          })
+          .catch(() => {});
+      }
+    };
+
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(syncNetworkData, { timeout: 3500 });
+    } else {
+      setTimeout(syncNetworkData, 2500);
     }
   }, []);
 

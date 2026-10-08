@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Script from "next/script";
 
 // Configurable GA4 Measurement ID
@@ -18,6 +18,8 @@ export function trackGAEvent(eventName: string, eventParams: Record<string, any>
 }
 
 export const GoogleAnalytics: React.FC = () => {
+  const [shouldLoad, setShouldLoad] = useState(false);
+
   // Check user cookie preferences for GDPR/NDPR compliance
   useEffect(() => {
     try {
@@ -33,19 +35,44 @@ export const GoogleAnalytics: React.FC = () => {
     } catch {
       // LocalStorage unavailable
     }
+
+    // Load GA on real user interaction or deferred idle fallback
+    const triggerLoad = () => {
+      setShouldLoad(true);
+      cleanup();
+    };
+
+    const cleanup = () => {
+      window.removeEventListener("scroll", triggerLoad);
+      window.removeEventListener("pointerdown", triggerLoad);
+      window.removeEventListener("touchstart", triggerLoad);
+      window.removeEventListener("keydown", triggerLoad);
+    };
+
+    window.addEventListener("scroll", triggerLoad, { passive: true, once: true });
+    window.addEventListener("pointerdown", triggerLoad, { passive: true, once: true });
+    window.addEventListener("touchstart", triggerLoad, { passive: true, once: true });
+    window.addEventListener("keydown", triggerLoad, { passive: true, once: true });
+
+    const timer = setTimeout(triggerLoad, 10000);
+
+    return () => {
+      cleanup();
+      clearTimeout(timer);
+    };
   }, []);
 
-  if (!GA_MEASUREMENT_ID) return null;
+  if (!GA_MEASUREMENT_ID || !shouldLoad) return null;
 
   return (
     <>
       <Script
-        strategy="lazyOnload"
+        strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
       />
       <Script
         id="google-analytics-init"
-        strategy="lazyOnload"
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];

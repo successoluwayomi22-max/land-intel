@@ -48,20 +48,33 @@ export const Navbar: React.FC = () => {
       } catch {}
     }
 
-    // 2. Cross-verify with session endpoint
-    fetch("/api/auth/me", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data && data.user) {
-          setUser(data.user);
-          if (typeof window !== "undefined") {
-            localStorage.setItem("landintel_user", JSON.stringify(data.user));
-          }
-        } else if (!savedUserStr) {
-          setUser(null);
-        }
-      })
-      .catch(() => {});
+    // 2. Cross-verify with session endpoint if previously logged in
+    if (savedUserStr) {
+      const verifySession = () => {
+        fetch("/api/auth/me", { credentials: "include" })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data) => {
+            if (data && data.user) {
+              setUser(data.user);
+              if (typeof window !== "undefined") {
+                localStorage.setItem("landintel_user", JSON.stringify(data.user));
+              }
+            } else {
+              setUser(null);
+              if (typeof window !== "undefined") {
+                localStorage.removeItem("landintel_user");
+              }
+            }
+          })
+          .catch(() => {});
+      };
+
+      if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+        (window as any).requestIdleCallback(verifySession);
+      } else {
+        setTimeout(verifySession, 2000);
+      }
+    }
   }, []);
 
   const handleLogout = async () => {

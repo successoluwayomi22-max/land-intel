@@ -60,7 +60,12 @@ export function PlatformContactProvider({ children }: { children: React.ReactNod
   }, []);
 
   useEffect(() => {
-    fetchContact();
+    let timer: any;
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(() => fetchContact(), { timeout: 4000 });
+    } else {
+      timer = setTimeout(() => fetchContact(), 2500);
+    }
 
     const handleUpdate = (e: CustomEvent<PlatformContactSettings>) => {
       if (e.detail) {
@@ -70,6 +75,7 @@ export function PlatformContactProvider({ children }: { children: React.ReactNod
 
     window.addEventListener("landintel:contact-updated" as any, handleUpdate as any);
     return () => {
+      if (timer) clearTimeout(timer);
       window.removeEventListener("landintel:contact-updated" as any, handleUpdate as any);
     };
   }, [fetchContact]);
