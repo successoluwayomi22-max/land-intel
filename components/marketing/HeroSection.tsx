@@ -1,29 +1,11 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import React from "react";
 import {
   ShieldCheck,
-  ArrowRight,
   CheckCircle2,
-  LayoutDashboard,
-  PlusCircle,
-  Download,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { useLocale } from "@/components/providers/LocaleProvider";
+import { HeroCta } from "./HeroCta";
 
 export const HeroSection: React.FC = () => {
-  const { t } = useLocale();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const savedUser = typeof window !== "undefined" ? localStorage.getItem("landintel_user") : null;
-    if (savedUser) {
-      setIsLoggedIn(true);
-    }
-  }, []);
-
   return (
     <section className="relative overflow-hidden pt-8 pb-14 sm:pt-14 sm:pb-20 lg:pt-20 lg:pb-28 border-b border-brand-border bg-gradient-to-b from-white via-white to-slate-50 text-brand-textPrimary selection:bg-blue-100 selection:text-blue-900">
       {/* Ambient soft background accents */}
@@ -35,69 +17,32 @@ export const HeroSection: React.FC = () => {
         {/* Main Text Header */}
         <div className="text-center max-w-4xl mx-auto space-y-4 sm:space-y-6">
 
-          {/* Heading */}
+          {/* Heading - Primary LCP Target */}
           <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-black text-brand-darkNavy font-heading tracking-tight leading-[1.12] sm:leading-[1.08] px-1 sm:px-0">
-            {t("heroTitle") || "Verify Any Property Before You Wire Millions."}
+            Verify Any Property Before You Wire Millions.
           </h1>
 
           {/* Subtitle */}
           <p className="text-xs xs:text-sm sm:text-lg text-brand-textSecondary leading-relaxed max-w-3xl mx-auto font-normal px-2 sm:px-0">
-            {t("heroSubtitle") || "Independent property due diligence, survey boundary verification, and title authentication for diaspora buyers, remote investors, and property developers."}
+            Independent property due diligence, survey boundary verification, and title authentication for diaspora buyers, remote investors, and property developers.
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3.5 pt-2 w-full max-w-xs sm:max-w-none mx-auto">
-            {isLoggedIn ? (
-              <>
-                <Link href="/properties/new" prefetch={false} className="w-full sm:w-auto">
-                  <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-md py-3 sm:py-3.5 px-6 font-bold text-xs sm:text-sm">
-                    <PlusCircle className="w-4 h-4 mr-2" />
-                    <span>{t("newCase") || "Start Property Verification"}</span>
-                  </Button>
-                </Link>
-                <Link href="/dashboard" prefetch={false} className="w-full sm:w-auto">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto bg-white border-slate-300 text-brand-darkNavy hover:bg-slate-50 py-3 sm:py-3.5 px-6 font-bold text-xs sm:text-sm shadow-xs">
-                    <LayoutDashboard className="w-4 h-4 mr-2 text-brand-blue" />
-                    <span>{t("dashboard") || "Go to Dashboard"}</span>
-                  </Button>
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link href="/register" prefetch={false} className="w-full sm:w-auto">
-                  <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-md py-3 sm:py-3.5 px-6 sm:px-7 font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
-                    <span>{t("analyzeProperty") || "Start Property Verification"}</span>
-                    <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </Link>
-                <Link href="/how-it-works" prefetch={false} className="w-full sm:w-auto">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto bg-white border-slate-300 text-slate-700 hover:text-brand-darkNavy hover:bg-slate-50 py-3 sm:py-3.5 px-6 font-bold text-xs sm:text-sm shadow-xs">
-                    <span>{t("howItWorks") || "See How It Works"}</span>
-                  </Button>
-                </Link>
-                <a href="/sample-diligence-report.pdf" download className="w-full sm:w-auto">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto bg-slate-50 border-slate-200 text-slate-600 hover:text-brand-darkNavy hover:bg-white py-3 sm:py-3.5 px-6 font-bold text-xs sm:text-sm shadow-xs flex items-center justify-center gap-2">
-                    <Download className="w-3.5 h-3.5" />
-                    <span>{t("previewSampleReport") || "Preview Sample Dossier (.PDF)"}</span>
-                  </Button>
-                </a>
-              </>
-            )}
-          </div>
+          <HeroCta />
 
           {/* Trust Highlights */}
           <div className="pt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-6 text-[11px] sm:text-xs text-brand-textSecondary">
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
-              <span>{t("freeScreening") || "Free Initial Cadastral Scan"}</span>
+              <span>Free Initial Cadastral Scan</span>
             </span>
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
-              <span>{t("privateStorageTitle") || "AES-256 Document Encryption"}</span>
+              <span>AES-256 Document Encryption</span>
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
-              <span>{t("downloadGenuinePdf") || "Certified 15-Section Due-Diligence PDF"}</span>
+              <span>Certified 15-Section Due-Diligence PDF</span>
             </span>
           </div>
         </div>
@@ -105,20 +50,20 @@ export const HeroSection: React.FC = () => {
         {/* Global Methodology Proof Bar */}
         <div className="pt-6 border-t border-brand-border grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 text-center">
           <div className="p-2 sm:p-0">
-            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">{t("proof1Title") || "15-Point Check"}</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">{t("proof1Subtitle") || "Statutory Deed & Cadastral Audit"}</div>
+            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">15-Point Check</div>
+            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">Statutory Deed &amp; Cadastral Audit</div>
           </div>
           <div className="p-2 sm:p-0">
-            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">{t("proof2Title") || "UTM 31N/32N"}</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">{t("proof2Subtitle") || "SURCON Sub-Meter Coordinate Grid"}</div>
+            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">UTM 31N/32N</div>
+            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">SURCON Sub-Meter Coordinate Grid</div>
           </div>
           <div className="p-2 sm:p-0">
-            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-emerald-700 font-heading tracking-tight">{t("proof3Title") || "Gazette Overlay"}</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">{t("proof3Subtitle") || "Committed Acquisition & Setback Screening"}</div>
+            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-emerald-700 font-heading tracking-tight">Gazette Overlay</div>
+            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">Committed Acquisition &amp; Setback Screening</div>
           </div>
           <div className="p-2 sm:p-0">
-            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-purple-700 font-heading tracking-tight">{t("proof4Title") || "SHA-256"}</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">{t("proof4Subtitle") || "Tamper-Proof Audit QR Seal"}</div>
+            <div className="text-xl xs:text-2xl sm:text-3xl font-black text-purple-700 font-heading tracking-tight">SHA-256</div>
+            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">Tamper-Proof Audit QR Seal</div>
           </div>
         </div>
       </div>
