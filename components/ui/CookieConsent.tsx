@@ -110,7 +110,7 @@ export const CookieConsent: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="font-semibold text-slate-200">Strictly Necessary</span>
-                    <p className="text-[11px] text-slate-400">Required for session security and document access</p>
+                    <p className="text-[11px] text-slate-300">Required for session security and document access</p>
                   </div>
                   <span className="text-[10px] font-mono bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">ALWAYS ON</span>
                 </div>
@@ -118,7 +118,7 @@ export const CookieConsent: React.FC = () => {
                 <div className="flex items-center justify-between pt-2 border-t border-slate-800">
                   <div>
                     <span className="font-semibold text-slate-200">Analytics &amp; Cadastral Performance</span>
-                    <p className="text-[11px] text-slate-400">Helps us monitor document OCR latency and telemetry</p>
+                    <p className="text-[11px] text-slate-300">Helps us monitor document OCR latency and telemetry</p>
                   </div>
                   <input
                     id="analytics-cookies"
@@ -126,24 +126,24 @@ export const CookieConsent: React.FC = () => {
                     type="checkbox"
                     checked={preferences.analytics}
                     onChange={(e) => setPreferences({ ...preferences, analytics: e.target.checked })}
-                    className="rounded border-slate-700 text-brand-blue focus:ring-brand-blue h-4 w-4"
+                    className="rounded border-slate-700 text-brand-blue focus:ring-brand-blue h-5 w-5 cursor-pointer"
                   />
                 </div>
               </div>
             )}
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2.5">
               <button
                 type="button"
                 onClick={handleAcceptAll}
-                className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors shadow-xs"
+                className="px-4 py-2.5 min-h-[44px] rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors shadow-xs flex items-center justify-center"
               >
                 Accept All
               </button>
               <button
                 type="button"
                 onClick={handleRejectNonessential}
-                className="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition-colors border border-slate-700"
+                className="px-4 py-2.5 min-h-[44px] rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold transition-colors border border-slate-700 flex items-center justify-center"
               >
                 Reject Non-Essential
               </button>
@@ -151,7 +151,7 @@ export const CookieConsent: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleSavePreferences}
-                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors"
+                  className="px-4 py-2.5 min-h-[44px] rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors flex items-center justify-center"
                 >
                   Save Choices
                 </button>
@@ -159,9 +159,9 @@ export const CookieConsent: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPreferences(true)}
-                  className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors flex items-center gap-1"
+                  className="px-3.5 py-2.5 min-h-[44px] rounded-lg text-slate-200 hover:text-white transition-colors flex items-center justify-center gap-1.5"
                 >
-                  <Settings className="w-3.5 h-3.5" />
+                  <Settings className="w-4 h-4" />
                   <span>Customize</span>
                 </button>
               )}

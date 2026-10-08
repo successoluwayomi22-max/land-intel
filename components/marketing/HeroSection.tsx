@@ -31,17 +31,17 @@ export const HeroSection: React.FC = () => {
           <HeroCta />
 
           {/* Trust Highlights */}
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-6 text-[11px] sm:text-xs text-brand-textSecondary">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-6 text-xs text-slate-700 font-medium">
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
               <span>Free Initial Cadastral Scan</span>
             </span>
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
+              <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
               <span>AES-256 Document Encryption</span>
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
               <span>Certified 15-Section Due-Diligence PDF</span>
             </span>
           </div>
@@ -51,19 +51,19 @@ export const HeroSection: React.FC = () => {
         <div className="pt-6 border-t border-brand-border grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 text-center">
           <div className="p-2 sm:p-0">
             <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">15-Point Check</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">Statutory Deed &amp; Cadastral Audit</div>
+            <div className="text-xs text-slate-700 font-medium mt-1">Statutory Deed &amp; Cadastral Audit</div>
           </div>
           <div className="p-2 sm:p-0">
             <div className="text-xl xs:text-2xl sm:text-3xl font-black text-brand-darkNavy font-heading tracking-tight">UTM 31N/32N</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">SURCON Sub-Meter Coordinate Grid</div>
+            <div className="text-xs text-slate-700 font-medium mt-1">SURCON Sub-Meter Coordinate Grid</div>
           </div>
           <div className="p-2 sm:p-0">
             <div className="text-xl xs:text-2xl sm:text-3xl font-black text-emerald-700 font-heading tracking-tight">Gazette Overlay</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">Committed Acquisition &amp; Setback Screening</div>
+            <div className="text-xs text-slate-700 font-medium mt-1">Committed Acquisition &amp; Setback Screening</div>
           </div>
           <div className="p-2 sm:p-0">
             <div className="text-xl xs:text-2xl sm:text-3xl font-black text-purple-700 font-heading tracking-tight">SHA-256</div>
-            <div className="text-[10px] sm:text-xs text-brand-textSecondary font-medium mt-0.5 sm:mt-1">Tamper-Proof Audit QR Seal</div>
+            <div className="text-xs text-slate-700 font-medium mt-1">Tamper-Proof Audit QR Seal</div>
           </div>
         </div>
       </div>

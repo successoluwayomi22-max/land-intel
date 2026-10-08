@@ -36,7 +36,7 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ caseStud
   return (
     <div className="max-w-5xl mx-auto">
       {/* Tab Selector */}
-      <div role="tablist" aria-label="Case Studies" className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8">
+      <div role="tablist" aria-label="Case Studies" className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-6 sm:mb-8">
         {caseStudies.map((item, idx) => (
           <button
             key={item.id}
@@ -46,14 +46,14 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ caseStud
             aria-selected={activeCaseTab === idx}
             aria-controls={item.id}
             onClick={() => setActiveCaseTab(idx)}
-            className={`px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 sm:gap-2 ${
+            className={`min-h-[44px] px-3.5 py-2.5 sm:px-4 sm:py-2.5 rounded-lg sm:rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
               activeCaseTab === idx
                 ? "bg-blue-700 text-white shadow-md ring-1 ring-blue-700"
-                : "bg-white text-slate-700 hover:text-brand-darkNavy hover:bg-slate-50 border border-brand-border shadow-2xs"
+                : "bg-white text-slate-800 hover:text-brand-darkNavy hover:bg-slate-50 border border-brand-border shadow-2xs"
             }`}
           >
             <span>{item.tag.split(":")[0]}</span>
-            <span className={`hidden sm:inline ${activeCaseTab === idx ? "text-white font-bold" : "text-slate-600"}`}>— {item.lossPrevented}</span>
+            <span className={`hidden sm:inline ${activeCaseTab === idx ? "text-white font-bold" : "text-slate-700"}`}>— {item.lossPrevented}</span>
           </button>
         ))}
       </div>
@@ -81,12 +81,12 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ caseStud
             <h3 className="text-lg xs:text-xl sm:text-2xl font-black font-heading text-brand-darkNavy tracking-tight leading-snug">
               {cs.title}
             </h3>
-            <p className="text-[11px] sm:text-xs font-medium text-slate-600 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <p className="text-xs font-medium text-slate-700 flex flex-wrap items-center gap-x-2 gap-y-1">
               <span className="flex items-center gap-1">
                 <Users className="w-3.5 h-3.5 text-brand-blue shrink-0" />
                 <span>Investor Profile: {cs.investor}</span>
               </span>
-              <span className="text-slate-400 hidden xs:inline" aria-hidden="true">|</span>
+              <span className="text-slate-500 hidden xs:inline" aria-hidden="true">|</span>
               <span className="text-amber-800 font-semibold">{cs.riskType}</span>
             </p>
           </div>
@@ -130,7 +130,7 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({ caseStud
               </div>
             </div>
             <Link href="/register" prefetch={false} className="w-full sm:w-auto">
-              <Button variant="primary" size="sm" className="w-full sm:w-auto text-xs py-2.5 sm:py-2 px-4 shadow-sm font-bold flex items-center justify-center">
+              <Button variant="primary" size="md" className="w-full sm:w-auto text-xs py-2.5 px-4 shadow-sm font-bold flex items-center justify-center min-h-[44px]">
                 <span>Screen Your Property Now</span>
                 <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>

@@ -20,8 +20,8 @@ export const PricingCards: React.FC = () => {
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Interactive Currency Selector Pills */}
-      <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-1">
-        <span className="text-[11px] sm:text-xs font-semibold text-slate-600 w-full text-center sm:w-auto sm:mr-2">
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 px-1">
+        <span className="text-xs font-semibold text-slate-700 w-full text-center sm:w-auto sm:mr-2">
           {t("viewPricingIn")}
         </span>
         {(Object.keys(CURRENCIES) as SupportedCurrency[]).map((cKey) => {
@@ -33,15 +33,15 @@ export const PricingCards: React.FC = () => {
               type="button"
               onClick={() => setCurrency(cKey)}
               aria-pressed={isSelected}
-              className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3.5 py-2 sm:py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer min-h-[44px] ${
                 isSelected
                   ? "bg-brand-blue text-white shadow-sm scale-105"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
+                  : "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300"
               }`}
             >
               <CountryFlag countryCode={c.countryCode} size={14} />
               <span>{c.code}</span>
-              <span className={`text-[10px] sm:text-[11px] font-medium ${isSelected ? "text-white font-bold" : "text-slate-600"}`}>({c.symbol})</span>
+              <span className={`text-[11px] font-medium ${isSelected ? "text-white font-bold" : "text-slate-700"}`}>({c.symbol})</span>
             </button>
           );
         })}
@@ -85,18 +85,18 @@ export const PricingCards: React.FC = () => {
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>{t("verifiedTitle") || "11-Point Verification Checklist"}</span>
               </li>
-              <li className="flex items-center gap-2 text-slate-600 font-medium">
-                <Lock className="w-3.5 h-3.5 shrink-0 text-slate-500" />
+              <li className="flex items-center gap-2 text-slate-700 font-medium">
+                <Lock className="w-3.5 h-3.5 shrink-0 text-slate-600" />
                 <span>Page-level discrepancy evidence locked</span>
               </li>
-              <li className="flex items-center gap-2 text-slate-600 font-medium">
-                <Lock className="w-3.5 h-3.5 shrink-0 text-slate-500" />
+              <li className="flex items-center gap-2 text-slate-700 font-medium">
+                <Lock className="w-3.5 h-3.5 shrink-0 text-slate-600" />
                 <span>Official PDF report export locked</span>
               </li>
             </ul>
           </div>
 
-          <Link href={isLoggedIn ? "/dashboard" : "/register"} prefetch={true} className="w-full block">
+          <Link href={isLoggedIn ? "/dashboard" : "/register"} prefetch={false} className="w-full block">
             <Button variant="outline" size="md" className="w-full font-semibold">
               {isLoggedIn ? (t("dashboard") || "Go to Dashboard") : (t("getStartedFree") || "Get Started Free")}
             </Button>
@@ -123,9 +123,9 @@ export const PricingCards: React.FC = () => {
                 <div className="text-2xl sm:text-3xl font-extrabold font-heading text-brand-darkNavy">
                   {formatPrice(48375)}
                 </div>
-                <span className="text-xs text-slate-600 font-medium">{t("perProperty") || "/ property"}</span>
+                <span className="text-xs text-slate-700 font-medium">{t("perProperty") || "/ property"}</span>
               </div>
-              <p className="text-[11px] text-slate-600 mt-0.5 font-mono">
+              <p className="text-[11px] text-slate-700 mt-0.5 font-mono">
                 Base: {formatPrice(45000)} &bull; 7.5% Statutory VAT: {formatPrice(3375)}
               </p>
               <p className="text-xs text-slate-700 mt-1">
@@ -135,33 +135,33 @@ export const PricingCards: React.FC = () => {
 
             <ul className="space-y-2 sm:space-y-2.5 text-xs text-slate-700 border-t pt-3 sm:pt-4">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
                 <span><strong>{t("everythingInFree") || "Everything in Free Tier"}</strong></span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
                 <span>Full 15-Section Certified Due-Diligence Report</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
                 <span>Unredacted Cadastral Evidence &amp; Beacon Matching</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
                 <span>{t("downloadGenuinePdf") || "Official Cryptographic PDF Report Download"}</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
                 <span>Instant Statutory Tax Receipt</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
                 <span>Interactive Property Due-Diligence Assistant</span>
               </li>
             </ul>
           </div>
 
-          <Link href={isLoggedIn ? "/properties/new" : "/register"} prefetch={true} className="w-full block">
+          <Link href={isLoggedIn ? "/properties/new" : "/register"} prefetch={false} className="w-full block">
             <Button variant="primary" size="md" className="w-full shadow-subtle font-bold bg-emerald-700 hover:bg-emerald-800 text-xs sm:text-sm">
               <span>{isLoggedIn ? `${t("auditProperty") || "Start Property Audit"} (${formatPrice(48375)})` : `${t("auditProperty") || "Audit Property"} (${formatPrice(48375)})`}</span>
               <ArrowRight className="w-3.5 h-3.5 ml-1.5 shrink-0" />
@@ -228,7 +228,7 @@ export const PricingCards: React.FC = () => {
             </ul>
           </div>
 
-          <Link href={isLoggedIn ? "/billing" : "/register"} prefetch={true} className="w-full block">
+          <Link href={isLoggedIn ? "/billing" : "/register"} prefetch={false} className="w-full block">
             <Button variant="primary" size="md" className="w-full bg-brand-blue hover:bg-brand-blueHover text-white font-bold border-0 shadow-md text-xs sm:text-sm">
               <span>{isLoggedIn ? "Upgrade to Professional" : "Subscribe Professional"} ({formatPrice(102125)})</span>
               <ArrowRight className="w-3.5 h-3.5 ml-1.5 shrink-0" />
@@ -238,8 +238,8 @@ export const PricingCards: React.FC = () => {
       </div>
 
       <div className="text-center pt-2 px-2">
-        <p className="text-[11px] sm:text-xs text-slate-700 flex items-center justify-center gap-1.5 font-medium flex-wrap">
-          <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+        <p className="text-xs text-slate-700 flex items-center justify-center gap-1.5 font-medium flex-wrap">
+          <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
           <span>Secured instant checkout. Accepts Mastercard, Visa, Verve, Apple Pay &amp; International Bank Cards.</span>
         </p>
       </div>

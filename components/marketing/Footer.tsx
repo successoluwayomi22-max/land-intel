@@ -28,18 +28,18 @@ export const Footer: React.FC = () => {
               {t("footerTagline") ||
                 "Global Land Solutions — Securing High-Value Real Estate for Remote & Diaspora Investors. Independent cadastral verification, document provenance analysis, and title intelligence."}
             </p>
-            <div className="flex flex-col gap-1.5 text-[11px] text-slate-400">
+            <div className="flex flex-col gap-1.5 text-xs text-slate-300">
               <div className="flex items-center gap-2">
-                <span className="inline-block px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-bold text-[10px] tracking-wide">
+                <span className="inline-block px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 font-bold text-[10px] tracking-wide">
                   CAC Reg. RC 8365907
                 </span>
-                <span className="text-slate-300 font-medium">LandIntel Technologies Ltd</span>
+                <span className="text-slate-200 font-medium">LandIntel Technologies Ltd</span>
               </div>
-              <p className="text-slate-400 text-[10px]">
+              <p className="text-slate-300 text-[11px]">
                 Plot 14, Commercial Avenue, Victoria Island, Lagos, Nigeria
               </p>
             </div>
-            <div className="flex items-center gap-2 text-[11px] text-slate-400">
+            <div className="flex items-center gap-2 text-xs text-slate-300">
               <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>{t("privateStorageEncrypted") || "Private object storage • Encrypted data transmission"}</span>
             </div>
@@ -50,24 +50,24 @@ export const Footer: React.FC = () => {
             <p className="font-bold text-white uppercase tracking-wider text-[11px]">
               {t("product") || "Product"}
             </p>
-            <ul className="space-y-2">
+            <ul className="space-y-0.5">
               <li>
-                <Link href="/how-it-works" className="hover:text-white transition-colors">
+                <Link href="/how-it-works" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("howItWorks") || "How It Works"}
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="hover:text-white transition-colors">
+                <Link href="/pricing" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("pricing") || "Pricing"}
                 </Link>
               </li>
               <li>
-                <Link href="/security" className="hover:text-white transition-colors">
+                <Link href="/security" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("security") || "Security"}
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="hover:text-white transition-colors">
+                <Link href="/faq" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("faq") || "FAQ"}
                 </Link>
               </li>
@@ -79,9 +79,9 @@ export const Footer: React.FC = () => {
             <p className="font-bold text-white uppercase tracking-wider text-[11px]">
               {t("contactAndSupport") || "Contact & Support"}
             </p>
-            <ul className="space-y-2">
+            <ul className="space-y-0.5">
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
+                <Link href="/contact" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("supportDesk") || "Support Desk"}
                 </Link>
               </li>
@@ -91,7 +91,7 @@ export const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Chat with support on WhatsApp: ${contact.primaryWhatsapp}`}
-                  className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors flex items-center gap-1"
+                  className="min-h-[40px] py-1.5 inline-flex items-center text-emerald-400 hover:text-emerald-300 font-semibold transition-colors gap-1"
                 >
                   WhatsApp: {contact.primaryWhatsapp}
                 </a>
@@ -100,14 +100,14 @@ export const Footer: React.FC = () => {
                 <a
                   href={`mailto:${contact.displayEmail || "support@landintel.ai"}`}
                   aria-label={`Email Support: ${contact.displayEmail || "support@landintel.ai"}`}
-                  className="hover:text-white transition-colors break-all"
+                  className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors break-all"
                   title="Contact Support"
                 >
                   {contact.displayEmail || "support@landintel.ai"}
                 </a>
               </li>
               <li>
-                <Link href="/about" className="hover:text-white transition-colors">
+                <Link href="/about" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("aboutUs") || "About Us"}
                 </Link>
               </li>
@@ -119,34 +119,34 @@ export const Footer: React.FC = () => {
             <p className="font-bold text-white uppercase tracking-wider text-[11px]">
               {t("legalAndTrust") || "Legal & Trust"}
             </p>
-            <ul className="space-y-2">
+            <ul className="space-y-0.5">
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors">
+                <Link href="/privacy" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("privacyPolicy") || "Privacy Policy"}
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-white transition-colors">
+                <Link href="/terms" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("termsOfService") || "Terms of Service"}
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimer" className="hover:text-white transition-colors">
+                <Link href="/disclaimer" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("legalDisclaimer") || "Legal Disclaimer"}
                 </Link>
               </li>
               <li>
-                <Link href="/cookies" className="hover:text-white transition-colors">
+                <Link href="/cookies" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("cookiePolicy") || "Cookie Policy"}
                 </Link>
               </li>
               <li>
-                <Link href="/acceptable-use" className="hover:text-white transition-colors">
+                <Link href="/acceptable-use" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("acceptableUse") || "Acceptable Use"}
                 </Link>
               </li>
               <li>
-                <Link href="/refund-policy" className="hover:text-white transition-colors">
+                <Link href="/refund-policy" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
                   {t("refundPolicy") || "Refund Policy"}
                 </Link>
               </li>
@@ -154,11 +154,11 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-400 text-[11px]">
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-300 text-xs">
           <p suppressHydrationWarning>
             © {currentYear} LandIntel — Global Land Intelligence. {t("allRightsReserved") || "All rights reserved."}
           </p>
-          <p className="text-center md:text-right max-w-xl text-slate-400">
+          <p className="text-center md:text-right max-w-xl text-slate-300 leading-relaxed">
             {APP_CONFIG.legalDisclaimer}
           </p>
         </div>

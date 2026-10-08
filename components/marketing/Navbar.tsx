@@ -155,7 +155,7 @@ export const Navbar: React.FC = () => {
                   <div className="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center shadow-xs ring-1 ring-emerald-500/20 transition-all">
                     {userInitial}
                   </div>
-                  <ChevronDown className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-150 ${userMenuOpen ? "rotate-180 text-emerald-700" : ""}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 text-slate-600 transition-transform duration-150 ${userMenuOpen ? "rotate-180 text-emerald-700" : ""}`} />
                 </button>
 
                 {userMenuOpen && (
@@ -169,7 +169,7 @@ export const Navbar: React.FC = () => {
                           <p className="text-xs font-bold text-slate-800 truncate">
                             {user.name || user.email}
                           </p>
-                          <p className="text-[11px] text-slate-500 truncate">
+                          <p className="text-[11px] text-slate-600 truncate">
                             {user.email}
                           </p>
                         </div>
@@ -251,11 +251,11 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Mobile menu toggle */}
-        <div className="flex items-center gap-1.5 sm:gap-2 lg:hidden shrink-0 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-3 lg:hidden shrink-0 min-w-0">
           <LocaleSelector variant="light" compact />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-1.5 text-brand-textPrimary rounded-md hover:bg-slate-100 cursor-pointer"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 text-brand-textPrimary rounded-lg hover:bg-slate-100 cursor-pointer"
             aria-label="Toggle Navigation"
             aria-expanded={mobileOpen}
           >
@@ -267,14 +267,14 @@ export const Navbar: React.FC = () => {
       {/* Mobile Menu */}
       {mobileOpen && (
         <div className="lg:hidden border-b border-brand-border bg-white px-4 py-4 space-y-3">
-          <nav className="flex flex-col space-y-2 text-sm font-semibold text-brand-textPrimary">
+          <nav className="flex flex-col space-y-1 text-sm font-semibold text-brand-textPrimary">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 prefetch={false}
                 onClick={() => setMobileOpen(false)}
-                className="py-1.5 hover:text-brand-blue transition-colors"
+                className="py-2.5 px-2 min-h-[44px] flex items-center hover:text-brand-blue transition-colors rounded-lg"
               >
                 {link.label}
               </Link>

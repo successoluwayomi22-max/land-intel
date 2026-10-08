@@ -175,7 +175,7 @@ export const LocaleSelector: React.FC<{
           }
         }}
         className={`notranslate group relative inline-flex items-center ${
-          compact ? "gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px]" : "gap-2 px-3 py-1.5 text-xs"
+          compact ? "gap-1.5 px-3 py-2 text-xs min-h-[44px]" : "gap-2 px-3.5 py-2 text-xs min-h-[44px]"
         } rounded-full font-semibold transition-all duration-200 border shadow-xs cursor-pointer select-none shrink-0 whitespace-nowrap ${
           isDark
             ? "bg-slate-900/90 hover:bg-slate-800 text-slate-100 border-slate-700/80 hover:border-slate-600 focus:ring-2 focus:ring-emerald-500/40"
@@ -195,12 +195,12 @@ export const LocaleSelector: React.FC<{
               <CountryFlag countryCode={activeCurrency.countryCode} size={13} />
               <span className={isDark ? "text-white" : "text-slate-900"}>{currency}</span>
             </span>
-            <span className={`hidden min-[380px]:inline ${isDark ? "text-slate-700" : "text-slate-300"}`}>•</span>
+            <span className={`hidden min-[380px]:inline ${isDark ? "text-slate-600" : "text-slate-400"}`} aria-hidden="true">•</span>
             <span className="hidden min-[380px]:flex items-center gap-1">
               <CountryFlag countryCode={activeLanguage.countryCode} size={13} />
               <span
                 className={`font-mono text-[10px] font-bold uppercase ${
-                  isDark ? "text-emerald-400" : "text-emerald-700"
+                  isDark ? "text-emerald-400" : "text-emerald-800"
                 }`}
               >
                 {activeLanguage.code}
@@ -208,7 +208,7 @@ export const LocaleSelector: React.FC<{
             </span>
             <ChevronDown
               className={`w-3 h-3 transition-transform duration-200 shrink-0 ${
-                open ? "rotate-180 text-emerald-500" : isDark ? "text-slate-400" : "text-slate-500"
+                open ? "rotate-180 text-emerald-600" : isDark ? "text-slate-300" : "text-slate-600"
               }`}
             />
           </>
@@ -218,18 +218,18 @@ export const LocaleSelector: React.FC<{
             <span className="flex items-center gap-1.5 font-bold tracking-tight">
               <CountryFlag countryCode={activeCurrency.countryCode} size={15} />
               <span className={isDark ? "text-white" : "text-slate-900"}>{currency}</span>
-              <span className="opacity-70 font-normal">({activeCurrency.symbol})</span>
+              <span className="opacity-80 font-normal">({activeCurrency.symbol})</span>
             </span>
 
             {/* Divider */}
-            <span className={isDark ? "text-slate-700" : "text-slate-300"}>•</span>
+            <span className={isDark ? "text-slate-600" : "text-slate-400"} aria-hidden="true">•</span>
 
             {/* Language Badge */}
             <span className="flex items-center gap-1.5">
               <CountryFlag countryCode={activeLanguage.countryCode} size={15} />
               <span
                 className={`font-mono text-[11px] font-bold uppercase tracking-wider ${
-                  isDark ? "text-emerald-400" : "text-emerald-700"
+                  isDark ? "text-emerald-400" : "text-emerald-800"
                 }`}
               >
                 {activeLanguage.code}
@@ -238,7 +238,7 @@ export const LocaleSelector: React.FC<{
 
             <ChevronDown
               className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                open ? "rotate-180 text-emerald-500" : isDark ? "text-slate-400" : "text-slate-500"
+                open ? "rotate-180 text-emerald-600" : isDark ? "text-slate-300" : "text-slate-600"
               }`}
             />
           </>
@@ -280,7 +280,7 @@ export const LocaleSelector: React.FC<{
                   <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider font-heading flex items-center gap-1.5 text-slate-900 dark:text-white">
                     <span>{t("currencyAndLanguage") || "Currency & Language"}</span>
                   </h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                     {activeLanguage.nativeName} • {activeCurrency.code} ({activeCurrency.symbol})
                   </p>
                 </div>
@@ -289,10 +289,10 @@ export const LocaleSelector: React.FC<{
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="Close selector"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -581,16 +581,16 @@ export const LocaleSelector: React.FC<{
             </div>
 
             {/* Footer Bar */}
-            <div className="shrink-0 px-4 py-2 sm:py-2.5 bg-slate-50/90 dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-              <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 truncate">
-                <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <div className="shrink-0 px-4 py-2 sm:py-2.5 bg-slate-50/90 dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-200 truncate">
+                <MapPin className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400 shrink-0" />
                 <span className="truncate">
                   {t("detectedRegion") || "Region"}:{" "}
                   <strong className="text-slate-900 dark:text-white">{detectedCountry}</strong>
                   {detectedCity ? ` • ${detectedCity}` : ""}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5 font-medium text-slate-500 dark:text-slate-400 shrink-0 ml-2">
+              <div className="flex items-center gap-1.5 font-medium text-slate-600 dark:text-slate-300 shrink-0 ml-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                 <span>{isAutoDetected ? "Live Auto-Tracking" : `${allLangCount} Languages`}</span>
               </div>
