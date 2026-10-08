@@ -58,3 +58,4 @@ test*.html
 # OS files
 .DS_Store
 Thumbs.db
+lh_report*.json
