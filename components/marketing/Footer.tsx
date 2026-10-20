@@ -52,22 +52,22 @@ export const Footer: React.FC = () => {
             </p>
             <ul className="space-y-0.5">
               <li>
-                <Link href="/how-it-works" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/how-it-works" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("howItWorks") || "How It Works"}
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/pricing" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("pricing") || "Pricing"}
                 </Link>
               </li>
               <li>
-                <Link href="/security" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/security" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("security") || "Security"}
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/faq" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("faq") || "FAQ"}
                 </Link>
               </li>
@@ -81,7 +81,7 @@ export const Footer: React.FC = () => {
             </p>
             <ul className="space-y-0.5">
               <li>
-                <Link href="/contact" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/contact" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("supportDesk") || "Support Desk"}
                 </Link>
               </li>
@@ -91,7 +91,7 @@ export const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Chat with support on WhatsApp: ${contact.primaryWhatsapp}`}
-                  className="min-h-[40px] py-1.5 inline-flex items-center text-emerald-400 hover:text-emerald-300 font-semibold transition-colors gap-1"
+                  className="min-h-[48px] py-2 inline-flex items-center text-emerald-400 hover:text-emerald-300 font-semibold transition-colors gap-1"
                 >
                   WhatsApp: {contact.primaryWhatsapp}
                 </a>
@@ -100,14 +100,14 @@ export const Footer: React.FC = () => {
                 <a
                   href={`mailto:${contact.displayEmail || "support@landintel.ai"}`}
                   aria-label={`Email Support: ${contact.displayEmail || "support@landintel.ai"}`}
-                  className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors break-all"
+                  className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors break-all"
                   title="Contact Support"
                 >
                   {contact.displayEmail || "support@landintel.ai"}
                 </a>
               </li>
               <li>
-                <Link href="/about" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/about" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("aboutUs") || "About Us"}
                 </Link>
               </li>
@@ -121,32 +121,32 @@ export const Footer: React.FC = () => {
             </p>
             <ul className="space-y-0.5">
               <li>
-                <Link href="/privacy" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/privacy" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("privacyPolicy") || "Privacy Policy"}
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/terms" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("termsOfService") || "Terms of Service"}
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimer" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/disclaimer" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("legalDisclaimer") || "Legal Disclaimer"}
                 </Link>
               </li>
               <li>
-                <Link href="/cookies" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/cookies" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("cookiePolicy") || "Cookie Policy"}
                 </Link>
               </li>
               <li>
-                <Link href="/acceptable-use" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/acceptable-use" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("acceptableUse") || "Acceptable Use"}
                 </Link>
               </li>
               <li>
-                <Link href="/refund-policy" className="min-h-[40px] py-1.5 inline-flex items-center hover:text-white transition-colors">
+                <Link href="/refund-policy" className="min-h-[48px] py-2 inline-flex items-center hover:text-white transition-colors">
                   {t("refundPolicy") || "Refund Policy"}
                 </Link>
               </li>

@@ -161,8 +161,8 @@ export const LandIntelLogo: React.FC<LandIntelLogoProps> = ({
     return (
       <Link
         href={href}
-        aria-label={showText && !iconOnly ? undefined : "LAND INTEL Home"}
-        className={`inline-flex items-center shrink-0 focus:outline-none ${className}`}
+        aria-label="LandIntel Home"
+        className={`inline-flex items-center shrink-0 min-h-[44px] focus:outline-none ${className}`}
       >
         {content}
       </Link>

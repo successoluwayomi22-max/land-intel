@@ -9,8 +9,8 @@ export const HeroSection: React.FC = () => {
   return (
     <section className="relative overflow-hidden pt-8 pb-14 sm:pt-14 sm:pb-20 lg:pt-20 lg:pb-28 border-b border-brand-border bg-gradient-to-b from-white via-white to-slate-50 text-brand-textPrimary selection:bg-blue-100 selection:text-blue-900">
       {/* Ambient soft background accents */}
-      <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-blue-50/70 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] bg-emerald-50/50 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(239,246,255,0.7)_0%,transparent_70%)] pointer-events-none" />
+      <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(236,253,245,0.5)_0%,transparent_70%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f030_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f030_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 relative z-10 space-y-8 sm:space-y-12">

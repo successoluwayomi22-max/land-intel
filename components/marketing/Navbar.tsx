@@ -234,14 +234,14 @@ export const Navbar: React.FC = () => {
               <Link
                 href="/login"
                 prefetch={false}
-                className="text-xs font-bold text-slate-700 hover:text-emerald-700 px-3 py-2 transition-colors whitespace-nowrap"
+                className="text-xs font-bold text-slate-700 hover:text-emerald-700 px-3 py-2 min-h-[44px] inline-flex items-center transition-colors whitespace-nowrap"
               >
                 {t("logIn") || "Sign In"}
               </Link>
               <Link
                 href="/register"
                 prefetch={false}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-all whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-all whitespace-nowrap"
               >
                 <span>{t("analyzeProperty") || "Analyze a Property"}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -334,12 +334,12 @@ export const Navbar: React.FC = () => {
                   href="/login"
                   prefetch={false}
                   onClick={() => setMobileOpen(false)}
-                  className="text-center py-2 text-xs font-bold text-brand-textPrimary"
+                  className="text-center py-2.5 min-h-[44px] flex items-center justify-center text-xs font-bold text-brand-textPrimary rounded-lg hover:bg-slate-50 transition-colors"
                 >
                   {t("logIn") || "Sign In"}
                 </Link>
                 <Link href="/register" prefetch={false} onClick={() => setMobileOpen(false)}>
-                  <Button variant="primary" size="md" className="w-full">
+                  <Button variant="primary" size="md" className="w-full min-h-[48px]">
                     {t("analyzeProperty") || "Analyze a Property"}
                   </Button>
                 </Link>

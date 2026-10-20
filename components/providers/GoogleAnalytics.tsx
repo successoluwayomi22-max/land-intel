@@ -54,7 +54,7 @@ export const GoogleAnalytics: React.FC = () => {
     window.addEventListener("touchstart", triggerLoad, { passive: true, once: true });
     window.addEventListener("keydown", triggerLoad, { passive: true, once: true });
 
-    const timer = setTimeout(triggerLoad, 10000);
+    const timer = setTimeout(triggerLoad, 20000);
 
     return () => {
       cleanup();

@@ -1,5 +1,6 @@
 process.env.PRISMA_CLI_QUERY_ENGINE_TYPE = 'binary';
 process.env.PRISMA_CLIENT_ENGINE_TYPE = 'binary';
+process.env.NEXT_SKIP_BINARY_DOWNLOAD = '1';
 const { execSync } = require('child_process');
 
 console.log('Generating Prisma Client (if needed)...');
