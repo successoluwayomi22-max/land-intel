@@ -136,14 +136,14 @@ export const CookieConsent: React.FC = () => {
               <button
                 type="button"
                 onClick={handleAcceptAll}
-                className="px-4 py-2.5 min-h-[44px] rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors shadow-xs flex items-center justify-center"
+                className="px-4 py-3 min-h-[48px] rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors shadow-xs flex items-center justify-center"
               >
                 Accept All
               </button>
               <button
                 type="button"
                 onClick={handleRejectNonessential}
-                className="px-4 py-2.5 min-h-[44px] rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold transition-colors border border-slate-700 flex items-center justify-center"
+                className="px-4 py-3 min-h-[48px] rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold transition-colors border border-slate-700 flex items-center justify-center"
               >
                 Reject Non-Essential
               </button>
@@ -151,7 +151,7 @@ export const CookieConsent: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleSavePreferences}
-                  className="px-4 py-2.5 min-h-[44px] rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors flex items-center justify-center"
+                  className="px-4 py-3 min-h-[48px] rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors flex items-center justify-center"
                 >
                   Save Choices
                 </button>
@@ -159,7 +159,7 @@ export const CookieConsent: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPreferences(true)}
-                  className="px-3.5 py-2.5 min-h-[44px] rounded-lg text-slate-200 hover:text-white transition-colors flex items-center justify-center gap-1.5"
+                  className="px-4 py-3 min-h-[48px] rounded-lg text-slate-200 hover:text-white transition-colors flex items-center justify-center gap-1.5"
                 >
                   <Settings className="w-4 h-4" />
                   <span>Customize</span>

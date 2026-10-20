@@ -174,8 +174,9 @@ export const LocaleSelector: React.FC<{
             (window as any).__landintel_load_translate?.();
           }
         }}
+        aria-label={`Select Currency and Language: currently ${currency} and ${activeLanguage.label}`}
         className={`notranslate group relative inline-flex items-center ${
-          compact ? "gap-1.5 px-3 py-2 text-xs min-h-[44px]" : "gap-2 px-3.5 py-2 text-xs min-h-[44px]"
+          compact ? "gap-1.5 px-3 py-2 text-xs min-h-[48px]" : "gap-2 px-3.5 py-2.5 text-xs min-h-[48px]"
         } rounded-full font-semibold transition-all duration-200 border shadow-xs cursor-pointer select-none shrink-0 whitespace-nowrap ${
           isDark
             ? "bg-slate-900/90 hover:bg-slate-800 text-slate-100 border-slate-700/80 hover:border-slate-600 focus:ring-2 focus:ring-emerald-500/40"

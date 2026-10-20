@@ -286,7 +286,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       window.addEventListener("touchstart", runOnce, { once: true, passive: true });
       window.addEventListener("keydown", runOnce, { once: true, passive: true });
 
-      const idleTimer = setTimeout(runOnce, 10000);
+      const idleTimer = setTimeout(runOnce, 25000);
       return () => {
         cleanup();
         clearTimeout(idleTimer);

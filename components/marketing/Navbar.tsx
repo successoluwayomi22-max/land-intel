@@ -255,7 +255,7 @@ export const Navbar: React.FC = () => {
           <LocaleSelector variant="light" compact />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 text-brand-textPrimary rounded-lg hover:bg-slate-100 cursor-pointer"
+            className="min-w-[48px] min-h-[48px] flex items-center justify-center p-2.5 text-brand-textPrimary rounded-lg hover:bg-slate-100 cursor-pointer"
             aria-label="Toggle Navigation"
             aria-expanded={mobileOpen}
           >

@@ -13,6 +13,9 @@ const urbanist = Urbanist({
   subsets: ["latin"],
   variable: "--font-urbanist",
   display: "swap",
+  preload: true,
+  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+  adjustFontFallback: true,
 });
 
 export const viewport: Viewport = {

@@ -82,7 +82,7 @@ export function PlatformContactProvider({ children }: { children: React.ReactNod
       window.addEventListener("pointerdown", runFetch, { once: true, passive: true });
       window.addEventListener("touchstart", runFetch, { once: true, passive: true });
       window.addEventListener("keydown", runFetch, { once: true, passive: true });
-      timer = setTimeout(runFetch, 10000);
+      timer = setTimeout(runFetch, 25000);
     }
 
     const handleUpdate = (e: CustomEvent<PlatformContactSettings>) => {
