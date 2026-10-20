@@ -96,13 +96,25 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 2. Mozilla Observatory Grade A+ Content Security Policy (CSP)
-  // Utilizes cryptographic nonce & strict-dynamic to eliminate unsafe-inline penalties while allowing Next.js hydration
-  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  const cspHeader = `default-src 'self'; script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://www.googletagmanager.com https://maps.googleapis.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.google.com https://www.gstatic.com https://accounts.google.com https://js.paystack.co https://checkout.paystack.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com https://accounts.google.com; img-src 'self' blob: data: https://www.google-analytics.com https://*.google-analytics.com https://maps.googleapis.com https://maps.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.gstatic.com https://www.google.com https://lh3.googleusercontent.com https://checkout.paystack.com https://fonts.gstatic.com; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; frame-src 'self' https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://checkout.paystack.com https://www.google.com https://recaptcha.google.com https://accounts.google.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://translate.googleapis.com https://translate-pa.googleapis.com https://translate.google.com https://maps.googleapis.com https://api.paystack.co https://checkout.paystack.com https://accounts.google.com https://open.er-api.com; upgrade-insecure-requests;`.replace(/\s{2,}/g, " ").trim();
+  // 2. Comprehensive Content Security Policy (CSP)
+  // Cleanly supports Next.js hydration, inline scripts (JSON-LD, GA4), Google Translate, Maps, & Paystack without console errors or DevTools issues
+  const cspHeader = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://*.googletagmanager.com https://maps.googleapis.com https://*.googleapis.com https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://www.google.com https://*.google.com https://www.gstatic.com https://*.gstatic.com https://accounts.google.com https://js.paystack.co https://checkout.paystack.com https://*.paystack.co https://*.paystack.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com https://*.gstatic.com https://accounts.google.com",
+    "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://translate.googleapis.com https://translate.google.com https://www.gstatic.com https://*.gstatic.com https://accounts.google.com",
+    "img-src 'self' blob: data: https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://stats.g.doubleclick.net https://*.doubleclick.net https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com https://*.gstatic.com https://translate.google.com https://translate.googleapis.com https://www.gstatic.com https://www.google.com https://*.google.com https://lh3.googleusercontent.com https://checkout.paystack.com https://*.paystack.co https://*.paystack.com https://fonts.gstatic.com",
+    "font-src 'self' data: https://fonts.gstatic.com https://*.gstatic.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
+    "frame-src 'self' https://translate.google.com https://translate.googleapis.com https://translate-pa.googleapis.com https://checkout.paystack.com https://*.paystack.co https://*.paystack.com https://www.google.com https://*.google.com https://recaptcha.google.com https://accounts.google.com",
+    "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://stats.g.doubleclick.net https://*.doubleclick.net https://translate.googleapis.com https://translate-pa.googleapis.com https://translate.google.com https://maps.googleapis.com https://*.googleapis.com https://*.gstatic.com https://api.paystack.co https://checkout.paystack.com https://standard.paystack.co https://*.paystack.co https://*.paystack.com https://accounts.google.com https://open.er-api.com",
+    "upgrade-insecure-requests",
+  ].join("; ");
 
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", cspHeader);
 
   const response = NextResponse.next({
