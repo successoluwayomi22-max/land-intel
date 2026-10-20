@@ -34,6 +34,8 @@ import {
   Languages,
   FileEdit,
   Cpu,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { LocaleSelector } from "@/components/ui/LocaleSelector";
@@ -106,6 +108,35 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [adminUser, setAdminUser] = useState<AdminUserInfo | null>(null);
   const [nonAdminUser, setNonAdminUser] = useState<AdminUserInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Automatically close mobile menu on page transition
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
+  // Close mobile menu on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isMobileMenuOpen]);
 
   const checkAuth = async (): Promise<void> => {
     const token = typeof window !== "undefined" ? localStorage.getItem("landintel_token") : null;
@@ -342,13 +373,165 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </aside>
 
       {/* ============================================================ */}
-      {/* 2. ADMIN MAIN VIEWPORT (Offset by 64 (16rem) on desktop)     */}
+      {/* 2. MOBILE SLIDE-OUT DRAWER FOR PHONE VIEW (Obsidian/Amber)   */}
+      {/* ============================================================ */}
+      {isMobileMenuOpen && (
+        <div
+          id="admin-mobile-drawer"
+          className="md:hidden fixed inset-0 z-50 flex"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Operations Navigation Menu"
+        >
+          {/* Backdrop blur overlay */}
+          <div
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+
+          {/* Drawer panel */}
+          <aside className="relative w-[85vw] max-w-xs sm:w-80 bg-[#070B16] border-r border-amber-500/30 text-slate-200 flex flex-col h-full shadow-2xl z-10 select-none">
+            {/* Operations Brand Header */}
+            <div className="p-4 border-b border-amber-500/20 bg-[#0A1020] flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <LandIntelLogo href="/admin" size="sm" variant="dark" />
+                <span className="text-[9px] tracking-widest text-amber-400 font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">
+                  OPS
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-1.5 rounded-lg bg-slate-900/80 hover:bg-amber-500/20 text-slate-400 hover:text-amber-400 border border-slate-800 transition-colors cursor-pointer"
+                aria-label="Close navigation menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Status node banner */}
+            <div className="px-4 py-2 border-b border-amber-500/10 bg-[#060A14]">
+              <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-mono bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                <span>NODE: CADASTRAL-CENTRAL [ONLINE]</span>
+              </div>
+            </div>
+
+            {/* Drawer Navigation Links */}
+            <div className="flex-1 py-3 px-3 space-y-4 overflow-y-auto custom-scrollbar">
+              {ADMIN_NAV_GROUPS.map((group) => (
+                <div key={group.title}>
+                  <span className="text-[9px] font-mono uppercase tracking-wider text-slate-400 px-3 block mb-1 font-bold">
+                    {group.title}
+                  </span>
+                  <div className="space-y-0.5">
+                    {group.items.map((item) => {
+                      const NavIcon = item.icon;
+                      const isActive = pathname === item.href;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                            isActive
+                              ? "bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold"
+                              : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <NavIcon className={`w-4 h-4 ${isActive ? "text-amber-400" : "text-slate-400"}`} />
+                            <span>{item.label}</span>
+                          </div>
+                          {isActive && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              {/* Quick Viewport Switchers */}
+              <div className="pt-2 border-t border-slate-800 space-y-2">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 px-3 block font-bold">
+                  Switch Viewport
+                </span>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2 rounded-lg bg-blue-950/30 hover:bg-blue-900/40 border border-blue-800/40 text-blue-300 text-xs font-semibold transition-all group"
+                >
+                  <span className="flex items-center gap-2">
+                    <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                    <span>Investor Workspace</span>
+                  </span>
+                  <span className="text-[9px] px-1 bg-blue-500/20 text-blue-200 rounded font-mono">CLIENT</span>
+                </Link>
+
+                <Link
+                  href="/"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold transition-all"
+                >
+                  <span className="flex items-center gap-2">
+                    <Home className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Public Website</span>
+                  </span>
+                  <span className="text-[9px] px-1 bg-slate-800 text-slate-400 rounded font-mono">EXT</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Mobile Drawer Footer: Admin Identity & Logout */}
+            <div className="p-3 border-t border-amber-500/20 bg-[#0A1020] flex items-center justify-between">
+              <div className="truncate pr-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+                  <span className="text-xs font-bold text-white block truncate">{adminUser.name || "Administrator"}</span>
+                </div>
+                <span className="text-[10px] font-mono text-amber-400/80 block truncate">{adminUser.email}</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="p-2 rounded-lg bg-slate-900 hover:bg-rose-950/50 text-slate-200 hover:text-rose-400 border border-slate-700 transition-colors cursor-pointer shrink-0"
+                title="Terminate Admin Session"
+                aria-label="Terminate Admin Session"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/* 3. ADMIN MAIN VIEWPORT (Offset by 64 (16rem) on desktop)     */}
       {/* ============================================================ */}
       <div className="md:pl-64 flex flex-col min-h-screen">
         {/* Top Operations Telemetry Header */}
-        <header className="bg-[#0A1020]/95 backdrop-blur-md border-b border-amber-500/20 sticky top-0 z-20 px-4 sm:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="md:hidden flex items-center gap-2">
+        <header className="bg-[#0A1020]/95 backdrop-blur-md border-b border-amber-500/20 sticky top-0 z-20 px-3 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Mobile Hamburger Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg bg-[#070B16] hover:bg-amber-500/15 text-amber-400 border border-amber-500/30 transition-all focus:outline-none focus:ring-2 focus:ring-amber-500/50 cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
+              aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="admin-mobile-drawer"
+            >
+              {isMobileMenuOpen ? (
+                <X className="w-5 h-5 text-amber-400" />
+              ) : (
+                <Menu className="w-5 h-5 text-amber-400" />
+              )}
+            </button>
+
+            <div className="flex items-center gap-2">
               <LandIntelLogo href="/admin" size="sm" variant="dark" />
               <span className="text-[9px] tracking-widest text-amber-400 font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">
                 OPS
@@ -365,21 +548,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <LocaleSelector variant="dark" />
 
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-950/60 hover:bg-blue-900/70 border border-blue-600/50 text-xs font-bold text-blue-200 hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-blue-950/60 hover:bg-blue-900/70 border border-blue-600/50 text-xs font-bold text-blue-200 hover:text-white transition-colors"
+              title="Return to Customer View"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Customer View</span>
+              <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden sm:inline">Customer View</span>
             </Link>
 
             <button
               onClick={handleLogout}
               className="p-1.5 rounded-lg bg-slate-900 hover:bg-rose-950/40 text-slate-200 hover:text-rose-400 border border-slate-700 transition-colors cursor-pointer"
               title="Sign Out"
+              aria-label="Sign Out"
             >
               <LogOut className="w-4 h-4" />
             </button>

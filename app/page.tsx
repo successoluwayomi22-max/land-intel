@@ -33,6 +33,9 @@ import { Button } from "@/components/ui/Button";
 import { PricingCards } from "@/components/marketing/PricingCards";
 import { CaseStudiesSection } from "@/components/marketing/CaseStudiesSection";
 
+export const dynamic = "force-static";
+export const revalidate = 86400;
+
 export default function LandingPage() {
   const t = (_key: string) => "";
 

@@ -59,3 +59,4 @@ test*.html
 .DS_Store
 Thumbs.db
 lh_report*.json
+scratch*.json

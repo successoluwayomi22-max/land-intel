@@ -699,7 +699,7 @@ export default function AdminProDashboardPage() {
       </div>
 
       {/* Tab Navigation Bar */}
-      <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-800/80 pb-3">
+      <div className="flex flex-nowrap sm:flex-wrap items-center gap-1.5 border-b border-slate-800/80 pb-3 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
         {[
           { id: "overview", label: "Overview & Telemetry", icon: Activity, badge: null },
           { id: "cases", label: `Cases Monitor (${recentCases.length})`, icon: Building2, badge: null },
@@ -726,7 +726,7 @@ export default function AdminProDashboardPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as AdminTab)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer shrink-0 ${
                 isActive
                   ? "bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/10"
                   : "bg-slate-900/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800/60"
